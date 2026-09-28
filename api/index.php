@@ -38,8 +38,8 @@ $path = trim($path, '/');
 
 $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 $static_mimes = [
-    'css'   => 'text/css',
-    'js'    => 'application/javascript',
+    'css'   => 'text/css; charset=UTF-8',
+    'js'    => 'application/javascript; charset=UTF-8',
     'jpg'   => 'image/jpeg',
     'jpeg'  => 'image/jpeg',
     'png'   => 'image/png',
@@ -59,12 +59,18 @@ if (isset($static_mimes[$ext])) {
         __DIR__ . '/../public/' . $path,
         __DIR__ . '/../' . ltrim($path, '/'),
         __DIR__ . '/../assets/' . preg_replace('#^assets/#i', '', $path),
-        __DIR__ . '/../public/assets/' . preg_replace('#^assets/#i', '', $path)
+        __DIR__ . '/../public/assets/' . preg_replace('#^assets/#i', '', $path),
+        __DIR__ . '/../uploads/' . preg_replace('#^uploads/#i', '', $path),
+        __DIR__ . '/../public/uploads/' . preg_replace('#^uploads/#i', '', $path)
     ];
     foreach ($candidates as $candidate) {
         if (file_exists($candidate) && !is_dir($candidate)) {
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
             header('Content-Type: ' . $static_mimes[$ext]);
             header('Cache-Control: public, max-age=31536000');
+            header('Content-Length: ' . filesize($candidate));
             readfile($candidate);
             exit();
         }
@@ -185,6 +191,11 @@ $route_map = [
     'tasks/cancel-task'           => 'tasks/cancel_task.php',
     'tasks/cancel_task'           => 'tasks/cancel_task.php',
     'tasks/cancel_task.php'       => 'tasks/cancel_task.php',
+
+    'api'                         => 'index.php',
+    'api/'                        => 'index.php',
+    'api/index'                   => 'index.php',
+    'api/index.php'               => 'index.php',
 ];
 
 $target = null;
@@ -206,19 +217,30 @@ if (isset($route_map[$lookup])) {
     }
 }
 
+if ($target && realpath($target) === realpath(__FILE__)) {
+    $target = __DIR__ . '/../index.php';
+}
+
 if ($target && file_exists($target)) {
-    require_once __DIR__ . "/../config/database.php";
+    while (ob_get_level()) {
+        ob_end_clean();
+    }
     chdir(dirname($target));
     require $target;
     exit();
 }
 
 http_response_code(404);
+while (ob_get_level()) {
+    ob_end_clean();
+}
+$home_url = defined('BASE_URL') ? BASE_URL . 'index.php' : '/index.php';
+$css_url = defined('BASE_URL') ? BASE_URL . 'assets/css/style.css' : '/assets/css/style.css';
 echo "<!DOCTYPE html><html><head><title>404 Not Found - SkillSprout</title>";
-echo "<link rel='stylesheet' href='/assets/css/style.css'>";
+echo "<link rel='stylesheet' href='" . htmlspecialchars($css_url) . "'>";
 echo "</head><body><main><div class='card content-box text-center'>";
 echo "<h1>404 Not Found</h1>";
 echo "<p>The requested page <code>" . htmlspecialchars($path) . "</code> could not be found.</p>";
-echo "<a href='/index.php' class='btn btn-primary'>Return to Home</a>";
+echo "<a href='" . htmlspecialchars($home_url) . "' class='button'>Return to Home</a>";
 echo "</div></main></body></html>";
 exit();

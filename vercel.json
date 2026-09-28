@@ -5,18 +5,10 @@
       "includeFiles": "**"
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/public/assets/$1"
-    },
-    {
-      "src": "/uploads/(.*)",
-      "dest": "/public/uploads/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.php"
+      "source": "/(.*)",
+      "destination": "/api/index.php"
     }
   ]
 }

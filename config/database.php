@@ -7,9 +7,10 @@ if (!isset($conn) || !$conn instanceof mysqli) {
         $parsed_url = parse_url($db_url);
         $host = $parsed_url['host'] ?? 'localhost';
         $port = isset($parsed_url['port']) ? (int)$parsed_url['port'] : 3306;
-        $username = $parsed_url['user'] ?? 'root';
-        $password = $parsed_url['pass'] ?? '';
-        $database = isset($parsed_url['path']) ? ltrim($parsed_url['path'], '/') : 'workpoint';
+        $username = isset($parsed_url['user']) ? rawurldecode($parsed_url['user']) : 'root';
+        $password = isset($parsed_url['pass']) ? rawurldecode($parsed_url['pass']) : '';
+        $raw_db = isset($parsed_url['path']) ? ltrim($parsed_url['path'], '/') : 'workpoint';
+        $database = rawurldecode(explode('?', $raw_db)[0]);
     } else {
         $host = getenv('DB_HOST') ?: (getenv('MYSQL_HOST') ?: 'localhost');
         $username = getenv('DB_USER') ?: (getenv('MYSQL_USER') ?: 'root');
@@ -20,7 +21,8 @@ if (!isset($conn) || !$conn instanceof mysqli) {
 
     $conn = mysqli_init();
 
-    $use_ssl = getenv('DB_SSL') === 'true' || getenv('MYSQL_SSL') === 'true';
+    $is_remote = ($host !== 'localhost' && $host !== '127.0.0.1' && $host !== '');
+    $use_ssl = getenv('DB_SSL') === 'true' || getenv('MYSQL_SSL') === 'true' || $is_remote;
 
     if ($use_ssl && defined('MYSQLI_CLIENT_SSL')) {
         mysqli_ssl_set($conn, NULL, NULL, getenv('DB_SSL_CA') ?: NULL, NULL, NULL);
@@ -33,11 +35,12 @@ if (!isset($conn) || !$conn instanceof mysqli) {
     }
 
     if (!$connected) {
-        error_log("Database connection failed: " . mysqli_connect_error());
+        $conn_err = mysqli_connect_error();
+        error_log("Database connection failed: " . $conn_err);
         if (getenv('VERCEL')) {
-            die("Database connection failed. Please configure your MySQL database credentials in Vercel Project Settings (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT or DATABASE_URL).");
+            die("Database connection failed (" . htmlspecialchars($conn_err) . "). Please configure your MySQL database credentials in Vercel Project Settings (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT or DATABASE_URL).");
         } else {
-            die("Database connection failed. Please check your database configuration.");
+            die("Database connection failed: " . htmlspecialchars($conn_err) . ". Please check your database configuration.");
         }
     }
 

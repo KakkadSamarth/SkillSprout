@@ -72,10 +72,6 @@ if (!class_exists('SkillSproutSessionHandler')) {
 }
 
 function init_skillsprout_session($conn) {
-    if (session_status() === PHP_SESSION_ACTIVE) {
-        return;
-    }
-
     if (getenv('VERCEL') || getenv('SESSION_DRIVER') === 'database') {
         @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `sessions` (
             `id` VARCHAR(128) NOT NULL PRIMARY KEY,
@@ -83,7 +79,17 @@ function init_skillsprout_session($conn) {
             `last_activity` INT UNSIGNED NOT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        $handler = new SkillSproutSessionHandler($conn);
-        session_set_save_handler($handler, true);
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $existing_data = $_SESSION;
+            session_write_close();
+            $handler = new SkillSproutSessionHandler($conn);
+            session_set_save_handler($handler, true);
+            session_start();
+            $_SESSION = array_merge($_SESSION, $existing_data);
+        } else {
+            $handler = new SkillSproutSessionHandler($conn);
+            session_set_save_handler($handler, true);
+            session_start();
+        }
     }
 }
