@@ -6,7 +6,7 @@ if (!defined('BASE_URL')) {
     } else {
         $uri = $_SERVER['REQUEST_URI'] ?? '';
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-        if (strpos($uri, '/SkillSprout/') === 0 || strpos($scriptName, '/SkillSprout/') === 0) {
+        if (preg_match('#^/SkillSprout(/|$)#i', $uri) || preg_match('#^/SkillSprout(/|$)#i', $scriptName)) {
             define('BASE_URL', '/SkillSprout/');
         } else {
             define('BASE_URL', '/');

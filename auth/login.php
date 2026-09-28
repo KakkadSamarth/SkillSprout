@@ -37,7 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["email"] = $user["email"];
 
             echo "<script>
-                    alert('Login successful!');
                     window.location.href = '" . BASE_URL . "user/dashboard.php';
                   </script>";
 
