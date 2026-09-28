@@ -17,8 +17,6 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
 
 $task_id = (int) $_GET["id"];
 
-/* Get submitted work */
-
 $sql = "SELECT
             tasks.task_id,
             tasks.title,
@@ -65,86 +63,91 @@ if (!$submission) {
     exit();
 }
 
-/* Approve submitted work */
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+    $action = $_POST["action"] ?? "approve";
     $submission_id = $submission["submission_id"];
     $worker_id = $submission["worker_id"];
-    $reward_wp = $submission["reward_wp"];
+    $reward_wp = (int) $submission["reward_wp"];
 
-    mysqli_begin_transaction($conn);
+    if ($action === "approve") {
+        mysqli_begin_transaction($conn);
 
-    try {
+        try {
+            $sql = "UPDATE submissions
+                    SET status = 'APPROVED'
+                    WHERE submission_id = ? AND status = 'SUBMITTED'";
 
-        /* Mark submission as approved */
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $submission_id);
+            mysqli_stmt_execute($stmt);
 
-        $sql = "UPDATE submissions
-                SET status = 'APPROVED'
-                WHERE submission_id = ?";
+            if (mysqli_stmt_affected_rows($stmt) !== 1) {
+                mysqli_stmt_close($stmt);
+                mysqli_rollback($conn);
+                header("Location: " . BASE_URL . "user/my_work.php");
+                exit();
+            }
+            mysqli_stmt_close($stmt);
 
-        $stmt = mysqli_prepare($conn, $sql);
+            $sql = "UPDATE users
+                    SET wp_balance = wp_balance + ?
+                    WHERE user_id = ?";
 
-        mysqli_stmt_bind_param(
-            $stmt,
-            "i",
-            $submission_id
-        );
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "ii", $reward_wp, $worker_id);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
 
-        mysqli_stmt_execute($stmt);
+            $sql = "UPDATE tasks
+                    SET status = 'COMPLETED'
+                    WHERE task_id = ?";
 
-        mysqli_stmt_close($stmt);
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $task_id);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
 
+            mysqli_commit($conn);
 
-        /* Add Work Points to worker */
+            header("Location: " . BASE_URL . "user/my_work.php");
+            exit();
 
-        $sql = "UPDATE users
-                SET wp_balance = wp_balance + ?
-                WHERE user_id = ?";
+        } catch (Exception $e) {
+            mysqli_rollback($conn);
+            die("Failed to approve work: " . $e->getMessage());
+        }
+    } elseif ($action === "reject") {
+        mysqli_begin_transaction($conn);
 
-        $stmt = mysqli_prepare($conn, $sql);
+        try {
+            $sql = "UPDATE submissions
+                    SET status = 'REJECTED'
+                    WHERE submission_id = ? AND status = 'SUBMITTED'";
 
-        mysqli_stmt_bind_param(
-            $stmt,
-            "ii",
-            $reward_wp,
-            $worker_id
-        );
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $submission_id);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
 
-        mysqli_stmt_execute($stmt);
+            $sql = "UPDATE tasks
+                    SET status = 'ASSIGNED'
+                    WHERE task_id = ?";
 
-        mysqli_stmt_close($stmt);
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $task_id);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
 
+            mysqli_commit($conn);
 
-        /* Mark task as completed */
+            header("Location: " . BASE_URL . "user/my_work.php");
+            exit();
 
-        $sql = "UPDATE tasks
-                SET status = 'COMPLETED'
-                WHERE task_id = ?";
-
-        $stmt = mysqli_prepare($conn, $sql);
-
-        mysqli_stmt_bind_param(
-            $stmt,
-            "i",
-            $task_id
-        );
-
-        mysqli_stmt_execute($stmt);
-
-        mysqli_stmt_close($stmt);
-
-
-        mysqli_commit($conn);
-
-        header("Location: " . BASE_URL . "user/my_work.php");
-        exit();
-
-    } catch (Exception $e) {
-
-        mysqli_rollback($conn);
-
-        die("Failed to approve work.");
+        } catch (Exception $e) {
+            mysqli_rollback($conn);
+            die("Failed to reject submission: " . $e->getMessage());
+        }
     }
 }
 
@@ -208,8 +211,12 @@ include __DIR__ . "/../includes/header2.php";
 
                     <form action="" method="post">
 
-                        <button type="submit">
-                            Approve Work
+                        <button type="submit" name="action" value="approve" style="padding: 10px 20px; background-color: black; color: white; border: none; cursor: pointer; margin-right: 10px;">
+                            Approve Work &amp; Pay <?php echo (int) $submission["reward_wp"]; ?> WP
+                        </button>
+
+                        <button type="submit" name="action" value="reject" style="padding: 10px 20px; background-color: #d32f2f; color: white; border: none; cursor: pointer;" onclick="return confirm('Are you sure you want to reject this submission? The task will be returned to the worker to redo.');">
+                            Reject Submission
                         </button>
 
                     </form>

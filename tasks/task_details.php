@@ -3,13 +3,11 @@ session_start();
 
 include __DIR__ . "/../config/database.php";
 
-// Check if user is logged in
 if (!isset($_SESSION["user_id"])) {
     header("Location: " . BASE_URL . "auth/login.php");
     exit();
 }
 
-// Check if task ID exists
 if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
     header("Location: " . BASE_URL . "tasks/tasks.php");
     exit();
@@ -17,7 +15,6 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
 
 $task_id = (int) $_GET["id"];
 
-// Get task details
 $sql = "SELECT tasks.task_id, tasks.creator_id, tasks.title, tasks.description, tasks.domain, tasks.required_skills, tasks.reward_wp, 
           tasks.deadline, tasks.status, tasks.created_at, users.name 
           AS creator_name FROM tasks 
@@ -36,7 +33,6 @@ $task = mysqli_fetch_assoc($result);
 
 mysqli_stmt_close($stmt);
 
-// Task does not exist
 if (!$task) {
     header("Location: " . BASE_URL . "tasks/tasks.php");
     exit();
@@ -117,9 +113,18 @@ if ($task["creator_id"] == $_SESSION["user_id"]) {
         ?>
 
         <p>
-            <a href="<?= BASE_URL ?>tasks/manage_applications.php?id=<?php echo $task["task_id"]; ?>">
+            <a href="<?= BASE_URL ?>tasks/manage_applications.php?id=<?php echo $task["task_id"]; ?>" style="display: inline-block; padding: 8px 16px; background-color: black; color: white; text-decoration: none; margin-right: 10px;">
                 Manage Applications
             </a>
+        </p>
+
+        <p>
+            <form action="<?= BASE_URL ?>tasks/cancel_task.php" method="post" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to cancel this task? Your <?php echo (int) $task['reward_wp']; ?> WP will be refunded to your balance.');">
+                <input type="hidden" name="task_id" value="<?php echo $task['task_id']; ?>">
+                <button type="submit" style="padding: 8px 16px; background-color: #d32f2f; color: white; border: none; cursor: pointer;">
+                    Cancel Task (Refund <?php echo (int) $task['reward_wp']; ?> WP)
+                </button>
+            </form>
         </p>
 
         <?php

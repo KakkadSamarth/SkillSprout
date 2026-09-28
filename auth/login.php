@@ -15,7 +15,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["email"]);
     $password = $_POST["password"];
 
-    // Find user by email
     $sql = "SELECT user_id, name, email, password FROM users WHERE email = ?";
 
     $stmt = mysqli_prepare($conn, $sql);
@@ -29,10 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $user = mysqli_fetch_assoc($result);
 
-        // Check password
         if (password_verify($password, $user["password"])) {
 
-            // Store user information in session
             $_SESSION["user_id"] = $user["user_id"];
             $_SESSION["name"] = $user["name"];
             $_SESSION["email"] = $user["email"];
@@ -130,8 +127,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <?php include __DIR__ . "/../includes/header1.php"; ?>
-
-    <!-- ================= LOGIN SECTION ================= -->
 
     <main>
 

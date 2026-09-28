@@ -3,13 +3,11 @@ session_start();
 
 include __DIR__ . "/../config/database.php";
 
-// Check if user is logged in
 if (!isset($_SESSION["user_id"])) {
     header("Location: " . BASE_URL . "auth/login.php");
     exit();
 }
 
-// Get all open tasks
 $sql = "SELECT
             task_id,
             title,
@@ -59,13 +57,11 @@ include __DIR__ . "/../includes/header2.php";
                 <tr>
 
                     <td>
-                        <strong>
-                            <?php echo htmlspecialchars($task["title"]); ?>
-                        </strong>
-
-                        <br>
-
-                        <?php echo htmlspecialchars($task["description"]); ?>
+                        <strong><?php echo htmlspecialchars($task["title"]); ?></strong>
+                        <p><?php echo htmlspecialchars($task["description"]); ?></p>
+                        <?php if ($task["required_skills"] != "") { ?>
+                            <small>Skills: <?php echo htmlspecialchars($task["required_skills"]); ?></small>
+                        <?php } ?>
                     </td>
 
                     <td>
@@ -82,7 +78,7 @@ include __DIR__ . "/../includes/header2.php";
 
                     <td>
                         <a href="<?= BASE_URL ?>tasks/task_details.php?id=<?php echo $task["task_id"]; ?>">
-                            View Task
+                            View Details
                         </a>
                     </td>
 
@@ -95,7 +91,7 @@ include __DIR__ . "/../includes/header2.php";
     <?php } else { ?>
 
         <p>
-            No tasks are currently available.
+            No tasks available right now. Please check back later.
         </p>
 
     <?php } ?>

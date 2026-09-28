@@ -1,8 +1,20 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteBase /WorkPoint/
+RewriteBase /SkillSprout/
 
-# Redirect legacy root paths to new feature folders
+# Prevent directory index browsing
+Options -Indexes
+
+# -------------------------------------------------------------
+# 1. Feature Directory Defaults (avoids 403 or missing index)
+# -------------------------------------------------------------
+RewriteRule ^auth/?$ auth/login.php [R=301,L]
+RewriteRule ^user/?$ user/dashboard.php [R=301,L]
+RewriteRule ^tasks/?$ tasks/tasks.php [R=301,L]
+
+# -------------------------------------------------------------
+# 2. Redirect legacy root .php paths to new feature folders
+# -------------------------------------------------------------
 RewriteRule ^login\.php$ auth/login.php [R=301,L,QSA]
 RewriteRule ^register\.php$ auth/register.php [R=301,L,QSA]
 RewriteRule ^logout\.php$ auth/logout.php [R=301,L,QSA]
@@ -19,4 +31,37 @@ RewriteRule ^apply_task\.php$ tasks/apply_task.php [R=301,L,QSA]
 RewriteRule ^manage_applications\.php$ tasks/manage_applications.php [R=301,L,QSA]
 RewriteRule ^submit_work\.php$ tasks/submit_work.php [R=301,L,QSA]
 RewriteRule ^review_submission\.php$ tasks/review_submission.php [R=301,L,QSA]
+RewriteRule ^cancel_task\.php$ tasks/cancel_task.php [R=301,L,QSA]
+
+# -------------------------------------------------------------
+# 3. Friendly root shortcuts / clean URLs
+# -------------------------------------------------------------
+RewriteRule ^about$ about.php [L,QSA]
+RewriteRule ^home$ index.php [L,QSA]
+
+RewriteRule ^login$ auth/login.php [R=301,L,QSA]
+RewriteRule ^register$ auth/register.php [R=301,L,QSA]
+RewriteRule ^logout$ auth/logout.php [R=301,L,QSA]
+
+RewriteRule ^dashboard$ user/dashboard.php [R=301,L,QSA]
+RewriteRule ^my[-_]work$ user/my_work.php [R=301,L,QSA]
+RewriteRule ^wallet$ user/wallet.php [R=301,L,QSA]
+RewriteRule ^profile$ user/profile.php [R=301,L,QSA]
+
+RewriteRule ^create[-_]task$ tasks/create_task.php [R=301,L,QSA]
+RewriteRule ^task[-_]details$ tasks/task_details.php [R=301,L,QSA]
+RewriteRule ^apply[-_]task$ tasks/apply_task.php [R=301,L,QSA]
+RewriteRule ^manage[-_]applications$ tasks/manage_applications.php [R=301,L,QSA]
+RewriteRule ^submit[-_]work$ tasks/submit_work.php [R=301,L,QSA]
+RewriteRule ^review[-_]submission$ tasks/review_submission.php [R=301,L,QSA]
+RewriteRule ^cancel[-_]task$ tasks/cancel_task.php [R=301,L,QSA]
+
+# -------------------------------------------------------------
+# 4. Extensionless PHP URL rewriting (e.g. /auth/login -> /auth/login.php)
+# -------------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L,QSA]
+
 </IfModule>

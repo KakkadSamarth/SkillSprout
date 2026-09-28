@@ -16,7 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["email"]);
     $password = $_POST["password"];
 
-    // Check if email already exists
     $check = "SELECT user_id FROM users WHERE email = ?";
     $stmt = mysqli_prepare($conn, $check);
 
@@ -30,10 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     } else {
 
-        // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert new user
         $sql = "INSERT INTO users (name, email, password)
                 VALUES (?, ?, ?)";
 
@@ -72,7 +69,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-family: Arial, sans-serif;
         }
 
-        /* Register form */
         main {
             padding: 40px;
         }
@@ -148,8 +144,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <?php include __DIR__ . "/../includes/header1.php"; ?>
 
-<!-- ================= REGISTER SECTION ================= -->
-
 <main>
 
     <div class="register-box">
@@ -162,23 +156,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <form action="" method="post" onsubmit="return validateRegisterForm()">
 
-            <!-- Full Name -->
             <label for="name"> Full Name </label>
             <input type="text" id="name" name="name" placeholder="Enter your full name">
 
-            <!-- Email -->
             <label for="email"> Email </label>
             <input type="text" id="email" name="email" placeholder="Enter your email">
 
-            <!-- Password -->
             <label for="password"> Password </label>
             <input type="password" id="password" name="password" placeholder="Enter your password">
 
-            <!-- Confirm Password -->
             <label for="confirm_password"> Confirm Password </label>
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Enter your password again">
 
-            <!-- Register Button -->
             <button type="submit"> Register </button>
 
         </form>

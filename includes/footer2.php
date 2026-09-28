@@ -1,6 +1,6 @@
 <?php
 if (!defined('BASE_URL')) {
-    define('BASE_URL', '/WorkPoint/');
+    define('BASE_URL', '/SkillSprout/');
 }
 ?>
 <footer>

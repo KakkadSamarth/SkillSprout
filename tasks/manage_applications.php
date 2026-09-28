@@ -3,7 +3,6 @@ session_start();
 
 include __DIR__ . "/../config/database.php";
 
-// Check if user is logged in
 if (!isset($_SESSION["user_id"])) {
     header("Location: " . BASE_URL . "auth/login.php");
     exit();
@@ -11,7 +10,6 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 
-// Check task ID
 if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
     header("Location: " . BASE_URL . "user/dashboard.php");
     exit();
@@ -23,9 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $application_id = (int) $_POST["application_id"];
     $action = $_POST["action"];
-
-    /* Check that the application belongs to this task
-       and is still pending */
 
     $sql = "SELECT user_id
             FROM applications
@@ -50,23 +45,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     mysqli_stmt_close($stmt);
 
-
     if (!$application) {
-
         header("Location: " . BASE_URL . "tasks/manage_applications.php?id=" . $task_id);
         exit();
     }
-
-
-    /* ACCEPT APPLICATION */
 
     if ($action == "accept") {
 
         mysqli_begin_transaction($conn);
 
         try {
-
-            /* Accept selected application */
 
             $sql = "UPDATE applications
                     SET status = 'ACCEPTED'
@@ -86,9 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             mysqli_stmt_close($stmt);
 
-
-            /* Reject all other pending applications */
-
             $sql = "UPDATE applications
                     SET status = 'REJECTED'
                     WHERE task_id = ?
@@ -107,9 +92,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mysqli_stmt_execute($stmt);
 
             mysqli_stmt_close($stmt);
-
-
-            /* Assign task to selected worker */
 
             $assigned_user_id = $application["user_id"];
 
@@ -131,7 +113,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             mysqli_stmt_close($stmt);
 
-
             mysqli_commit($conn);
 
         } catch (Exception $e) {
@@ -145,9 +126,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: " . BASE_URL . "tasks/manage_applications.php?id=" . $task_id);
         exit();
     }
-
-
-    /* REJECT APPLICATION */
 
     if ($action == "reject") {
 
@@ -170,13 +148,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         mysqli_stmt_close($stmt);
 
-
         header("Location: " . BASE_URL . "tasks/manage_applications.php?id=" . $task_id);
         exit();
     }
 }
 
-// Get task and verify that current user is the creator
 $sql = "SELECT
             task_id,
             title,
@@ -197,13 +173,11 @@ $task = mysqli_fetch_assoc($result);
 
 mysqli_stmt_close($stmt);
 
-// Task does not exist or user is not the creator
 if (!$task) {
     header("Location: " . BASE_URL . "user/dashboard.php");
     exit();
 }
 
-// Get applicants
 $sql = "SELECT
             applications.application_id,
             applications.message,

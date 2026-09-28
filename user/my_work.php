@@ -3,17 +3,12 @@ session_start();
 
 include __DIR__ . "/../config/database.php";
 
-// Check if user is logged in
 if (!isset($_SESSION["user_id"])) {
     header("Location: " . BASE_URL . "auth/login.php");
     exit();
 }
 
 $user_id = $_SESSION["user_id"];
-
-/* =========================================
-   1. MY CREATED TASKS
-   ========================================= */
 
 $sql = "SELECT
             tasks.task_id,
@@ -41,11 +36,6 @@ mysqli_stmt_execute($stmt);
 
 $created_tasks = mysqli_stmt_get_result($stmt);
 
-
-/* =========================================
-   2. MY APPLICATIONS
-   ========================================= */
-
 $sql = "SELECT
             applications.application_id,
             applications.status AS application_status,
@@ -66,11 +56,6 @@ mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
 
 $my_applications = mysqli_stmt_get_result($stmt);
-
-
-/* =========================================
-   3. ACTIVE WORK
-   ========================================= */
 
 $sql = "SELECT
             tasks.task_id,
@@ -107,10 +92,15 @@ include __DIR__ . "/../includes/header2.php";
         Manage your created tasks, applications and active work.
     </p>
 
-
-    <!-- =========================================
-         MY CREATED TASKS
-         ========================================= -->
+    <?php if (isset($_GET["cancelled"]) && isset($_GET["refund"])) { ?>
+        <div style="background-color: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; padding: 12px; margin-bottom: 20px;">
+            Task cancelled successfully! <?php echo (int) $_GET["refund"]; ?> Work Points have been refunded to your wallet.
+        </div>
+    <?php } elseif (isset($_GET["err"])) { ?>
+        <div style="background-color: #ffebee; border: 1px solid #ffcdd2; color: #b71c1c; padding: 12px; margin-bottom: 20px;">
+            Unable to cancel task. The task may have already been assigned or completed.
+        </div>
+    <?php } ?>
 
     <h2>My Created Tasks</h2>
 
@@ -158,6 +148,13 @@ include __DIR__ . "/../includes/header2.php";
                             <a href="<?= BASE_URL ?>tasks/manage_applications.php?id=<?php echo $task["task_id"]; ?>">
                                 Manage Applications
                             </a>
+                            <br>
+                            <form action="<?= BASE_URL ?>tasks/cancel_task.php" method="post" style="display:inline; margin-top: 5px;" onsubmit="return confirm('Are you sure you want to cancel this task? Your <?php echo (int) $task['reward_wp']; ?> WP will be refunded.');">
+                                <input type="hidden" name="task_id" value="<?php echo $task['task_id']; ?>">
+                                <button type="submit" style="background: none; border: none; color: #d32f2f; text-decoration: underline; cursor: pointer; padding: 0; font-size: 13px;">
+                                    Cancel &amp; Refund
+                                </button>
+                            </form>
 
                         <?php } elseif ($task["status"] == "SUBMITTED") { ?>
                         
@@ -188,11 +185,6 @@ include __DIR__ . "/../includes/header2.php";
         </p>
 
     <?php } ?>
-
-
-    <!-- =========================================
-         MY APPLICATIONS
-         ========================================= -->
 
     <h2>My Applications</h2>
 
@@ -249,11 +241,6 @@ include __DIR__ . "/../includes/header2.php";
         </p>
 
     <?php } ?>
-
-
-    <!-- =========================================
-                        ACTIVE WORK
-         ========================================= -->
 
     <h2>Active Work</h2>
 

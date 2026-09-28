@@ -3,7 +3,6 @@ session_start();
 
 include __DIR__ . "/../config/database.php";
 
-// Check if user is logged in
 if (!isset($_SESSION["user_id"])) {
     header("Location: " . BASE_URL . "auth/login.php");
     exit();
@@ -11,87 +10,101 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 
-$message = "";
+$sql = "SELECT wp_balance FROM users WHERE user_id = ?";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$user = mysqli_fetch_assoc($result);
+mysqli_stmt_close($stmt);
 
-// Handle form submission
+$current_balance = $user ? (int) $user["wp_balance"] : 0;
+$message = "";
+$message_type = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $title = trim($_POST["title"]);
-    $description = trim($_POST["description"]);
-    $domain = trim($_POST["domain"]);
-    $required_skills = trim($_POST["required_skills"]);
-    $reward_wp = (int) $_POST["reward_wp"];
-    $deadline = $_POST["deadline"];
+    $title = trim($_POST["title"] ?? "");
+    $description = trim($_POST["description"] ?? "");
+    $domain = trim($_POST["domain"] ?? "");
+    $required_skills = trim($_POST["required_skills"] ?? "");
+    $reward_wp = isset($_POST["reward_wp"]) ? (int) $_POST["reward_wp"] : 0;
+    $deadline = trim($_POST["deadline"] ?? "");
 
     $today = date("Y-m-d");
 
-    // Basic validation
     if (
-        $title == "" ||
-        $description == "" ||
-        $domain == "" ||
+        $title === "" ||
+        $description === "" ||
+        $domain === "" ||
         $reward_wp <= 0 ||
-        $deadline == ""
+        $deadline === ""
     ) {
-
         $message = "Please fill all required fields.";
-
+        $message_type = "error";
     } elseif ($deadline <= $today) {
-
         $message = "The deadline must be selected after today only.";
-
+        $message_type = "error";
+    } elseif ($reward_wp > $current_balance) {
+        $message = "Insufficient Work Points. You have " . $current_balance . " WP available, but tried to offer " . $reward_wp . " WP.";
+        $message_type = "error";
     } else {
+        mysqli_begin_transaction($conn);
 
-        // Check user's current WP balance
-        $sql = "SELECT wp_balance FROM users WHERE user_id = ?";
+        try {
+            $deduct_sql = "UPDATE users 
+                           SET wp_balance = wp_balance - ? 
+                           WHERE user_id = ? AND wp_balance >= ?";
+            $deduct_stmt = mysqli_prepare($conn, $deduct_sql);
+            mysqli_stmt_bind_param($deduct_stmt, "iii", $reward_wp, $user_id, $reward_wp);
+            mysqli_stmt_execute($deduct_stmt);
 
-        $stmt = mysqli_prepare($conn, $sql);
-
-        mysqli_stmt_bind_param($stmt, "i", $user_id);
-        mysqli_stmt_execute($stmt);
-
-        $result = mysqli_stmt_get_result($stmt);
-        $user = mysqli_fetch_assoc($result);
-
-        mysqli_stmt_close($stmt);
-
-        // Check if user has enough WP
-        if ($reward_wp > $user["wp_balance"]) {
-
-            $message = "You do not have enough Work Points.";
-
-        } else {
-
-            // Insert task
-            $sql = "INSERT INTO tasks
-                    (creator_id, title, description, domain,
-                     required_skills, reward_wp, deadline)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-            $stmt = mysqli_prepare($conn, $sql);
-
-            mysqli_stmt_bind_param(
-                $stmt,
-                "issssis",
-                $user_id,
-                $title,
-                $description,
-                $domain,
-                $required_skills,
-                $reward_wp,
-                $deadline
-            );
-
-            if (mysqli_stmt_execute($stmt)) {
-
-                $message = "Task created successfully!";
-
+            if (mysqli_stmt_affected_rows($deduct_stmt) !== 1) {
+                mysqli_stmt_close($deduct_stmt);
+                mysqli_rollback($conn);
+                $message = "Failed to deduct Work Points. You do not have enough balance.";
+                $message_type = "error";
             } else {
+                mysqli_stmt_close($deduct_stmt);
 
-                $message = "Failed to create task.";
+                $task_sql = "INSERT INTO tasks
+                             (creator_id, title, description, domain,
+                              required_skills, reward_wp, deadline, status)
+                             VALUES (?, ?, ?, ?, ?, ?, ?, 'OPEN')";
+
+                $task_stmt = mysqli_prepare($conn, $task_sql);
+                mysqli_stmt_bind_param(
+                    $task_stmt,
+                    "issssis",
+                    $user_id,
+                    $title,
+                    $description,
+                    $domain,
+                    $required_skills,
+                    $reward_wp,
+                    $deadline
+                );
+
+                if (mysqli_stmt_execute($task_stmt)) {
+                    $new_task_id = mysqli_insert_id($conn);
+                    mysqli_stmt_close($task_stmt);
+
+                    mysqli_commit($conn);
+
+                    $current_balance -= $reward_wp;
+                    $message = "Task created successfully! " . $reward_wp . " Work Points deducted from your balance.";
+                    $message_type = "success";
+                } else {
+                    mysqli_stmt_close($task_stmt);
+                    mysqli_rollback($conn);
+                    $message = "Failed to create task. Points were not deducted.";
+                    $message_type = "error";
+                }
             }
-
-            mysqli_stmt_close($stmt);
+        } catch (Exception $e) {
+            mysqli_rollback($conn);
+            $message = "An error occurred while creating task. Points were not deducted.";
+            $message_type = "error";
         }
     }
 }
@@ -102,6 +115,35 @@ include __DIR__ . "/../includes/header2.php";
 <html>
 <head>
     <title>Create Task - SkillSprout</title>
+    <style>
+        .balance-badge {
+            background-color: #f3f9f4;
+            border: 1px solid #c8e6c9;
+            color: #2e7d32;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            display: inline-block;
+        }
+        .balance-badge strong {
+            font-size: 17px;
+        }
+        .alert-box {
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+        }
+        .alert-success {
+            background-color: #e8f5e9;
+            border-color: #a5d6a7;
+            color: #1b5e20;
+        }
+        .alert-error {
+            background-color: #ffebee;
+            border-color: #ffcdd2;
+            color: #b71c1c;
+        }
+    </style>
 </head>
 <body>
 
@@ -116,58 +158,78 @@ include __DIR__ . "/../includes/header2.php";
                 <h1>Create a Task</h1>
 
                 <p>
-                    Post a task and offer Work Points to someone
-                    who completes it.
+                    Post a task and offer Work Points to someone who completes it.
                 </p>
 
+                <div class="balance-badge">
+                    Your Available Balance: <strong><?php echo (int) $current_balance; ?> WP</strong>
+                </div>
+
                 <?php if ($message != "") { ?>
-
-                    <p>
+                    <div class="alert-box <?php echo $message_type == 'success' ? 'alert-success' : 'alert-error'; ?>">
                         <?php echo htmlspecialchars($message); ?>
-                    </p>
-
+                        <?php if ($message_type == 'success') { ?>
+                            <br><a href="<?= BASE_URL ?>tasks/tasks.php" style="margin-top: 8px; display: inline-block;">View in Available Tasks &rarr;</a>
+                        <?php } ?>
+                    </div>
                 <?php } ?>
 
-                <form action="" method="post">
+                <?php if ($current_balance <= 0) { ?>
+                    <div style="background-color: #fff3e0; border: 1px solid #ffe0b2; color: #e65100; padding: 15px; margin-bottom: 25px;">
+                        <strong>You have 0 Work Points.</strong><br>
+                        You need Work Points in your balance to post tasks.
+                        <a href="<?= BASE_URL ?>tasks/tasks.php" style="color: #bf360c; text-decoration: underline; font-weight: bold; margin-left: 5px;">
+                            Browse tasks
+                        </a> to apply, complete work, and earn Work Points!
+                    </div>
+                <?php } ?>
+
+                <form action="" method="post" onsubmit="return validateTaskForm()">
 
                     <table class="create-task-form">
 
                         <tr>
                             <td>
-                                <label>Task Title</label>
+                                <label for="title">Task Title</label>
                             </td>
 
                             <td>
                                 <input
                                     type="text"
+                                    id="title"
                                     name="title"
+                                    placeholder="Brief task title"
                                     required
+                                    <?php if ($current_balance <= 0) echo 'disabled'; ?>
                                 >
                             </td>
                         </tr>
 
                         <tr>
                             <td>
-                                <label>Description</label>
+                                <label for="description">Description</label>
                             </td>
 
                             <td>
                                 <textarea
+                                    id="description"
                                     name="description"
                                     rows="6"
+                                    placeholder="Explain the requirements, instructions, and expectations clearly..."
                                     required
+                                    <?php if ($current_balance <= 0) echo 'disabled'; ?>
                                 ></textarea>
                             </td>
                         </tr>
 
                         <tr>
                             <td>
-                                <label>Domain</label>
+                                <label for="domain">Domain</label>
                             </td>
 
                             <td>
 
-                                <select name="domain" required>
+                                <select id="domain" name="domain" required <?php if ($current_balance <= 0) echo 'disabled'; ?>>
 
                                     <option value="">
                                         Select Domain
@@ -204,36 +266,45 @@ include __DIR__ . "/../includes/header2.php";
 
                         <tr>
                             <td>
-                                <label>Required Skills</label>
+                                <label for="required_skills">Required Skills</label>
                             </td>
 
                             <td>
                                 <input
                                     type="text"
+                                    id="required_skills"
                                     name="required_skills"
                                     placeholder="Example: HTML, CSS, JavaScript"
+                                    <?php if ($current_balance <= 0) echo 'disabled'; ?>
                                 >
                             </td>
                         </tr>
 
                         <tr>
                             <td>
-                                <label>Reward (Work Points)</label>
+                                <label for="reward_wp">Reward (Work Points)</label>
                             </td>
 
                             <td>
                                 <input
                                     type="number"
+                                    id="reward_wp"
                                     name="reward_wp"
                                     min="1"
+                                    max="<?php echo (int) $current_balance; ?>"
+                                    placeholder="Amount in WP (Max: <?php echo (int) $current_balance; ?>)"
                                     required
+                                    <?php if ($current_balance <= 0) echo 'disabled'; ?>
                                 >
+                                <small style="display: block; margin-top: 5px; color: #666;">
+                                    Points will be deducted from your wallet when the task is posted and paid to the worker upon your approval.
+                                </small>
                             </td>
                         </tr>
 
                         <tr>
                             <td>
-                                <label>Deadline</label>
+                                <label for="deadline">Deadline</label>
                             </td>
 
                             <td>
@@ -243,6 +314,7 @@ include __DIR__ . "/../includes/header2.php";
                                     name="deadline"
                                     min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>"
                                     required
+                                    <?php if ($current_balance <= 0) echo 'disabled'; ?>
                                 >
                             </td>
                         </tr>
@@ -251,8 +323,8 @@ include __DIR__ . "/../includes/header2.php";
                             <td></td>
 
                             <td>
-                                <button type="submit">
-                                    Create Task
+                                <button type="submit" <?php if ($current_balance <= 0) echo 'disabled style="background-color: #888; cursor: not-allowed;"'; ?>>
+                                    Create Task & Deduct Reward
                                 </button>
                             </td>
                         </tr>
@@ -273,6 +345,27 @@ include __DIR__ . "/../includes/header2.php";
                             deadlineInput.min = yyyy + '-' + mm + '-' + dd;
                         }
                     })();
+
+                    function validateTaskForm() {
+                        var rewardInput = document.getElementById("reward_wp");
+                        if (!rewardInput) return true;
+                        var reward = parseInt(rewardInput.value, 10);
+                        var maxBalance = <?php echo (int) $current_balance; ?>;
+
+                        if (isNaN(reward) || reward <= 0) {
+                            alert("Please enter a valid reward amount (at least 1 WP).");
+                            rewardInput.focus();
+                            return false;
+                        }
+
+                        if (reward > maxBalance) {
+                            alert("You do not have enough Work Points! You have " + maxBalance + " WP, but entered " + reward + " WP.");
+                            rewardInput.focus();
+                            return false;
+                        }
+
+                        return confirm("Are you sure you want to post this task? " + reward + " WP will be deducted from your balance.");
+                    }
                 </script>
 
             </td>

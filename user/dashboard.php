@@ -37,8 +37,6 @@ include __DIR__ . "/../includes/header2.php";
 
     <table class="dashboard-layout">
 
-        <!-- Welcome Row -->
-
         <tr>
 
             <td colspan="3" class="welcome-box">
@@ -54,9 +52,6 @@ include __DIR__ . "/../includes/header2.php";
             </td>
 
         </tr>
-
-
-        <!-- Quick Actions -->
 
         <tr>
 
@@ -102,9 +97,6 @@ include __DIR__ . "/../includes/header2.php";
 
         </tr>
 
-
-        <!-- Overview -->
-
         <tr>
 
             <td colspan="3">
@@ -127,7 +119,6 @@ include __DIR__ . "/../includes/header2.php";
 
             </td>
 
-
             <td class="overview-card">
 
                 <h3>Tasks Completed</h3>
@@ -135,7 +126,6 @@ include __DIR__ . "/../includes/header2.php";
                 <p>0</p>
 
             </td>
-
 
             <td class="overview-card">
 
@@ -146,9 +136,6 @@ include __DIR__ . "/../includes/header2.php";
             </td>
 
         </tr>
-
-
-        <!-- Recent Activity -->
 
         <tr>
 

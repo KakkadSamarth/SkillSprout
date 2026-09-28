@@ -1,6 +1,10 @@
 <?php
 if (!defined('BASE_URL')) {
-    define('BASE_URL', '/WorkPoint/');
+    define('BASE_URL', '/SkillSprout/');
+}
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
 if (!isset($_SESSION["user_id"])) {

@@ -8,7 +8,6 @@ if (!isset($_SESSION["user_id"])) {
     exit();
 }
 
-// Check task ID
 if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
     header("Location: " . BASE_URL . "tasks/tasks.php");
     exit();
@@ -19,7 +18,6 @@ $user_id = $_SESSION["user_id"];
 
 $message = "";
 
-// Get task information
 $sql = "SELECT task_id, creator_id, title, status
         FROM tasks
         WHERE task_id = ?";
@@ -34,25 +32,21 @@ $task = mysqli_fetch_assoc($result);
 
 mysqli_stmt_close($stmt);
 
-// Check if task exists
 if (!$task) {
     header("Location: " . BASE_URL . "tasks/tasks.php");
     exit();
 }
 
-// User cannot apply to their own task
 if ($task["creator_id"] == $user_id) {
     header("Location: " . BASE_URL . "tasks/task_details.php?id=" . $task_id);
     exit();
 }
 
-// Check if task is still open
 if ($task["status"] != "OPEN") {
     header("Location: " . BASE_URL . "tasks/task_details.php?id=" . $task_id);
     exit();
 }
 
-// Check if user has already applied
 $sql = "SELECT application_id
         FROM applications
         WHERE task_id = ?
@@ -69,7 +63,6 @@ $already_applied = mysqli_num_rows($result) > 0;
 
 mysqli_stmt_close($stmt);
 
-// Handle application
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !$already_applied) {
 
     $application_message = trim($_POST["message"]);

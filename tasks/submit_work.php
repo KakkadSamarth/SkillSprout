@@ -17,8 +17,6 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
 
 $task_id = (int) $_GET["id"];
 
-/* Check that this task is assigned to the logged-in user */
-
 $sql = "SELECT
             task_id,
             title,
@@ -53,8 +51,6 @@ if (!$task) {
     exit();
 }
 
-/* Submit work */
-
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -82,8 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         );
 
         if (mysqli_stmt_execute($stmt)) {
-
-            /* Change task status */
 
             $sql = "UPDATE tasks
                     SET status = 'SUBMITTED'
