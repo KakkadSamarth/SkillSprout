@@ -38,12 +38,12 @@ if ($ucol_res) {
         $u_cols[$uc['Field']] = true;
     }
 }
-$u_name = isset($u_cols['name']) ? 'users.name' : (isset($u_cols['username']) ? 'users.username AS creator_name' : 'users.email AS creator_name');
+$u_pk = isset($u_cols['user_id']) ? 'users.user_id' : (isset($u_cols['id']) ? 'users.id' : 'users.user_id');
+$u_name = isset($u_cols['name']) ? 'users.name' : (isset($u_cols['username']) ? 'users.username' : 'users.email');
 
 $sql = "SELECT tasks.task_id, $t_creator AS creator_id, tasks.title, tasks.description, $t_domain, $t_skills, $t_reward, 
-          $t_deadline, $t_status, tasks.created_at, $u_name 
-          AS creator_name FROM tasks 
-          INNER JOIN users ON $t_creator = users.user_id  
+          $t_deadline, $t_status, tasks.created_at, $u_name AS creator_name FROM tasks 
+          LEFT JOIN users ON $t_creator = $u_pk  
           WHERE tasks.task_id = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
@@ -140,7 +140,15 @@ include __DIR__ . "/../includes/header2.php";
 $user_id = (int)$_SESSION["user_id"];
 $user_applied = false;
 $app_status = '';
-$app_check = @mysqli_query($conn, "SELECT status FROM applications WHERE task_id = $task_id AND (user_id = $user_id OR applicant_id = $user_id) LIMIT 1");
+$app_cols = [];
+$app_col_res = @mysqli_query($conn, "SHOW COLUMNS FROM applications");
+if ($app_col_res) {
+    while ($ac = mysqli_fetch_assoc($app_col_res)) {
+        $app_cols[$ac['Field']] = true;
+    }
+}
+$a_user_cond = isset($app_cols['user_id']) ? "user_id = $user_id" : (isset($app_cols['applicant_id']) ? "applicant_id = $user_id" : "user_id = $user_id");
+$app_check = @mysqli_query($conn, "SELECT status FROM applications WHERE task_id = $task_id AND $a_user_cond LIMIT 1");
 if ($app_check && ($ar = mysqli_fetch_assoc($app_check))) {
     $user_applied = true;
     $app_status = $ar['status'];

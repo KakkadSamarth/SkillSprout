@@ -92,31 +92,63 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$already_applied) {
 
     $application_message = trim($_POST["message"]);
 
-    $sql = "INSERT INTO applications
-            ($a_task_col, $a_user_col, $a_msg_col)
-            VALUES (?, ?, ?)";
-
-    $stmt = mysqli_prepare($conn, $sql);
-
-    mysqli_stmt_bind_param(
-        $stmt,
-        "iis",
-        $task_id,
-        $user_id,
-        $application_message
-    );
-
-    if (mysqli_stmt_execute($stmt)) {
-    
-        header("Location: " . BASE_URL . "tasks/task_details.php?id=" . $task_id);
-        exit();
-    
-    } else {
-    
-        $message = "Failed to submit application: " . mysqli_error($conn);
+    $app_meta_res = @mysqli_query($conn, "SHOW COLUMNS FROM applications");
+    $app_meta = [];
+    if ($app_meta_res) {
+        while ($c = mysqli_fetch_assoc($app_meta_res)) {
+            $app_meta[$c['Field']] = $c;
+        }
     }
 
-    mysqli_stmt_close($stmt);
+    $ins_cols = [$a_task_col, $a_user_col];
+    $ins_placeholders = ["?", "?"];
+    $types = "ii";
+    $params = [$task_id, $user_id];
+
+    if ($a_msg_col && isset($app_meta[$a_msg_col])) {
+        $ins_cols[] = $a_msg_col;
+        $ins_placeholders[] = "?";
+        $types .= "s";
+        $params[] = $application_message;
+    }
+
+    if (isset($app_meta['status']) && !in_array('status', $ins_cols, true)) {
+        $ins_cols[] = 'status';
+        $ins_placeholders[] = "'PENDING'";
+    }
+
+    foreach ($app_meta as $field => $meta) {
+        if (in_array($field, $ins_cols, true)) continue;
+        if (stripos($meta['Extra'] ?? '', 'auto_increment') !== false) continue;
+        if (($meta['Null'] ?? '') === 'NO' && ($meta['Default'] === null)) {
+            $ins_cols[] = "`$field`";
+            $type = strtolower($meta['Type'] ?? '');
+            if (preg_match('/int|decimal|float/i', $type)) {
+                $ins_placeholders[] = "1";
+            } elseif (preg_match('/date|time/i', $type)) {
+                $ins_placeholders[] = "'" . date('Y-m-d H:i:s') . "'";
+            } else {
+                $ins_placeholders[] = "''";
+            }
+        }
+    }
+
+    $sql = "INSERT INTO applications (" . implode(', ', $ins_cols) . ") VALUES (" . implode(', ', $ins_placeholders) . ")";
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, $types, ...$params);
+
+        if (mysqli_stmt_execute($stmt)) {
+            header("Location: " . BASE_URL . "tasks/task_details.php?id=" . $task_id);
+            exit();
+        } else {
+            $message = "Failed to submit application: " . mysqli_error($conn);
+        }
+        mysqli_stmt_close($stmt);
+    } else {
+        $message = "Failed to prepare application submission: " . mysqli_error($conn);
+    }
 }
 
 include __DIR__ . "/../includes/header2.php";

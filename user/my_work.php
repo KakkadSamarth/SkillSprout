@@ -19,9 +19,16 @@ if ($tcol_res) {
         $t_cols[$tc['Field']] = true;
     }
 }
-$t_reward = isset($t_cols['reward_wp']) ? 'tasks.reward_wp' : (isset($t_cols['reward']) ? 'tasks.reward AS reward_wp' : (isset($t_cols['points']) ? 'tasks.points AS reward_wp' : (isset($t_cols['budget']) ? 'tasks.budget AS reward_wp' : '10 AS reward_wp')));
-$t_deadline = isset($t_cols['deadline']) ? 'tasks.deadline' : 'CURRENT_DATE AS deadline';
-$t_status = isset($t_cols['status']) ? 'tasks.status' : "'OPEN' AS status";
+$t_reward_expr = isset($t_cols['reward_wp']) ? 'tasks.reward_wp' : (isset($t_cols['reward']) ? 'tasks.reward' : (isset($t_cols['points']) ? 'tasks.points' : (isset($t_cols['budget']) ? 'tasks.budget' : '10')));
+$t_deadline_expr = isset($t_cols['deadline']) ? 'tasks.deadline' : 'CURRENT_DATE';
+$t_status_expr = isset($t_cols['status']) ? 'tasks.status' : "'OPEN'";
+
+$t_reward_select = "$t_reward_expr AS reward_wp";
+$t_deadline_select = "$t_deadline_expr AS deadline";
+$t_status_select = "$t_status_expr AS status";
+$t_status_assigned_where = isset($t_cols['status']) ? "tasks.status = 'ASSIGNED'" : "1=1";
+$t_order = isset($t_cols['created_at']) ? 'tasks.created_at' : 'tasks.task_id';
+
 $t_creator = isset($t_cols['creator_id']) ? 'tasks.creator_id' : (isset($t_cols['client_id']) ? 'tasks.client_id' : (isset($t_cols['user_id']) ? 'tasks.user_id' : 'tasks.creator_id'));
 $t_assigned = isset($t_cols['assigned_user_id']) ? 'tasks.assigned_user_id' : (isset($t_cols['worker_id']) ? 'tasks.worker_id' : (isset($t_cols['freelancer_id']) ? 'tasks.freelancer_id' : 'tasks.task_id'));
 
@@ -41,14 +48,14 @@ $a_user = isset($app_cols['user_id']) ? 'applications.user_id' : (
     isset($app_cols['candidate_id']) ? 'applications.candidate_id' : (
     isset($app_cols['student_id']) ? 'applications.student_id' : 'applications.user_id'))));
 $a_status = isset($app_cols['status']) ? 'applications.status' : "'PENDING'";
-$a_created = isset($app_cols['created_at']) ? 'applications.created_at' : (isset($app_cols['applied_at']) ? 'applications.applied_at' : 'tasks.created_at');
+$a_created = isset($app_cols['created_at']) ? 'applications.created_at' : (isset($app_cols['applied_at']) ? 'applications.applied_at' : (isset($t_cols['created_at']) ? 'tasks.created_at' : 'tasks.task_id'));
 
 $sql = "SELECT
             tasks.task_id,
             tasks.title,
-            $t_reward,
-            $t_deadline,
-            $t_status,
+            $t_reward_select,
+            $t_deadline_select,
+            $t_status_select,
             COUNT($a_count) AS applicant_count
         FROM tasks
         LEFT JOIN applications
@@ -57,10 +64,10 @@ $sql = "SELECT
         GROUP BY
             tasks.task_id,
             tasks.title,
-            $t_reward,
-            $t_deadline,
-            $t_status
-        ORDER BY tasks.created_at DESC";
+            $t_reward_expr,
+            $t_deadline_expr,
+            $t_status_expr
+        ORDER BY $t_order DESC";
 
 $stmt = mysqli_prepare($conn, $sql);
 
@@ -74,8 +81,8 @@ $sql = "SELECT
             $a_status AS application_status,
             tasks.task_id,
             tasks.title,
-            $t_reward,
-            $t_deadline
+            $t_reward_select,
+            $t_deadline_select
         FROM applications
         INNER JOIN tasks
             ON $a_task = tasks.task_id
@@ -93,13 +100,13 @@ $my_applications = mysqli_stmt_get_result($stmt);
 $sql = "SELECT
             tasks.task_id,
             tasks.title,
-            $t_reward,
-            $t_deadline,
-            $t_status
+            $t_reward_select,
+            $t_deadline_select,
+            $t_status_select
         FROM tasks
         WHERE $t_assigned = ?
-        AND $t_status = 'ASSIGNED'
-        ORDER BY tasks.created_at DESC";
+        AND $t_status_assigned_where
+        ORDER BY $t_order DESC";
 
 $stmt = mysqli_prepare($conn, $sql);
 

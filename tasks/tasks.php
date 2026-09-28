@@ -21,10 +21,12 @@ $f_domain = isset($t_cols['domain']) ? 'domain' : (isset($t_cols['category']) ? 
 $f_skills = isset($t_cols['required_skills']) ? 'required_skills' : (isset($t_cols['skills']) ? 'skills AS required_skills' : "'' AS required_skills");
 $f_reward = isset($t_cols['reward_wp']) ? 'reward_wp' : (isset($t_cols['reward']) ? 'reward AS reward_wp' : (isset($t_cols['points']) ? 'points AS reward_wp' : (isset($t_cols['budget']) ? 'budget AS reward_wp' : '10 AS reward_wp')));
 $f_deadline = isset($t_cols['deadline']) ? 'deadline' : 'CURRENT_DATE AS deadline';
-$f_status = isset($t_cols['status']) ? 'status' : "'OPEN' AS status";
+$f_status_select = isset($t_cols['status']) ? 'status' : "'OPEN' AS status";
+$f_status_where = isset($t_cols['status']) ? "status = 'OPEN'" : "1=1";
 $t_creator = isset($t_cols['creator_id']) ? 'creator_id' : (isset($t_cols['client_id']) ? 'client_id' : (isset($t_cols['user_id']) ? 'user_id' : 'creator_id'));
+$t_order = isset($t_cols['created_at']) ? 'created_at' : 'task_id';
 
-$user_id = $_SESSION["user_id"];
+$user_id = (int)$_SESSION["user_id"];
 
 $sql = "SELECT
             task_id,
@@ -35,15 +37,24 @@ $sql = "SELECT
             $f_skills,
             $f_reward,
             $f_deadline,
-            created_at
+            $f_status_select
         FROM tasks
-        WHERE $f_status = 'OPEN'
-        ORDER BY created_at DESC";
+        WHERE $f_status_where
+        ORDER BY $t_order DESC";
 
 $result = mysqli_query($conn, $sql);
 
+$app_cols = [];
+$appcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM applications");
+if ($appcol_res) {
+    while ($ac = mysqli_fetch_assoc($appcol_res)) {
+        $app_cols[$ac['Field']] = true;
+    }
+}
+$app_uid_col = isset($app_cols['user_id']) ? 'user_id' : (isset($app_cols['applicant_id']) ? 'applicant_id' : 'user_id');
+
 $applied_map = [];
-$app_res = @mysqli_query($conn, "SELECT task_id, status FROM applications WHERE user_id = $user_id");
+$app_res = @mysqli_query($conn, "SELECT task_id, status FROM applications WHERE $app_uid_col = $user_id");
 if ($app_res) {
     while ($ar = mysqli_fetch_assoc($app_res)) {
         $applied_map[(int)$ar['task_id']] = $ar['status'];
