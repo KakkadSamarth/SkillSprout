@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /WorkPoint/
+
+# Redirect legacy root paths to new feature folders
+RewriteRule ^login\.php$ auth/login.php [R=301,L,QSA]
+RewriteRule ^register\.php$ auth/register.php [R=301,L,QSA]
+RewriteRule ^logout\.php$ auth/logout.php [R=301,L,QSA]
+
+RewriteRule ^dashboard\.php$ user/dashboard.php [R=301,L,QSA]
+RewriteRule ^my_work\.php$ user/my_work.php [R=301,L,QSA]
+RewriteRule ^wallet\.php$ user/wallet.php [R=301,L,QSA]
+RewriteRule ^profile\.php$ user/profile.php [R=301,L,QSA]
+
+RewriteRule ^tasks\.php$ tasks/tasks.php [R=301,L,QSA]
+RewriteRule ^create_task\.php$ tasks/create_task.php [R=301,L,QSA]
+RewriteRule ^task_details\.php$ tasks/task_details.php [R=301,L,QSA]
+RewriteRule ^apply_task\.php$ tasks/apply_task.php [R=301,L,QSA]
+RewriteRule ^manage_applications\.php$ tasks/manage_applications.php [R=301,L,QSA]
+RewriteRule ^submit_work\.php$ tasks/submit_work.php [R=301,L,QSA]
+RewriteRule ^review_submission\.php$ tasks/review_submission.php [R=301,L,QSA]
+</IfModule>

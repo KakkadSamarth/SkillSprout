@@ -1,0 +1,612 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex: 1;
+    padding: 20px 30px;
+}
+
+/* Header */
+
+header {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 40px;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+nav a:hover {
+    transform: translateY(-2px);
+    opacity: 0.75;
+}
+
+.account {
+    margin-left: auto;
+}
+
+.account a {
+    text-decoration: none;
+    color: black;
+    margin-left: 15px;
+    display: inline-block;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.account a:hover {
+    transform: translateY(-2px);
+    opacity: 0.75;
+}
+
+/* Footer */
+
+footer {
+    background-color: #f2f2f2;
+    padding: 25px;
+    margin-top: 30px;
+}
+
+.footer-table {
+    width: 100%;
+}
+
+.footer-table td {
+    border: none;
+    padding: 10px;
+}
+
+.footer-table a {
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+    margin-bottom: 5px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.footer-table a:hover {
+    transform: translateX(4px);
+    opacity: 0.75;
+}
+
+.copyright {
+    text-align: center;
+    border-top: 1px solid #ccc;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+
+/*for main page*/
+
+/* Dashboard */
+
+.dashboard-layout {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 20px;
+    margin-top: 20px;
+}
+
+.dashboard-layout td {
+    vertical-align: top;
+}
+
+
+/* Welcome */
+
+.welcome-box {
+    padding: 30px;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.welcome-box:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.welcome-box h1 {
+    margin-top: 0;
+}
+
+
+/* Dashboard Action Cards / Tags */
+
+.dashboard-card {
+    width: 33.33%;
+    padding: 0;
+    border: 1px solid #ddd;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    border-color: #aaa;
+}
+
+.dashboard-action-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+}
+
+.action-tag {
+    display: block;
+    padding: 25px;
+    cursor: pointer;
+    margin: 0;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.action-tag h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #111;
+    transition: transform 0.2s ease;
+}
+
+.action-tag p {
+    color: #555;
+    margin-bottom: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.action-tag-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid #333;
+    font-size: 13px;
+    font-weight: bold;
+    color: black;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dashboard-card:hover .action-tag-badge {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+
+/* Overview */
+
+.overview-card {
+    width: 33.33%;
+    padding: 25px;
+    border: 1px solid #ddd;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.overview-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.overview-card h3 {
+    margin-top: 0;
+}
+
+.overview-card p {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+/* Recent Activity */
+
+.activity-box {
+    padding: 25px;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.25s ease;
+}
+
+.activity-box:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+/* Create Task */
+
+.create-task-layout {
+    width: 70%;
+    margin: 30px auto;
+    border-collapse: separate;
+    border-spacing: 20px;
+}
+
+.create-task-box {
+    padding: 25px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+    transition: box-shadow 0.25s ease;
+}
+
+.create-task-box:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.create-task-box h1 {
+    margin-top: 0;
+}
+
+.create-task-form {
+    width: 100%;
+}
+
+.create-task-form td {
+    padding: 10px;
+    border: none;
+}
+
+.create-task-form label {
+    font-weight: bold;
+}
+
+.create-task-form input,
+.create-task-form textarea,
+.create-task-form select {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.create-task-form input:focus,
+.create-task-form textarea:focus,
+.create-task-form select:focus {
+    outline: none;
+    border-color: #333;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.create-task-form textarea {
+    resize: vertical;
+}
+
+.create-task-form button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    border: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.create-task-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+
+
+/* Tasks */
+
+.tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+}
+
+.tasks-table th,
+.tasks-table td {
+    padding: 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tasks-table tr:hover td {
+    box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.015);
+}
+
+.tasks-table th {
+    font-weight: bold;
+}
+
+.tasks-table a {
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.tasks-table a:hover {
+    transform: translateX(4px);
+    color: #444;
+}
+
+
+/* Task Details */
+
+.task-details-layout {
+    width: 70%;
+    margin: 30px auto;
+    border-collapse: separate;
+    border-spacing: 20px;
+}
+
+.task-details-box {
+    padding: 30px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+    transition: box-shadow 0.25s ease;
+}
+
+.task-details-box:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.task-details-box h1 {
+    margin-top: 0;
+}
+
+.task-details-box h2 {
+    margin-top: 25px;
+}
+
+.task-details-box hr {
+    margin: 25px 0;
+}
+
+.task-details-box a {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    color: black;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.task-details-box a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #333;
+}
+
+
+/* Apply Task */
+
+.apply-task-layout {
+    width: 70%;
+    margin: 30px auto;
+    border-collapse: separate;
+    border-spacing: 20px;
+}
+
+.apply-task-box {
+    padding: 30px;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.25s ease;
+}
+
+.apply-task-box:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.apply-task-box h1 {
+    margin-top: 0;
+}
+
+.apply-task-box textarea {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    resize: vertical;
+    border: 1px solid #ccc;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.apply-task-box textarea:focus {
+    outline: none;
+    border-color: #333;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.apply-task-box button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    border: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.apply-task-box button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* My Work */
+
+.my-work-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+}
+
+.my-work-table th,
+.my-work-table td {
+    padding: 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+    transition: box-shadow 0.2s ease;
+}
+
+.my-work-table tr:hover td {
+    box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.015);
+}
+
+.my-work-table th {
+    font-weight: bold;
+}
+
+.my-work-table a {
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.my-work-table a:hover {
+    transform: translateX(4px);
+    color: #444;
+}
+
+
+/* Applications */
+
+.applications-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+}
+
+.applications-table th,
+.applications-table td {
+    padding: 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+    transition: box-shadow 0.2s ease;
+}
+
+.applications-table tr:hover td {
+    box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.015);
+}
+
+.applications-table th {
+    font-weight: bold;
+}
+
+.applications-table a {
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.applications-table a:hover {
+    transform: translateX(4px);
+    color: #444;
+}
+
+
+
+.submit-work-layout {
+    width: 70%;
+    margin: 30px auto;
+    border-collapse: separate;
+    border-spacing: 20px;
+}
+
+.submit-work-box {
+    padding: 30px;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.25s ease;
+}
+
+.submit-work-box:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.submit-work-box h1 {
+    margin-top: 0;
+}
+
+.submit-work-box textarea {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    resize: vertical;
+    border: 1px solid #ccc;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.submit-work-box textarea:focus {
+    outline: none;
+    border-color: #333;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.submit-work-box button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    border: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.submit-work-box button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.review-submission-layout {
+    width: 70%;
+    margin: 30px auto;
+    border-collapse: separate;
+    border-spacing: 20px;
+}
+
+.review-submission-box {
+    padding: 30px;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.25s ease;
+}
+
+.review-submission-box:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.review-submission-box h1 {
+    margin-top: 0;
+}
+
+.review-submission-box hr {
+    margin: 25px 0;
+}
+
+.review-submission-box button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    border: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.review-submission-box button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
