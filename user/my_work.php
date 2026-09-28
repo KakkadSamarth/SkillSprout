@@ -12,23 +12,36 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 
+$t_cols = [];
+$tcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM tasks");
+if ($tcol_res) {
+    while ($tc = mysqli_fetch_assoc($tcol_res)) {
+        $t_cols[$tc['Field']] = true;
+    }
+}
+$t_reward = isset($t_cols['reward_wp']) ? 'tasks.reward_wp' : (isset($t_cols['reward']) ? 'tasks.reward AS reward_wp' : (isset($t_cols['points']) ? 'tasks.points AS reward_wp' : '10 AS reward_wp'));
+$t_deadline = isset($t_cols['deadline']) ? 'tasks.deadline' : 'CURRENT_DATE AS deadline';
+$t_status = isset($t_cols['status']) ? 'tasks.status' : "'OPEN' AS status";
+$t_creator = isset($t_cols['creator_id']) ? 'tasks.creator_id' : (isset($t_cols['user_id']) ? 'tasks.user_id' : 'tasks.creator_id');
+$t_assigned = isset($t_cols['assigned_user_id']) ? 'tasks.assigned_user_id' : 'tasks.task_id';
+
 $sql = "SELECT
             tasks.task_id,
             tasks.title,
-            tasks.reward_wp,
-            tasks.deadline,
-            tasks.status,
+            $t_reward,
+            $t_deadline,
+            $t_status,
             COUNT(applications.application_id) AS applicant_count
         FROM tasks
         LEFT JOIN applications
             ON tasks.task_id = applications.task_id
-        WHERE tasks.creator_id = ?
+        WHERE $t_creator = ?
         GROUP BY
             tasks.task_id,
             tasks.title,
-            tasks.reward_wp,
-            tasks.deadline,
-            tasks.status
+            $t_reward,
+            $t_deadline,
+            $t_status
         ORDER BY tasks.created_at DESC";
 
 $stmt = mysqli_prepare($conn, $sql);
@@ -43,8 +56,8 @@ $sql = "SELECT
             applications.status AS application_status,
             tasks.task_id,
             tasks.title,
-            tasks.reward_wp,
-            tasks.deadline
+            $t_reward,
+            $t_deadline
         FROM applications
         INNER JOIN tasks
             ON applications.task_id = tasks.task_id
@@ -62,12 +75,12 @@ $my_applications = mysqli_stmt_get_result($stmt);
 $sql = "SELECT
             tasks.task_id,
             tasks.title,
-            tasks.reward_wp,
-            tasks.deadline,
-            tasks.status
+            $t_reward,
+            $t_deadline,
+            $t_status
         FROM tasks
-        WHERE tasks.assigned_user_id = ?
-        AND tasks.status = 'ASSIGNED'
+        WHERE $t_assigned = ?
+        AND $t_status = 'ASSIGNED'
         ORDER BY tasks.created_at DESC";
 
 $stmt = mysqli_prepare($conn, $sql);

@@ -974,3 +974,232 @@ main > table td.translates {
             font-weight: bold;
             margin-bottom: 12px;
         }
+
+/* Auth / Login & Register */
+
+.login-box, .register-box {
+    width: 100%;
+    max-width: 440px;
+    margin: 40px auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 35px 30px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+}
+
+.login-box h1, .register-box h1 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 28px;
+    color: #111;
+}
+
+.login-box p, .register-box p {
+    text-align: center;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+
+.login-box form, .register-box form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-box label, .register-box label {
+    display: block;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+}
+
+.login-box label:first-of-type, .register-box label:first-of-type {
+    margin-top: 0;
+}
+
+.login-box input, .register-box input {
+    width: 100%;
+    padding: 11px 13px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.login-box input:focus, .register-box input:focus {
+    outline: none;
+    border-color: #111;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.login-box button, .register-box button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 22px;
+    background-color: #111;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-box button:hover, .register-box button:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.login-link p, .login-box p:last-child {
+    margin-bottom: 0;
+    margin-top: 20px;
+}
+
+.login-link a, .login-box a {
+    color: #111;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.login-link a:hover, .login-box a:hover {
+    color: #444;
+}
+
+/* Profile */
+
+.profile-card {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.profile-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.profile-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.profile-table td:first-child {
+    font-weight: bold;
+    width: 35%;
+    color: #444;
+}
+
+/* Alerts, Badges & Buttons */
+
+.alert-box {
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.alert-warning {
+    background-color: #fff8e1;
+    border: 1px solid #ffe082;
+    color: #f57f17;
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-danger {
+    background-color: #d32f2f;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #b71c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.25);
+}
+
+.btn-link-danger {
+    color: #d32f2f;
+    text-decoration: underline;
+    font-size: 13px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.btn-link-danger:hover {
+    color: #b71c1c;
+}
+
+.balance-badge {
+    display: inline-block;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.required-star {
+    color: #d32f2f;
+}
+
+.help-text, .form-help-text {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.empty-state {
+    text-align: center;
+    color: #888;
+    padding: 30px;
+    font-size: 15px;
+}
+
+.text-muted { color: #777; }
+.mr-1 { margin-right: 10px; }
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 10px; }
+.mt-2 { margin-top: 20px; }
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 10px; }
+.inline-block { display: inline-block; }
+.inline-form { display: inline; }

@@ -10,17 +10,30 @@ if (!isset($_SESSION["user_id"])) {
     exit();
 }
 
+$t_cols = [];
+$tcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM tasks");
+if ($tcol_res) {
+    while ($tc = mysqli_fetch_assoc($tcol_res)) {
+        $t_cols[$tc['Field']] = true;
+    }
+}
+$f_domain = isset($t_cols['domain']) ? 'domain' : (isset($t_cols['category']) ? 'category AS domain' : "'General' AS domain");
+$f_skills = isset($t_cols['required_skills']) ? 'required_skills' : (isset($t_cols['skills']) ? 'skills AS required_skills' : "'' AS required_skills");
+$f_reward = isset($t_cols['reward_wp']) ? 'reward_wp' : (isset($t_cols['reward']) ? 'reward AS reward_wp' : (isset($t_cols['points']) ? 'points AS reward_wp' : '10 AS reward_wp'));
+$f_deadline = isset($t_cols['deadline']) ? 'deadline' : 'CURRENT_DATE AS deadline';
+$f_status = isset($t_cols['status']) ? 'status' : "'OPEN' AS status";
+
 $sql = "SELECT
             task_id,
             title,
             description,
-            domain,
-            required_skills,
-            reward_wp,
-            deadline,
+            $f_domain,
+            $f_skills,
+            $f_reward,
+            $f_deadline,
             created_at
         FROM tasks
-        WHERE status = 'OPEN'
+        WHERE $f_status = 'OPEN'
         ORDER BY created_at DESC";
 
 $result = mysqli_query($conn, $sql);

@@ -17,10 +17,33 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
 
 $task_id = (int) $_GET["id"];
 
-$sql = "SELECT tasks.task_id, tasks.creator_id, tasks.title, tasks.description, tasks.domain, tasks.required_skills, tasks.reward_wp, 
-          tasks.deadline, tasks.status, tasks.created_at, users.name 
+$t_cols = [];
+$tcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM tasks");
+if ($tcol_res) {
+    while ($tc = mysqli_fetch_assoc($tcol_res)) {
+        $t_cols[$tc['Field']] = true;
+    }
+}
+$t_domain = isset($t_cols['domain']) ? 'tasks.domain' : (isset($t_cols['category']) ? 'tasks.category AS domain' : "'General' AS domain");
+$t_skills = isset($t_cols['required_skills']) ? 'tasks.required_skills' : (isset($t_cols['skills']) ? 'tasks.skills AS required_skills' : "'' AS required_skills");
+$t_reward = isset($t_cols['reward_wp']) ? 'tasks.reward_wp' : (isset($t_cols['reward']) ? 'tasks.reward AS reward_wp' : (isset($t_cols['points']) ? 'tasks.points AS reward_wp' : '10 AS reward_wp'));
+$t_deadline = isset($t_cols['deadline']) ? 'tasks.deadline' : 'CURRENT_DATE AS deadline';
+$t_status = isset($t_cols['status']) ? 'tasks.status' : "'OPEN' AS status";
+$t_creator = isset($t_cols['creator_id']) ? 'tasks.creator_id' : (isset($t_cols['user_id']) ? 'tasks.user_id' : 'tasks.creator_id');
+
+$u_cols = [];
+$ucol_res = @mysqli_query($conn, "SHOW COLUMNS FROM users");
+if ($ucol_res) {
+    while ($uc = mysqli_fetch_assoc($ucol_res)) {
+        $u_cols[$uc['Field']] = true;
+    }
+}
+$u_name = isset($u_cols['name']) ? 'users.name' : (isset($u_cols['username']) ? 'users.username AS creator_name' : 'users.email AS creator_name');
+
+$sql = "SELECT tasks.task_id, $t_creator, tasks.title, tasks.description, $t_domain, $t_skills, $t_reward, 
+          $t_deadline, $t_status, tasks.created_at, $u_name 
           AS creator_name FROM tasks 
-          INNER JOIN users ON tasks.creator_id = users.user_id  
+          INNER JOIN users ON $t_creator = users.user_id  
           WHERE tasks.task_id = ?";
 
 $stmt = mysqli_prepare($conn, $sql);

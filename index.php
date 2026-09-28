@@ -28,7 +28,7 @@ if (!defined('BASE_URL')) {
 <html>
 <head>
     <title>SkillSprout</title>
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css?v=2">
 </head>
 <body>
 
