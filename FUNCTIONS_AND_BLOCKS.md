@@ -23,7 +23,9 @@ This guide provides a comprehensive, function-by-function and block-by-block bre
    - [Deep Dive: auth/logout.php](#deep-dive-authlogoutphp)
    - [Deep Dive: user/dashboard.php](#deep-dive-userdashboardphp)
    - [Deep Dive: user/my_work.php](#deep-dive-usermy_workphp)
-   - [Deep Dive: user/wallet.php & user/profile.php](#deep-dive-userwalletphp--userprofilephp)
+   - [Deep Dive: user/wallet.php](#deep-dive-userwalletphp)
+   - [Deep Dive: user/purchase_wallet.php](#deep-dive-userpurchase_walletphp)
+   - [Deep Dive: user/profile.php](#deep-dive-userprofilephp)
    - [Deep Dive: config/database.php](#deep-dive-configdatabasephp)
    - [Deep Dive: includes/header1.php & includes/header2.php](#deep-dive-includesheader1php--includesheader2php)
 3. [Client-Side JavaScript Validation Blocks](#3-client-side-javascript-validation-blocks)
@@ -427,10 +429,27 @@ function validateTaskForm() {
 
 ---
 
-### Deep Dive: `user/wallet.php` & `user/profile.php`
+### Deep Dive: `user/wallet.php`
 
-#### Block 1: Live Account Data Query Block
-* **Defined Work**: Reads fresh balance and user registration timestamp for presentation.
+#### Block 1: Live Account Data & Transaction History
+* **Inbuilt Functions**: `session_status()`, `session_start()`, `mysqli_query()`, `mysqli_prepare()`, `mysqli_stmt_bind_param()`, `mysqli_stmt_execute()`, `mysqli_stmt_get_result()`, `mysqli_fetch_assoc()`, `mysqli_num_rows()`, `htmlspecialchars()`, `number_format()`, `date()`, `strtotime()`.
+* **Defined Work**: Queries live user Work Points balance and fetches recent transaction logs from the `transactions` table. Renders balance, "+ Purchase Work Points" top-up CTA, and historical top-up activity.
+
+---
+
+### Deep Dive: `user/purchase_wallet.php`
+
+#### Block 1: Package Selection & Top-up Processing Block
+* **Inbuilt Functions**: `session_status()`, `session_start()`, `mysqli_query()`, `mysqli_prepare()`, `mysqli_stmt_bind_param()`, `mysqli_stmt_execute()`, `mysqli_begin_transaction()`, `mysqli_commit()`, `mysqli_rollback()`, `preg_match()`, `preg_replace()`, `substr()`, `strlen()`, `trim()`, `header()`, `exit()`.
+* **Defined Work**: Implements a 1:1 exchange rate where 1 Rupee (₹) = 1 WorkPoint (WP). Validates chosen package (100, 250, 500, 1000, 2500 WP or custom). Validates required payment inputs specifically for the selected payment option (UPI, Card, Net Banking, or Wallet). Executes atomic top-up transaction: credits `users.wp_balance`, stores the formatted payment details into `transactions`, commits changes, and redirects back to `wallet.php`.
+
+---
+
+### Deep Dive: `user/profile.php`
+
+#### Block 1: User Profile Presentation
+* **Inbuilt Functions**: `mysqli_prepare()`, `mysqli_stmt_bind_param()`, `mysqli_stmt_execute()`, `mysqli_stmt_get_result()`, `mysqli_fetch_assoc()`.
+* **Defined Work**: Reads and renders user profile identity, email, balance, and account creation timestamp.
 
 ---
 

@@ -12,6 +12,17 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 
+@mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `transactions` (
+    `transaction_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `amount_wp` INT NOT NULL,
+    `price_paid` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    `payment_method` VARCHAR(150) NOT NULL DEFAULT 'Mock Card / Test Payment',
+    `status` ENUM('COMPLETED', 'PENDING', 'FAILED') NOT NULL DEFAULT 'COMPLETED',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT `fk_transactions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
 $sql = "SELECT name, email, wp_balance FROM users WHERE user_id = ?";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
@@ -20,31 +31,157 @@ $result = mysqli_stmt_get_result($stmt);
 $user = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
 
+$txn_sql = "SELECT transaction_id, amount_wp, price_paid, payment_method, status, created_at FROM transactions WHERE user_id = ? ORDER BY created_at DESC LIMIT 10";
+$txn_stmt = mysqli_prepare($conn, $txn_sql);
+mysqli_stmt_bind_param($txn_stmt, "i", $user_id);
+mysqli_stmt_execute($txn_stmt);
+$transactions = mysqli_stmt_get_result($txn_stmt);
+
 include __DIR__ . "/../includes/header2.php";
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <title>My Wallet - SkillSprout</title>
+    <style>
+        .wallet-card {
+            max-width: 650px;
+            margin: 30px auto;
+            padding: 30px;
+            border: 1px solid #ccc;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background: #fff;
+        }
+        .wallet-history {
+            max-width: 650px;
+            margin: 25px auto 40px;
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .history-table th, .history-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .history-table th {
+            background-color: #f7f7f7;
+            font-weight: bold;
+        }
+        .badge-success {
+            display: inline-block;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .alert-success {
+            background-color: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            color: #1b5e20;
+            padding: 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .rate-tag {
+            display: inline-block;
+            background-color: #f1f8e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+            padding: 4px 12px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+    </style>
 </head>
 <body>
 
 <main>
-    <div style="max-width: 600px; margin: 40px auto; padding: 25px; border: 1px solid #ccc; text-align: center;">
-        <h1>SkillSprout Wallet</h1>
+    <div class="wallet-card">
+        <?php if (isset($_GET['success']) && $_GET['success'] === 'purchased'): ?>
+            <div class="alert-success">
+                &check; Payment Successful! Added +<?php echo (int)($_GET['wp'] ?? 0); ?> Work Points (&#8377;<?php echo number_format((float)($_GET['rupees'] ?? $_GET['wp'] ?? 0), 2); ?>) to your wallet.
+            </div>
+        <?php endif; ?>
+
+        <div class="rate-tag">
+            Exchange Rate: &#8377;1 Rupee = 1 WorkPoint (WP)
+        </div>
+
+        <h1 style="margin-top: 0;">SkillSprout Wallet</h1>
         <p>Current balance for <strong><?php echo htmlspecialchars($user["name"]); ?></strong></p>
-        <div style="font-size: 42px; font-weight: bold; margin: 20px 0; color: #2e7d32;">
+        
+        <div style="font-size: 44px; font-weight: bold; margin: 15px 0 5px; color: #2e7d32;">
             <?php echo (int) $user["wp_balance"]; ?> WP
         </div>
-        <p>Complete tasks to earn more Work Points, or use your points to post tasks!</p>
-        <p style="margin-top: 25px;">
-            <a href="<?= BASE_URL ?>tasks/tasks.php" style="padding: 10px 20px; background-color: black; color: white; text-decoration: none; margin-right: 10px;">Find Tasks</a>
-            <a href="<?= BASE_URL ?>tasks/create_task.php" style="padding: 10px 20px; background-color: #333; color: white; text-decoration: none;">Create Task</a>
+        <div style="font-size: 18px; color: #555; margin-bottom: 15px;">
+            (Equivalent Value: <strong>&#8377;<?php echo number_format($user["wp_balance"], 2); ?></strong>)
+        </div>
+
+        <p style="color: #666; font-size: 14px;">
+            Complete tasks to earn Work Points, or top-up your balance to post tasks and reward skilled contributors!
         </p>
+
+        <div style="margin-top: 25px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <a href="<?= BASE_URL ?>user/purchase_wallet.php" style="padding: 12px 24px; background-color: #2e7d32; color: white; text-decoration: none; font-weight: bold; border-radius: 4px; display: inline-block;">+ Purchase Work Points</a>
+            <a href="<?= BASE_URL ?>tasks/tasks.php" style="padding: 12px 20px; background-color: black; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">Find Tasks</a>
+            <a href="<?= BASE_URL ?>tasks/create_task.php" style="padding: 12px 20px; background-color: #333; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">Create Task</a>
+        </div>
+    </div>
+
+    <div class="wallet-history">
+        <h3 style="margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px;">Purchase &amp; Top-up History</h3>
+        <?php if ($transactions && mysqli_num_rows($transactions) > 0): ?>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Work Points</th>
+                        <th>Amount Paid (&#8377;)</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($txn = mysqli_fetch_assoc($transactions)): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars(date('M d, Y H:i', strtotime($txn['created_at']))); ?></td>
+                            <td style="color: #2e7d32; font-weight: bold;">+<?php echo (int)$txn['amount_wp']; ?> WP</td>
+                            <td>&#8377;<?php echo number_format($txn['price_paid'], 2); ?></td>
+                            <td><?php echo htmlspecialchars($txn['payment_method']); ?></td>
+                            <td><span class="badge-success"><?php echo htmlspecialchars($txn['status']); ?></span></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p style="color: #888; font-size: 14px; text-align: center; margin: 20px 0;">
+                No purchase transactions yet. Click &ldquo;Purchase Work Points&rdquo; above to add funds.
+            </p>
+        <?php endif; ?>
     </div>
 </main>
 
-<?php include __DIR__ . "/../includes/footer2.php"; ?>
+<?php
+if ($txn_stmt) {
+    mysqli_stmt_close($txn_stmt);
+}
+include __DIR__ . "/../includes/footer2.php";
+?>
 
 </body>
 </html>

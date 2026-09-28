@@ -116,7 +116,7 @@ include __DIR__ . "/../includes/header2.php";
                 <h3>Work Points</h3>
 
                 <p>
-                    <?php echo $user["wp_balance"]; ?> WP
+                    <?php echo (int) $user["wp_balance"]; ?> WP (&#8377;<?php echo number_format($user["wp_balance"]); ?>)
                 </p>
 
             </td>

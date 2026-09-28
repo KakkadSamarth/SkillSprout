@@ -59,3 +59,14 @@ CREATE TABLE IF NOT EXISTS `sessions` (
     `data` MEDIUMTEXT NOT NULL,
     `last_activity` INT UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `transactions` (
+    `transaction_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `amount_wp` INT NOT NULL,
+    `price_paid` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    `payment_method` VARCHAR(50) NOT NULL DEFAULT 'Mock Card / Test Payment',
+    `status` ENUM('COMPLETED', 'PENDING', 'FAILED') NOT NULL DEFAULT 'COMPLETED',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT `fk_transactions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

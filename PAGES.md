@@ -17,6 +17,7 @@ This document explains the work, role, inputs, workflows, database queries, and 
    - [user/dashboard.php](#userdashboardphp)
    - [user/my_work.php](#usermy_workphp)
    - [user/wallet.php](#userwalletphp)
+   - [user/purchase_wallet.php](#userpurchase_walletphp)
    - [user/profile.php](#userprofilephp)
 4. [Tasks Module (`tasks/`)](#4-tasks-module-tasks)
    - [tasks/tasks.php](#taskstasksphp)
@@ -159,14 +160,47 @@ This document explains the work, role, inputs, workflows, database queries, and 
 ---
 
 ### `user/wallet.php`
-* **Purpose**: Dedicated balance management page showing available Work Points.
+* **Purpose**: Dedicated balance management page showing available Work Points, instant top-up link, and transaction history.
 * **Access Level**: Authenticated only.
 * **Work & Workflow**:
-  1. Queries latest `wp_balance` for current user from `users` table.
-  2. Includes `includes/header2.php`.
-  3. Displays wallet card with large formatted points display: `X WP`.
-  4. Explains how points work: complete tasks to earn, spend points to post tasks.
-  5. Provides quick shortcut buttons: "Find Tasks" and "Create Task".
+  1. Automatically verifies that the `transactions` table exists.
+  2. Queries latest `wp_balance` for current user from `users` table.
+  3. Queries recent top-up records from `transactions` table ordered by `created_at DESC`.
+  4. If redirected from a purchase (`success=purchased`), displays a green success confirmation banner with the added points.
+  5. Displays wallet card with large formatted points display: `X WP`.
+  6. Provides primary action button: **"+ Purchase Work Points"** linking directly to `user/purchase_wallet.php`.
+  7. Provides secondary shortcut buttons: "Find Tasks" and "Create Task".
+  8. Renders the "Purchase & Top-up History" table showing date, WP added, price paid, payment method, and completion status.
+
+---
+
+### `user/purchase_wallet.php`
+* **Purpose**: Checkout and package selection page allowing users to buy Work Points and top-up their wallet.
+* **Access Level**: Authenticated only.
+* **Work & Workflow**:
+  1. Queries user identity and live balance.
+  2. Exchange rate: **₹1 Rupee = 1 WorkPoint (1:1 ratio)**.
+  3. Presents interactive Work Points packages:
+     - **Starter Pack**: 100 WP (₹100.00)
+     - **Popular Pack**: 250 WP (₹250.00)
+     - **Standard Pack**: 500 WP (₹500.00)
+     - **Pro Pack**: 1,000 WP (₹1,000.00)
+     - **Business Pack**: 2,500 WP (₹2,500.00)
+     - **Custom Amount**: User-defined WP input (minimum 10 WP = ₹10, up to 50,000 WP = ₹50,000).
+  4. Provides dynamic option-specific payment panels:
+     - **UPI**: Requires UPI ID / VPA (`name@bank`) and UPI app selection.
+     - **Card**: Requires Cardholder Name, 16-digit Card Number, MM/YY Expiry, 3-digit CVV.
+     - **Net Banking**: Requires Bank selection from major Indian banks and Customer/User ID.
+     - **Mobile Wallet**: Requires Wallet provider selection and 10-digit Indian mobile number.
+  5. JavaScript dynamically toggles field visibility and enables `required` / `disabled` attributes strictly for the active payment option.
+  6. On form submission (`POST`):
+     - Validates package or custom amount ($10 \le \text{WP} \le 50,000$) where $\text{price} = \text{WP amount}$.
+     - Validates required inputs according to selected payment method (`upi`, `card`, `netbanking`, `wallet`).
+     - Begins database transaction (`mysqli_begin_transaction`).
+     - Atomically credits wallet: `UPDATE users SET wp_balance = wp_balance + ? WHERE user_id = ?`.
+     - Logs transaction into `transactions` table with specific payment details (`UPI (id via app)`, `Card (name - last4)`, `Net Banking (bank - id)`, `Wallet (provider - mobile)`).
+     - Commits transaction (`mysqli_commit`).
+     - Redirects back to `user/wallet.php?success=purchased&wp=[amount_wp]&rupees=[price_paid]`.
 
 ---
 

@@ -30,7 +30,8 @@ SkillSprout/
 ├── user/
 │   ├── dashboard.php           # User hub with quick action cards & balance summary
 │   ├── my_work.php             # Consolidated dashboard for created tasks, applications & assigned work
-│   ├── wallet.php              # Dedicated Work Points balance display & direct action links
+│   ├── wallet.php              # Dedicated Work Points balance display, history & top-up shortcuts
+│   ├── purchase_wallet.php     # Work Points package purchase checkout & balance top-up
 │   └── profile.php             # User profile details and account management
 ├── tasks/
 │   ├── tasks.php               # Browse all OPEN tasks available across domains
@@ -103,6 +104,8 @@ The database uses InnoDB tables with foreign key constraints:
 | `tasks` | `task_id` | Tasks with foreign keys to `creator_id` and `assigned_user_id`, reward amount, status enum (`OPEN`, `ASSIGNED`, `SUBMITTED`, `COMPLETED`, `CANCELLED`). |
 | `applications` | `application_id` | Worker applications linked to `task_id` and `user_id`, with status enum (`PENDING`, `ACCEPTED`, `REJECTED`). |
 | `submissions` | `submission_id` | Deliverables submitted by workers with status enum (`SUBMITTED`, `APPROVED`, `REJECTED`). |
+| `transactions` | `transaction_id` | Top-up and purchase logs with `user_id`, `amount_wp`, `price_paid`, and `payment_method`. |
+| `sessions` | `id` | Serverless persistent session storage for Vercel deployment. |
 
 ---
 

@@ -43,7 +43,7 @@ include __DIR__ . "/../includes/header2.php";
             </tr>
             <tr>
                 <td style="padding: 10px; font-weight: bold; border-bottom: 1px solid #eee;">WP Balance:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee;"><?php echo (int) $user["wp_balance"]; ?> WP</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;"><?php echo (int) $user["wp_balance"]; ?> WP (&#8377;<?php echo number_format($user["wp_balance"]); ?>)</td>
             </tr>
             <tr>
                 <td style="padding: 10px; font-weight: bold; border-bottom: 1px solid #eee;">Member Since:</td>
