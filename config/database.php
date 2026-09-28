@@ -106,6 +106,9 @@ if (!isset($conn) || !$conn instanceof mysqli) {
                 @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `creator_id` INT NOT NULL DEFAULT 1 AFTER `task_id`");
             }
         }
+        if (isset($t_cols['user_id'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `user_id` INT NULL DEFAULT NULL");
+        }
 
         if (!isset($t_cols['assigned_user_id'])) {
             @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `assigned_user_id` INT NULL DEFAULT NULL AFTER `creator_id`");
@@ -119,6 +122,9 @@ if (!isset($conn) || !$conn instanceof mysqli) {
                 @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `domain` VARCHAR(100) NOT NULL DEFAULT 'General' AFTER `description`");
             }
         }
+        if (isset($t_cols['category'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `category` VARCHAR(100) NULL DEFAULT 'General'");
+        }
 
         if (!isset($t_cols['required_skills'])) {
             if (isset($t_cols['skills'])) {
@@ -127,6 +133,9 @@ if (!isset($conn) || !$conn instanceof mysqli) {
             } else {
                 @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `required_skills` TEXT NULL AFTER `domain`");
             }
+        }
+        if (isset($t_cols['skills'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `skills` TEXT NULL");
         }
 
         if (!isset($t_cols['reward_wp'])) {
@@ -142,6 +151,15 @@ if (!isset($conn) || !$conn instanceof mysqli) {
             } else {
                 @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `reward_wp` INT NOT NULL DEFAULT 10 AFTER `required_skills`");
             }
+        }
+        if (isset($t_cols['reward'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `reward` INT NULL DEFAULT 10");
+        }
+        if (isset($t_cols['points'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `points` INT NULL DEFAULT 10");
+        }
+        if (isset($t_cols['work_points'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `work_points` INT NULL DEFAULT 10");
         }
 
         if (!isset($t_cols['deadline'])) {
