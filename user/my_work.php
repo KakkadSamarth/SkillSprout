@@ -95,11 +95,11 @@ include __DIR__ . "/../includes/header2.php";
     </p>
 
     <?php if (isset($_GET["cancelled"]) && isset($_GET["refund"])) { ?>
-        <div style="background-color: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; padding: 12px; margin-bottom: 20px;">
+        <div class="alert-success">
             Task cancelled successfully! <?php echo (int) $_GET["refund"]; ?> Work Points have been refunded to your wallet.
         </div>
     <?php } elseif (isset($_GET["err"])) { ?>
-        <div style="background-color: #ffebee; border: 1px solid #ffcdd2; color: #b71c1c; padding: 12px; margin-bottom: 20px;">
+        <div class="alert-error">
             Unable to cancel task. The task may have already been assigned or completed.
         </div>
     <?php } ?>
@@ -151,9 +151,9 @@ include __DIR__ . "/../includes/header2.php";
                                 Manage Applications
                             </a>
                             <br>
-                            <form action="<?= BASE_URL ?>tasks/cancel_task.php" method="post" style="display:inline; margin-top: 5px;" onsubmit="return confirm('Are you sure you want to cancel this task? Your <?php echo (int) $task['reward_wp']; ?> WP will be refunded.');">
+                            <form action="<?= BASE_URL ?>tasks/cancel_task.php" method="post" class="inline-form" onsubmit="return confirm('Are you sure you want to cancel this task? Your <?php echo (int) $task['reward_wp']; ?> WP will be refunded.');">
                                 <input type="hidden" name="task_id" value="<?php echo $task['task_id']; ?>">
-                                <button type="submit" style="background: none; border: none; color: #d32f2f; text-decoration: underline; cursor: pointer; padding: 0; font-size: 13px;">
+                                <button type="submit" class="btn-link-danger">
                                     Cancel &amp; Refund
                                 </button>
                             </form>

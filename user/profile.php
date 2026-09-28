@@ -30,28 +30,28 @@ include __DIR__ . "/../includes/header2.php";
 <body>
 
 <main>
-    <div style="max-width: 600px; margin: 40px auto; padding: 25px; border: 1px solid #ccc;">
-        <h1 style="text-align: center;">User Profile</h1>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <div class="card profile-card">
+        <h1>User Profile</h1>
+        <table class="profile-table">
             <tr>
-                <td style="padding: 10px; font-weight: bold; border-bottom: 1px solid #eee;">Name:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee;"><?php echo htmlspecialchars($user["name"]); ?></td>
+                <td>Name:</td>
+                <td><?php echo htmlspecialchars($user["name"]); ?></td>
             </tr>
             <tr>
-                <td style="padding: 10px; font-weight: bold; border-bottom: 1px solid #eee;">Email:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee;"><?php echo htmlspecialchars($user["email"]); ?></td>
+                <td>Email:</td>
+                <td><?php echo htmlspecialchars($user["email"]); ?></td>
             </tr>
             <tr>
-                <td style="padding: 10px; font-weight: bold; border-bottom: 1px solid #eee;">WP Balance:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee;"><?php echo (int) $user["wp_balance"]; ?> WP (&#8377;<?php echo number_format($user["wp_balance"]); ?>)</td>
+                <td>WP Balance:</td>
+                <td><?php echo (int) $user["wp_balance"]; ?> WP (&#8377;<?php echo number_format($user["wp_balance"]); ?>)</td>
             </tr>
             <tr>
-                <td style="padding: 10px; font-weight: bold; border-bottom: 1px solid #eee;">Member Since:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee;"><?php echo htmlspecialchars($user["created_at"]); ?></td>
+                <td>Member Since:</td>
+                <td><?php echo htmlspecialchars($user["created_at"]); ?></td>
             </tr>
         </table>
-        <div style="text-align: center; margin-top: 25px;">
-            <a href="<?= BASE_URL ?>auth/logout.php" style="padding: 10px 20px; background-color: #d32f2f; color: white; text-decoration: none;">Logout</a>
+        <div class="text-center mt-2">
+            <a href="<?= BASE_URL ?>auth/logout.php" class="btn btn-danger">Logout</a>
         </div>
     </div>
 </main>

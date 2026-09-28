@@ -117,35 +117,7 @@ include __DIR__ . "/../includes/header2.php";
 <html>
 <head>
     <title>Create Task - SkillSprout</title>
-    <style>
-        .balance-badge {
-            background-color: #f3f9f4;
-            border: 1px solid #c8e6c9;
-            color: #2e7d32;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            font-size: 15px;
-            display: inline-block;
-        }
-        .balance-badge strong {
-            font-size: 17px;
-        }
-        .alert-box {
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-        }
-        .alert-success {
-            background-color: #e8f5e9;
-            border-color: #a5d6a7;
-            color: #1b5e20;
-        }
-        .alert-error {
-            background-color: #ffebee;
-            border-color: #ffcdd2;
-            color: #b71c1c;
-        }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 </head>
 <body>
 
@@ -171,16 +143,16 @@ include __DIR__ . "/../includes/header2.php";
                     <div class="alert-box <?php echo $message_type == 'success' ? 'alert-success' : 'alert-error'; ?>">
                         <?php echo htmlspecialchars($message); ?>
                         <?php if ($message_type == 'success') { ?>
-                            <br><a href="<?= BASE_URL ?>tasks/tasks.php" style="margin-top: 8px; display: inline-block;">View in Available Tasks &rarr;</a>
+                            <br><a href="<?= BASE_URL ?>tasks/tasks.php" class="inline-block mt-1">View in Available Tasks &rarr;</a>
                         <?php } ?>
                     </div>
                 <?php } ?>
 
                 <?php if ($current_balance <= 0) { ?>
-                    <div style="background-color: #fff3e0; border: 1px solid #ffe0b2; color: #e65100; padding: 15px; margin-bottom: 25px;">
+                    <div class="alert-warning">
                         <strong>You have 0 Work Points.</strong><br>
                         You need Work Points in your balance to post tasks.
-                        <a href="<?= BASE_URL ?>tasks/tasks.php" style="color: #bf360c; text-decoration: underline; font-weight: bold; margin-left: 5px;">
+                        <a href="<?= BASE_URL ?>tasks/tasks.php">
                             Browse tasks
                         </a> to apply, complete work, and earn Work Points!
                     </div>
@@ -298,7 +270,7 @@ include __DIR__ . "/../includes/header2.php";
                                     required
                                     <?php if ($current_balance <= 0) echo 'disabled'; ?>
                                 >
-                                <small style="display: block; margin-top: 5px; color: #666;">
+                                <small class="help-text">
                                     Points will be deducted from your wallet when the task is posted and paid to the worker upon your approval.
                                 </small>
                             </td>
@@ -325,7 +297,7 @@ include __DIR__ . "/../includes/header2.php";
                             <td></td>
 
                             <td>
-                                <button type="submit" <?php if ($current_balance <= 0) echo 'disabled style="background-color: #888; cursor: not-allowed;"'; ?>>
+                                <button type="submit" <?php if ($current_balance <= 0) echo 'disabled'; ?>>
                                     Create Task & Deduct Reward
                                 </button>
                             </td>

@@ -18,7 +18,7 @@ if (!defined('BASE_URL')) {
 
 <header>
     <div class="logo">
-        <a href="<?= BASE_URL ?>index.php" style="text-decoration: none; color: inherit;">SkillSprout</a>
+        <a href="<?= BASE_URL ?>index.php">SkillSprout</a>
     </div>
 
     <nav>

@@ -213,11 +213,11 @@ include __DIR__ . "/../includes/header2.php";
 
                     <form action="" method="post">
 
-                        <button type="submit" name="action" value="approve" style="padding: 10px 20px; background-color: black; color: white; border: none; cursor: pointer; margin-right: 10px;">
+                        <button type="submit" name="action" value="approve" class="btn btn-primary mr-1">
                             Approve Work &amp; Pay <?php echo (int) $submission["reward_wp"]; ?> WP
                         </button>
 
-                        <button type="submit" name="action" value="reject" style="padding: 10px 20px; background-color: #d32f2f; color: white; border: none; cursor: pointer;" onclick="return confirm('Are you sure you want to reject this submission? The task will be returned to the worker to redo.');">
+                        <button type="submit" name="action" value="reject" class="btn btn-danger" onclick="return confirm('Are you sure you want to reject this submission? The task will be returned to the worker to redo.');">
                             Reject Submission
                         </button>
 

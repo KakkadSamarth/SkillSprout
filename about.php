@@ -9,7 +9,7 @@
 <?php include __DIR__ . "/includes/header1.php"; ?>
 
 <main>
-    <div style="max-width: 800px; margin: 40px auto; line-height: 1.6;">
+    <div class="card content-box">
         <h1>About SkillSprout</h1>
         <p>
             SkillSprout is a collaborative platform designed to bring creators and task solvers together.

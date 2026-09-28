@@ -18,57 +18,7 @@ if (!defined('BASE_URL')) {
 <html>
 <head>
     <title>SkillSprout</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        main {
-            padding: 30px;
-        }
-
-        .hero {
-            text-align: center;
-            padding: 30px;
-            background-image: url('<?= BASE_URL ?>uploads/office1.jpeg');
-        }
-
-        .hero h1 {
-            font-size: 36px;
-        }
-
-        .hero p {
-            font-size: 18px;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: black;
-            color: white;
-            text-decoration: none;
-            margin-top: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            margin-bottom: 40px;
-        }
-
-        td {
-            padding: 20px;
-            border: 1px solid #ddd;
-            vertical-align: top;
-        }
-
-        th {
-            padding: 15px;
-            border: 1px solid #ddd;
-        }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 </head>
 <body>
 
@@ -218,7 +168,7 @@ include __DIR__."/includes/header1.php";
 
     <table>
         <tr>
-            <td style="text-align: center;">
+            <td class="text-center">
                 <h2>Ready to Get Started?</h2>
                 <p>
                     Create your SkillSprout account and

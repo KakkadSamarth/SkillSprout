@@ -115,15 +115,15 @@ if ($task["creator_id"] == $_SESSION["user_id"]) {
         ?>
 
         <p>
-            <a href="<?= BASE_URL ?>tasks/manage_applications.php?id=<?php echo $task["task_id"]; ?>" style="display: inline-block; padding: 8px 16px; background-color: black; color: white; text-decoration: none; margin-right: 10px;">
+            <a href="<?= BASE_URL ?>tasks/manage_applications.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-primary mr-1">
                 Manage Applications
             </a>
         </p>
 
         <p>
-            <form action="<?= BASE_URL ?>tasks/cancel_task.php" method="post" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to cancel this task? Your <?php echo (int) $task['reward_wp']; ?> WP will be refunded to your balance.');">
+            <form action="<?= BASE_URL ?>tasks/cancel_task.php" method="post" class="inline-block" onsubmit="return confirm('Are you sure you want to cancel this task? Your <?php echo (int) $task['reward_wp']; ?> WP will be refunded to your balance.');">
                 <input type="hidden" name="task_id" value="<?php echo $task['task_id']; ?>">
-                <button type="submit" style="padding: 8px 16px; background-color: #d32f2f; color: white; border: none; cursor: pointer;">
+                <button type="submit" class="btn btn-danger">
                     Cancel Task (Refund <?php echo (int) $task['reward_wp']; ?> WP)
                 </button>
             </form>

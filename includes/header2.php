@@ -27,7 +27,7 @@ if (!isset($_SESSION["user_id"])) {
 <header>
 
     <div class="logo">
-        <a href="<?= BASE_URL ?>user/dashboard.php" style="text-decoration: none; color: inherit;">SkillSprout</a>
+        <a href="<?= BASE_URL ?>user/dashboard.php">SkillSprout</a>
     </div>
 
     <nav>

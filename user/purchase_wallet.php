@@ -169,198 +169,22 @@ include __DIR__ . "/../includes/header2.php";
 <html>
 <head>
     <title>Purchase Work Points - SkillSprout Wallet</title>
-    <style>
-        .purchase-container {
-            max-width: 820px;
-            margin: 30px auto 50px;
-            padding: 30px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            background-color: #fff;
-        }
-        .rate-banner {
-            background: linear-gradient(135deg, #1b5e20, #2e7d32);
-            color: #fff;
-            padding: 14px 20px;
-            border-radius: 6px;
-            margin: 15px 0 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .rate-badge {
-            background-color: #fff;
-            color: #1b5e20;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 15px;
-            font-weight: bold;
-        }
-        .package-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin: 15px 0;
-        }
-        .package-card {
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 14px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            background: #fafafa;
-        }
-        .package-card:hover {
-            border-color: #2e7d32;
-            transform: translateY(-2px);
-            background: #f1f8e9;
-        }
-        .package-card.selected {
-            border-color: #2e7d32;
-            background-color: #e8f5e9;
-        }
-        .package-card input[type="radio"] {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-        }
-        .package-wp {
-            font-size: 20px;
-            font-weight: bold;
-            color: #2e7d32;
-            margin: 4px 0 2px;
-        }
-        .package-price {
-            font-size: 15px;
-            font-weight: bold;
-            color: #333;
-        }
-        .payment-method-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 12px;
-            margin: 15px 0 20px;
-        }
-        .method-tab {
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s ease;
-            background: #fafafa;
-        }
-        .method-tab:hover {
-            border-color: #2e7d32;
-        }
-        .method-tab.active {
-            border-color: #2e7d32;
-            background-color: #e8f5e9;
-            color: #1b5e20;
-        }
-        .payment-section {
-            background-color: #fcfcfc;
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
-            padding: 22px;
-            margin-top: 15px;
-        }
-        .option-panel {
-            display: none;
-        }
-        .option-panel.active {
-            display: block;
-        }
-        .form-row {
-            margin-bottom: 14px;
-        }
-        .form-row label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
-        .form-row input, .form-row select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-        .form-row input:focus, .form-row select:focus {
-            border-color: #2e7d32;
-            outline: none;
-        }
-        .form-cols {
-            display: flex;
-            gap: 15px;
-        }
-        .form-cols .form-row {
-            flex: 1;
-        }
-        .btn-purchase {
-            width: 100%;
-            padding: 14px;
-            background-color: #2e7d32;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            margin-top: 10px;
-        }
-        .btn-purchase:hover {
-            background-color: #1b5e20;
-        }
-        .btn-cancel {
-            display: inline-block;
-            margin-bottom: 15px;
-            color: #555;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .btn-cancel:hover {
-            text-decoration: underline;
-        }
-        .alert-error {
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 12px 16px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            border: 1px solid #ffcdd2;
-            font-weight: bold;
-        }
-        .summary-box {
-            background-color: #e8f5e9;
-            border: 1px solid #c8e6c9;
-            padding: 14px 18px;
-            border-radius: 6px;
-            margin: 20px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 </head>
 <body>
 
 <main>
     <div class="purchase-container">
         <a href="<?= BASE_URL ?>user/wallet.php" class="btn-cancel">&larr; Back to My Wallet</a>
-        <h1 style="margin: 0 0 6px;">Purchase Work Points</h1>
-        <p style="color: #666; margin-top: 0;">
+        <h1 class="mb-0">Purchase Work Points</h1>
+        <p class="text-muted mt-0">
             Add funds in Indian Rupees (&IndianRupee;) to your SkillSprout balance to post tasks, hire talent, and reward solutions.
         </p>
 
         <div class="rate-banner">
             <div>
-                <strong style="font-size: 16px;">Standard Platform Exchange Rate:</strong>
-                <div style="font-size: 13px; opacity: 0.9; margin-top: 2px;">1 Indian Rupee = 1 WorkPoint (1:1 Ratio)</div>
+                <strong class="rate-banner-title">Standard Platform Exchange Rate:</strong>
+                <div class="rate-banner-sub">1 Indian Rupee = 1 WorkPoint (1:1 Ratio)</div>
             </div>
             <div class="rate-badge">
                 &#8377;1 = 1 WP
@@ -374,73 +198,73 @@ include __DIR__ . "/../includes/header2.php";
         <?php endif; ?>
 
         <form action="" method="post" id="purchaseForm">
-            <h3 style="margin-bottom: 8px;">1. Select Work Points Package</h3>
+            <h3 class="mb-1">1. Select Work Points Package</h3>
             
             <div class="package-grid">
                 <label class="package-card selected" onclick="selectPackage('100', '100.00', this)">
                     <input type="radio" name="package" value="100" checked>
                     <div class="package-wp">100 WP</div>
                     <div class="package-price">&#8377;100</div>
-                    <div style="font-size: 11px; color: #777; margin-top: 2px;">Starter</div>
+                    <div class="pkg-tag pkg-tag-starter">Starter</div>
                 </label>
 
                 <label class="package-card" onclick="selectPackage('250', '250.00', this)">
                     <input type="radio" name="package" value="250">
                     <div class="package-wp">250 WP</div>
                     <div class="package-price">&#8377;250</div>
-                    <div style="font-size: 11px; color: #2e7d32; font-weight: bold; margin-top: 2px;">Popular</div>
+                    <div class="pkg-tag pkg-tag-popular">Popular</div>
                 </label>
 
                 <label class="package-card" onclick="selectPackage('500', '500.00', this)">
                     <input type="radio" name="package" value="500">
                     <div class="package-wp">500 WP</div>
                     <div class="package-price">&#8377;500</div>
-                    <div style="font-size: 11px; color: #7b1fa2; font-weight: bold; margin-top: 2px;">Standard</div>
+                    <div class="pkg-tag pkg-tag-standard">Standard</div>
                 </label>
 
                 <label class="package-card" onclick="selectPackage('1000', '1000.00', this)">
                     <input type="radio" name="package" value="1000">
                     <div class="package-wp">1,000 WP</div>
                     <div class="package-price">&#8377;1,000</div>
-                    <div style="font-size: 11px; color: #c2185b; font-weight: bold; margin-top: 2px;">Pro</div>
+                    <div class="pkg-tag pkg-tag-pro">Pro</div>
                 </label>
 
                 <label class="package-card" onclick="selectPackage('2500', '2500.00', this)">
                     <input type="radio" name="package" value="2500">
                     <div class="package-wp">2,500 WP</div>
                     <div class="package-price">&#8377;2,500</div>
-                    <div style="font-size: 11px; color: #f57c00; font-weight: bold; margin-top: 2px;">Business</div>
+                    <div class="pkg-tag pkg-tag-business">Business</div>
                 </label>
             </div>
 
-            <div style="margin: 15px 0 25px; padding: 12px 15px; border: 1px dashed #bbb; border-radius: 6px; background-color: #fafafa;">
-                <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: bold;">
+            <div class="custom-wp-box">
+                <label class="custom-wp-label">
                     <input type="radio" name="package" value="custom" id="customRadio" onclick="selectCustom(this)">
                     <span>Or enter custom Work Points amount (&#8377;1 per WP):</span>
                 </label>
-                <div style="margin-top: 8px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                    <input type="number" name="custom_wp" id="customInput" min="10" max="50000" step="1" placeholder="e.g. 350" style="padding: 8px 12px; width: 140px; font-size: 15px; border: 1px solid #ccc; border-radius: 4px;" oninput="updateCustomPrice()" disabled>
-                    <span id="customPriceLabel" style="font-weight: bold; color: #2e7d32;">Rate: &#8377;1 = 1 WP (Min. 10 WP)</span>
+                <div class="custom-wp-inputs">
+                    <input type="number" name="custom_wp" id="customInput" min="10" max="50000" step="1" placeholder="e.g. 350" class="custom-wp-input" oninput="updateCustomPrice()" disabled>
+                    <span id="customPriceLabel" class="custom-price-label">Rate: &#8377;1 = 1 WP (Min. 10 WP)</span>
                 </div>
             </div>
 
-            <h3 style="margin-bottom: 8px;">2. Choose Payment Method</h3>
+            <h3 class="mb-1">2. Choose Payment Method</h3>
             
             <div class="payment-method-selector">
                 <div class="method-tab active" id="tab_upi" onclick="switchPaymentMethod('upi')">
-                    <input type="radio" name="payment_option" value="upi" id="opt_upi" checked style="display:none;">
+                    <input type="radio" name="payment_option" value="upi" id="opt_upi" checked class="hidden-radio">
                     &#9889; UPI / QR Code
                 </div>
                 <div class="method-tab" id="tab_card" onclick="switchPaymentMethod('card')">
-                    <input type="radio" name="payment_option" value="card" id="opt_card" style="display:none;">
+                    <input type="radio" name="payment_option" value="card" id="opt_card" class="hidden-radio">
                     &#128179; Debit / Credit Card
                 </div>
                 <div class="method-tab" id="tab_netbanking" onclick="switchPaymentMethod('netbanking')">
-                    <input type="radio" name="payment_option" value="netbanking" id="opt_netbanking" style="display:none;">
+                    <input type="radio" name="payment_option" value="netbanking" id="opt_netbanking" class="hidden-radio">
                     &#127966; Net Banking
                 </div>
                 <div class="method-tab" id="tab_wallet" onclick="switchPaymentMethod('wallet')">
-                    <input type="radio" name="payment_option" value="wallet" id="opt_wallet" style="display:none;">
+                    <input type="radio" name="payment_option" value="wallet" id="opt_wallet" class="hidden-radio">
                     &#128091; Mobile Wallets
                 </div>
             </div>
@@ -448,9 +272,9 @@ include __DIR__ . "/../includes/header2.php";
             <div class="payment-section">
 
                 <div class="option-panel active" id="panel_upi">
-                    <h4 style="margin-top: 0; color: #1b5e20;">Enter UPI Details (Google Pay, PhonePe, Paytm, BHIM)</h4>
+                    <h4>Enter UPI Details (Google Pay, PhonePe, Paytm, BHIM)</h4>
                     <div class="form-row">
-                        <label for="upi_id">Your UPI ID / VPA <span style="color: red;">*</span></label>
+                        <label for="upi_id">Your UPI ID / VPA <span class="required-star">*</span></label>
                         <input type="text" name="upi_id" id="upi_id" placeholder="e.g. yourname@okhdfcbank or 9876543210@paytm" required>
                     </div>
                     <div class="form-row">
@@ -464,37 +288,37 @@ include __DIR__ . "/../includes/header2.php";
                             <option value="Other Bank UPI">Other Bank UPI</option>
                         </select>
                     </div>
-                    <div style="font-size: 12px; color: #666; margin-top: 6px;">
+                    <div class="form-help-text">
                         &bull; A collect request will be simulated to your UPI handle. Payment is completed instantly.
                     </div>
                 </div>
 
                 <div class="option-panel" id="panel_card">
-                    <h4 style="margin-top: 0; color: #1b5e20;">Debit, Credit or ATM Card (RuPay, Visa, Mastercard)</h4>
+                    <h4>Debit, Credit or ATM Card (RuPay, Visa, Mastercard)</h4>
                     <div class="form-row">
-                        <label for="card_name">Cardholder Name <span style="color: red;">*</span></label>
+                        <label for="card_name">Cardholder Name <span class="required-star">*</span></label>
                         <input type="text" name="card_name" id="card_name" value="<?php echo htmlspecialchars($user["name"]); ?>">
                     </div>
                     <div class="form-row">
-                        <label for="card_number">16-Digit Card Number <span style="color: red;">*</span></label>
+                        <label for="card_number">16-Digit Card Number <span class="required-star">*</span></label>
                         <input type="text" name="card_number" id="card_number" maxlength="19" placeholder="4242 4242 4242 4242" value="4242 4242 4242 4242">
                     </div>
                     <div class="form-cols">
                         <div class="form-row">
-                            <label for="card_expiry">Expiry Date (MM/YY) <span style="color: red;">*</span></label>
+                            <label for="card_expiry">Expiry Date (MM/YY) <span class="required-star">*</span></label>
                             <input type="text" name="card_expiry" id="card_expiry" placeholder="MM/YY" maxlength="5" value="12/28">
                         </div>
                         <div class="form-row">
-                            <label for="card_cvv">CVV / Security Code (3 Digits) <span style="color: red;">*</span></label>
+                            <label for="card_cvv">CVV / Security Code (3 Digits) <span class="required-star">*</span></label>
                             <input type="password" name="card_cvv" id="card_cvv" placeholder="123" maxlength="4" value="123">
                         </div>
                     </div>
                 </div>
 
                 <div class="option-panel" id="panel_netbanking">
-                    <h4 style="margin-top: 0; color: #1b5e20;">Internet Banking</h4>
+                    <h4>Internet Banking</h4>
                     <div class="form-row">
-                        <label for="bank_name">Select Your Bank <span style="color: red;">*</span></label>
+                        <label for="bank_name">Select Your Bank <span class="required-star">*</span></label>
                         <select name="bank_name" id="bank_name">
                             <option value="">-- Choose Indian Bank --</option>
                             <option value="State Bank of India (SBI)" selected>State Bank of India (SBI)</option>
@@ -510,15 +334,15 @@ include __DIR__ . "/../includes/header2.php";
                         </select>
                     </div>
                     <div class="form-row">
-                        <label for="netbanking_userid">Net Banking Customer ID / Username <span style="color: red;">*</span></label>
+                        <label for="netbanking_userid">Net Banking Customer ID / Username <span class="required-star">*</span></label>
                         <input type="text" name="netbanking_userid" id="netbanking_userid" placeholder="Enter Customer ID or Username" value="USER_<?php echo $user_id; ?>">
                     </div>
                 </div>
 
                 <div class="option-panel" id="panel_wallet">
-                    <h4 style="margin-top: 0; color: #1b5e20;">Digital Mobile Wallet</h4>
+                    <h4>Digital Mobile Wallet</h4>
                     <div class="form-row">
-                        <label for="wallet_provider">Select Wallet Provider <span style="color: red;">*</span></label>
+                        <label for="wallet_provider">Select Wallet Provider <span class="required-star">*</span></label>
                         <select name="wallet_provider" id="wallet_provider">
                             <option value="Paytm Wallet" selected>Paytm Wallet</option>
                             <option value="PhonePe Wallet">PhonePe Wallet</option>
@@ -527,26 +351,26 @@ include __DIR__ . "/../includes/header2.php";
                         </select>
                     </div>
                     <div class="form-row">
-                        <label for="wallet_mobile">Registered 10-Digit Mobile Number <span style="color: red;">*</span></label>
+                        <label for="wallet_mobile">Registered 10-Digit Mobile Number <span class="required-star">*</span></label>
                         <input type="tel" name="wallet_mobile" id="wallet_mobile" placeholder="e.g. 9876543210" maxlength="10" pattern="[6-9][0-9]{9}" value="9876543210">
                     </div>
                 </div>
 
                 <div class="summary-box">
-                    <div style="display: flex; justify-content: space-between; font-size: 15px;">
+                    <div class="summary-row">
                         <span>Work Points to Credit:</span>
-                        <strong id="summaryWp" style="color: #2e7d32; font-size: 17px;">+100 WP</strong>
+                        <strong id="summaryWp" class="summary-wp">+100 WP</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 16px; margin-top: 6px; border-top: 1px dashed #b2dfdb; padding-top: 6px;">
+                    <div class="summary-total">
                         <span>Total Payable Amount (Rupees):</span>
-                        <strong id="summaryPrice" style="color: #1b5e20; font-size: 20px;">&#8377;100.00</strong>
+                        <strong id="summaryPrice" class="summary-price">&#8377;100.00</strong>
                     </div>
                 </div>
 
                 <button type="submit" class="btn-purchase" id="submitBtn">
                     Pay &#8377;100.00 &amp; Add 100 WP
                 </button>
-                <div style="text-align: center; font-size: 12px; color: #777; margin-top: 10px;">
+                <div class="security-notice">
                     1 Rupee = 1 WorkPoint &bull; Safe simulated transaction &bull; Funds immediately credited to your wallet balance.
                 </div>
             </div>

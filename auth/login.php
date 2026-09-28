@@ -61,71 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
     <title>Login - SkillSprout</title>
-    <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-    }
-    main {
-        padding: 40px;
-    }
-
-    .login-box {
-        width: 400px;
-        margin: auto;
-        border: 1px solid #ccc;
-        padding: 25px;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .login-box:hover {
-        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-    }
-
-    .login-box h1 {
-        text-align: center;
-    }
-
-    .login-box p {
-        text-align: center;
-    }
-
-    label {
-        display: block;
-        margin-top: 15px;
-        margin-bottom: 5px;
-    }
-
-    input {
-        width: 100%;
-        padding: 10px;
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    input:focus {
-        border-color: #333;
-        box-shadow: 0 0 5px rgba(0,0,0,0.15);
-        outline: none;
-    }
-
-    button {
-        width: 100%;
-        padding: 10px;
-        margin-top: 20px;
-        background-color: black;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 </head>
 <body>
     <?php include __DIR__ . "/../includes/header1.php"; ?>

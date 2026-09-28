@@ -8,7 +8,7 @@ function validateLoginForm() {
         return false;
     }
 
-    var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    var emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
     if (!emailPattern.test(email)) {
         alert("Please enter a valid email address.");
