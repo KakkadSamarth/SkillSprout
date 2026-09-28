@@ -17,7 +17,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["email"]);
     $password = $_POST["password"];
 
-    $sql = "SELECT user_id, name, email, password FROM users WHERE email = ?";
+    $col_res = @mysqli_query($conn, "SHOW COLUMNS FROM users");
+    $has_name = false;
+    $has_username = false;
+    if ($col_res) {
+        while ($c = mysqli_fetch_assoc($col_res)) {
+            if ($c['Field'] === 'name') $has_name = true;
+            if ($c['Field'] === 'username') $has_username = true;
+        }
+    }
+    $name_expr = $has_name ? "name" : ($has_username ? "username AS name" : "email AS name");
+    $sql = "SELECT user_id, $name_expr, email, password FROM users WHERE email = ?";
 
     $stmt = mysqli_prepare($conn, $sql);
 
@@ -33,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $user["password"])) {
 
             $_SESSION["user_id"] = $user["user_id"];
-            $_SESSION["name"] = $user["name"];
+            $_SESSION["name"] = $user["name"] ?? ($user["email"] ?? "User");
             $_SESSION["email"] = $user["email"];
 
             echo "<script>

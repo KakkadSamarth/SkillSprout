@@ -12,7 +12,17 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 
-$sql = "SELECT name, email, wp_balance, created_at FROM users WHERE user_id = ?";
+$col_res = @mysqli_query($conn, "SHOW COLUMNS FROM users");
+$has_name = false;
+$has_username = false;
+if ($col_res) {
+    while ($c = mysqli_fetch_assoc($col_res)) {
+        if ($c['Field'] === 'name') $has_name = true;
+        if ($c['Field'] === 'username') $has_username = true;
+    }
+}
+$name_expr = $has_name ? "name" : ($has_username ? "username AS name" : "email AS name");
+$sql = "SELECT $name_expr, email, wp_balance, created_at FROM users WHERE user_id = ?";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);

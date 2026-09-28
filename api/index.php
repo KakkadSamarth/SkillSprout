@@ -58,7 +58,8 @@ if (isset($static_mimes[$ext])) {
         __DIR__ . '/../' . $path,
         __DIR__ . '/../public/' . $path,
         __DIR__ . '/../' . ltrim($path, '/'),
-        __DIR__ . '/../assets/' . preg_replace('#^assets/#i', '', $path)
+        __DIR__ . '/../assets/' . preg_replace('#^assets/#i', '', $path),
+        __DIR__ . '/../public/assets/' . preg_replace('#^assets/#i', '', $path)
     ];
     foreach ($candidates as $candidate) {
         if (file_exists($candidate) && !is_dir($candidate)) {

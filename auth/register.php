@@ -33,18 +33,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        $sql = "INSERT INTO users (name, email, password)
-                VALUES (?, ?, ?)";
+        $col_res = @mysqli_query($conn, "SHOW COLUMNS FROM users");
+        $cols = [];
+        if ($col_res) {
+            while ($c = mysqli_fetch_assoc($col_res)) {
+                $cols[$c['Field']] = true;
+            }
+        }
 
-        $stmt = mysqli_prepare($conn, $sql);
-
-        mysqli_stmt_bind_param(
-            $stmt,
-            "sss",
-            $name,
-            $email,
-            $hashedPassword
-        );
+        if (isset($cols['name']) && isset($cols['username'])) {
+            $sql = "INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "ssss", $name, $name, $email, $hashedPassword);
+        } elseif (isset($cols['name'])) {
+            $sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "sss", $name, $email, $hashedPassword);
+        } elseif (isset($cols['username'])) {
+            $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "sss", $name, $email, $hashedPassword);
+        } else {
+            $sql = "INSERT INTO users (email, password) VALUES (?, ?)";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "ss", $email, $hashedPassword);
+        }
 
         if (mysqli_stmt_execute($stmt)) {
 

@@ -41,6 +41,34 @@ if (!isset($conn) || !$conn instanceof mysqli) {
         }
     }
 
+    $tbl_check = @mysqli_query($conn, "SHOW TABLES LIKE 'users'");
+    if ($tbl_check && mysqli_num_rows($tbl_check) > 0) {
+        $cols = [];
+        $col_res = @mysqli_query($conn, "SHOW COLUMNS FROM users");
+        if ($col_res) {
+            while ($c = mysqli_fetch_assoc($col_res)) {
+                $cols[$c['Field']] = true;
+            }
+        }
+        if (!isset($cols['name'])) {
+            $has_uname = isset($cols['username']);
+            $has_fname = isset($cols['full_name']);
+            if ($has_uname) {
+                @mysqli_query($conn, "ALTER TABLE users ADD COLUMN `name` VARCHAR(100) NOT NULL DEFAULT '' AFTER `user_id`");
+                @mysqli_query($conn, "UPDATE users SET `name` = `username` WHERE `name` = '' OR `name` IS NULL");
+            } elseif ($has_fname) {
+                @mysqli_query($conn, "ALTER TABLE users ADD COLUMN `name` VARCHAR(100) NOT NULL DEFAULT '' AFTER `user_id`");
+                @mysqli_query($conn, "UPDATE users SET `name` = `full_name` WHERE `name` = '' OR `name` IS NULL");
+            } else {
+                @mysqli_query($conn, "ALTER TABLE users ADD COLUMN `name` VARCHAR(100) NOT NULL DEFAULT '' AFTER `user_id`");
+                @mysqli_query($conn, "UPDATE users SET `name` = SUBSTRING_INDEX(`email`, '@', 1) WHERE `name` = '' OR `name` IS NULL");
+            }
+        }
+        if (!isset($cols['wp_balance'])) {
+            @mysqli_query($conn, "ALTER TABLE users ADD COLUMN `wp_balance` INT NOT NULL DEFAULT 100 AFTER `password`");
+        }
+    }
+
     require_once __DIR__ . "/session.php";
     init_skillsprout_session($conn);
 }
