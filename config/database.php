@@ -24,8 +24,7 @@ if (!isset($conn) || !$conn instanceof mysqli) {
     $is_remote = ($host !== 'localhost' && $host !== '127.0.0.1' && $host !== '');
     $use_ssl = getenv('DB_SSL') === 'true' || getenv('MYSQL_SSL') === 'true' || $is_remote;
 
-    if
-     defined('MYSQLI_CLIENT_SSL')) {
+    if ($use_ssl && defined('MYSQLI_CLIENT_SSL')) {
         mysqli_ssl_set($conn, NULL, NULL, getenv('DB_SSL_CA') ?: NULL, NULL, NULL);
         $connected = @mysqli_real_connect($conn, $host, $username, $password, $database, $port, NULL, MYSQLI_CLIENT_SSL);
         if (!$connected) {
