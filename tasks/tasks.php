@@ -115,25 +115,36 @@ include __DIR__ . "/../includes/header2.php";
                     </td>
 
                     <td>
-                        <?php if ((int)$task["creator_id"] === (int)$user_id) { ?>
+                        <?php 
+                        $is_own = ((int)$task["creator_id"] === (int)$user_id);
+                        $is_applied = isset($applied_map[(int)$task["task_id"]]);
+                        ?>
+                        <?php if ($is_applied) { ?>
+                            <span class="badge badge-success">Applied (<?php echo htmlspecialchars($applied_map[(int)$task["task_id"]]); ?>)</span>
+                            <div class="mt-1">
+                                <a href="<?= BASE_URL ?>tasks/apply_task.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-secondary mr-1">
+                                    Edit Pitch
+                                </a>
+                                <a href="<?= BASE_URL ?>tasks/task_details.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-secondary">
+                                    Details
+                                </a>
+                            </div>
+                        <?php } elseif ($is_own) { ?>
                             <span class="badge badge-warning">Your Task</span>
                             <div class="mt-1">
-                                <a href="<?= BASE_URL ?>tasks/manage_applications.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-primary">
+                                <a href="<?= BASE_URL ?>tasks/apply_task.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-primary" style="font-weight:bold; margin-bottom: 4px;">
+                                    Apply Now &rarr;
+                                </a>
+                                <br>
+                                <a href="<?= BASE_URL ?>tasks/manage_applications.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-secondary mr-1">
                                     Manage
                                 </a>
                                 <a href="<?= BASE_URL ?>tasks/task_details.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-secondary">
                                     Details
                                 </a>
                             </div>
-                        <?php } elseif (isset($applied_map[(int)$task["task_id"]])) { ?>
-                            <span class="badge badge-success">Applied (<?php echo htmlspecialchars($applied_map[(int)$task["task_id"]]); ?>)</span>
-                            <div class="mt-1">
-                                <a href="<?= BASE_URL ?>tasks/task_details.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-secondary">
-                                    View Details
-                                </a>
-                            </div>
                         <?php } else { ?>
-                            <a href="<?= BASE_URL ?>tasks/apply_task.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-primary">
+                            <a href="<?= BASE_URL ?>tasks/apply_task.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-primary" style="font-weight:bold;">
                                 Apply Now &rarr;
                             </a>
                             <div class="mt-1">
