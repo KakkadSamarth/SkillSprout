@@ -14,7 +14,7 @@ if (!defined('BASE_URL')) {
     }
 }
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/style.css">
 
 <header>
     <div class="logo">
