@@ -43,7 +43,9 @@ include __DIR__ . "/../includes/header2.php";
 <html>
 <head>
     <title>My Wallet - SkillSprout</title>
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
+    <style>
+        
+    </style>
 </head>
 <body>
 
@@ -59,29 +61,29 @@ include __DIR__ . "/../includes/header2.php";
             Exchange Rate: &#8377;1 Rupee = 1 WorkPoint (WP)
         </div>
 
-        <h1 class="mt-0">SkillSprout Wallet</h1>
+        <h1 style="margin-top: 0;">SkillSprout Wallet</h1>
         <p>Current balance for <strong><?php echo htmlspecialchars($user["name"]); ?></strong></p>
         
-        <div class="wallet-balance">
+        <div style="font-size: 44px; font-weight: bold; margin: 15px 0 5px; color: #2e7d32;">
             <?php echo (int) $user["wp_balance"]; ?> WP
         </div>
-        <div class="wallet-equiv">
+        <div style="font-size: 18px; color: #555; margin-bottom: 15px;">
             (Equivalent Value: <strong>&#8377;<?php echo number_format($user["wp_balance"], 2); ?></strong>)
         </div>
 
-        <p class="wallet-desc">
+        <p style="color: #666; font-size: 14px;">
             Complete tasks to earn Work Points, or top-up your balance to post tasks and reward skilled contributors!
         </p>
 
-        <div class="wallet-actions">
-            <a href="<?= BASE_URL ?>user/purchase_wallet.php" class="btn btn-accent">+ Purchase Work Points</a>
-            <a href="<?= BASE_URL ?>tasks/tasks.php" class="btn btn-primary">Find Tasks</a>
-            <a href="<?= BASE_URL ?>tasks/create_task.php" class="btn btn-secondary">Create Task</a>
+        <div style="margin-top: 25px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <a href="<?= BASE_URL ?>user/purchase_wallet.php" style="padding: 12px 24px; background-color: #2e7d32; color: white; text-decoration: none; font-weight: bold; border-radius: 4px; display: inline-block;">+ Purchase Work Points</a>
+            <a href="<?= BASE_URL ?>tasks/tasks.php" style="padding: 12px 20px; background-color: black; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">Find Tasks</a>
+            <a href="<?= BASE_URL ?>tasks/create_task.php" style="padding: 12px 20px; background-color: #333; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">Create Task</a>
         </div>
     </div>
 
     <div class="wallet-history">
-        <h3>Purchase &amp; Top-up History</h3>
+        <h3 style="margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px;">Purchase &amp; Top-up History</h3>
         <?php if ($transactions && mysqli_num_rows($transactions) > 0): ?>
             <table class="history-table">
                 <thead>
@@ -97,7 +99,7 @@ include __DIR__ . "/../includes/header2.php";
                     <?php while ($txn = mysqli_fetch_assoc($transactions)): ?>
                         <tr>
                             <td><?php echo htmlspecialchars(date('M d, Y H:i', strtotime($txn['created_at']))); ?></td>
-                            <td class="text-accent font-bold">+<?php echo (int)$txn['amount_wp']; ?> WP</td>
+                            <td style="color: #2e7d32; font-weight: bold;">+<?php echo (int)$txn['amount_wp']; ?> WP</td>
                             <td>&#8377;<?php echo number_format($txn['price_paid'], 2); ?></td>
                             <td><?php echo htmlspecialchars($txn['payment_method']); ?></td>
                             <td><span class="badge-success"><?php echo htmlspecialchars($txn['status']); ?></span></td>
@@ -106,7 +108,7 @@ include __DIR__ . "/../includes/header2.php";
                 </tbody>
             </table>
         <?php else: ?>
-            <p class="empty-state">
+            <p style="color: #888; font-size: 14px; text-align: center; margin: 20px 0;">
                 No purchase transactions yet. Click &ldquo;Purchase Work Points&rdquo; above to add funds.
             </p>
         <?php endif; ?>
