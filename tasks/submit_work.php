@@ -19,16 +19,42 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
 
 $task_id = (int) $_GET["id"];
 
+$t_cols = [];
+$tcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM tasks");
+if ($tcol_res) {
+    while ($tc = mysqli_fetch_assoc($tcol_res)) {
+        $t_cols[$tc['Field']] = true;
+    }
+}
+$t_reward = isset($t_cols['reward_wp']) ? 'reward_wp' : (isset($t_cols['reward']) ? 'reward AS reward_wp' : (isset($t_cols['points']) ? 'points AS reward_wp' : '10 AS reward_wp'));
+$t_assigned = isset($t_cols['assigned_user_id']) ? 'assigned_user_id' : 'task_id';
+
+$sub_cols = [];
+$subcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM submissions");
+if ($subcol_res) {
+    while ($sc = mysqli_fetch_assoc($subcol_res)) {
+        $sub_cols[$sc['Field']] = true;
+    }
+}
+$s_user_col = isset($sub_cols['user_id']) ? 'user_id' : (
+    isset($sub_cols['worker_id']) ? 'worker_id' : (
+    isset($sub_cols['submitter_id']) ? 'submitter_id' : 'user_id'));
+$s_text_col = isset($sub_cols['submission_text']) ? 'submission_text' : (
+    isset($sub_cols['text']) ? 'text' : (
+    isset($sub_cols['content']) ? 'content' : (
+    isset($sub_cols['description']) ? 'description' : 'submission_text')));
+$s_task_col = isset($sub_cols['task_id']) ? 'task_id' : 'task_id';
+
 $sql = "SELECT
             task_id,
             title,
             description,
-            reward_wp,
+            $t_reward,
             deadline,
             status
         FROM tasks
         WHERE task_id = ?
-        AND assigned_user_id = ?
+        AND $t_assigned = ?
         AND status = 'ASSIGNED'";
 
 $stmt = mysqli_prepare($conn, $sql);
@@ -66,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
 
         $sql = "INSERT INTO submissions
-                (task_id, user_id, submission_text)
+                ($s_task_col, $s_user_col, $s_text_col)
                 VALUES (?, ?, ?)";
 
         $stmt = mysqli_prepare($conn, $sql);

@@ -20,7 +20,30 @@ $user_id = $_SESSION["user_id"];
 
 $message = "";
 
-$sql = "SELECT task_id, creator_id, title, status
+$t_cols = [];
+$tcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM tasks");
+if ($tcol_res) {
+    while ($tc = mysqli_fetch_assoc($tcol_res)) {
+        $t_cols[$tc['Field']] = true;
+    }
+}
+$t_creator_col = isset($t_cols['creator_id']) ? 'creator_id' : (isset($t_cols['user_id']) ? 'user_id' : 'creator_id');
+
+$app_cols = [];
+$appcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM applications");
+if ($appcol_res) {
+    while ($ac = mysqli_fetch_assoc($appcol_res)) {
+        $app_cols[$ac['Field']] = true;
+    }
+}
+$a_id_col = isset($app_cols['application_id']) ? 'application_id' : (isset($app_cols['id']) ? 'id AS application_id' : '1 AS application_id');
+$a_user_col = isset($app_cols['user_id']) ? 'user_id' : (
+    isset($app_cols['applicant_id']) ? 'applicant_id' : (
+    isset($app_cols['worker_id']) ? 'worker_id' : 'user_id'));
+$a_task_col = isset($app_cols['task_id']) ? 'task_id' : 'task_id';
+$a_msg_col = isset($app_cols['message']) ? 'message' : (isset($app_cols['proposal']) ? 'proposal' : 'message');
+
+$sql = "SELECT task_id, $t_creator_col AS creator_id, title, status
         FROM tasks
         WHERE task_id = ?";
 
@@ -49,10 +72,10 @@ if ($task["status"] != "OPEN") {
     exit();
 }
 
-$sql = "SELECT application_id
+$sql = "SELECT $a_id_col
         FROM applications
-        WHERE task_id = ?
-        AND user_id = ?";
+        WHERE $a_task_col = ?
+        AND $a_user_col = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
 
@@ -70,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$already_applied) {
     $application_message = trim($_POST["message"]);
 
     $sql = "INSERT INTO applications
-            (task_id, user_id, message)
+            ($a_task_col, $a_user_col, $a_msg_col)
             VALUES (?, ?, ?)";
 
     $stmt = mysqli_prepare($conn, $sql);

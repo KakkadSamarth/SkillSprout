@@ -19,29 +19,68 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
 
 $task_id = (int) $_GET["id"];
 
+$t_cols = [];
+$tcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM tasks");
+if ($tcol_res) {
+    while ($tc = mysqli_fetch_assoc($tcol_res)) {
+        $t_cols[$tc['Field']] = true;
+    }
+}
+$t_reward = isset($t_cols['reward_wp']) ? 'tasks.reward_wp' : (isset($t_cols['reward']) ? 'tasks.reward AS reward_wp' : (isset($t_cols['points']) ? 'tasks.points AS reward_wp' : '10 AS reward_wp'));
+$t_creator = isset($t_cols['creator_id']) ? 'tasks.creator_id' : (isset($t_cols['user_id']) ? 'tasks.user_id' : 'tasks.creator_id');
+
+$u_cols = [];
+$ucol_res = @mysqli_query($conn, "SHOW COLUMNS FROM users");
+if ($ucol_res) {
+    while ($uc = mysqli_fetch_assoc($ucol_res)) {
+        $u_cols[$uc['Field']] = true;
+    }
+}
+$u_name = isset($u_cols['name']) ? 'users.name AS worker_name' : (isset($u_cols['username']) ? 'users.username AS worker_name' : 'users.email AS worker_name');
+$u_bal_col = isset($u_cols['wp_balance']) ? 'wp_balance' : (isset($u_cols['points']) ? 'points' : 'wp_balance');
+
+$sub_cols = [];
+$subcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM submissions");
+if ($subcol_res) {
+    while ($sc = mysqli_fetch_assoc($subcol_res)) {
+        $sub_cols[$sc['Field']] = true;
+    }
+}
+$s_id = isset($sub_cols['submission_id']) ? 'submissions.submission_id' : (isset($sub_cols['id']) ? 'submissions.id AS submission_id' : '1 AS submission_id');
+$s_text = isset($sub_cols['submission_text']) ? 'submissions.submission_text' : (
+    isset($sub_cols['text']) ? 'submissions.text AS submission_text' : (
+    isset($sub_cols['content']) ? 'submissions.content AS submission_text' : (
+    isset($sub_cols['description']) ? 'submissions.description AS submission_text' : "'' AS submission_text")));
+$s_user = isset($sub_cols['user_id']) ? 'submissions.user_id' : (
+    isset($sub_cols['worker_id']) ? 'submissions.worker_id' : (
+    isset($sub_cols['submitter_id']) ? 'submissions.submitter_id' : 'submissions.user_id'));
+$s_task = isset($sub_cols['task_id']) ? 'submissions.task_id' : 'tasks.task_id';
+$s_status = isset($sub_cols['status']) ? 'submissions.status' : "'SUBMITTED'";
+$s_created = isset($sub_cols['created_at']) ? 'submissions.created_at' : 'tasks.created_at';
+
 $sql = "SELECT
             tasks.task_id,
             tasks.title,
-            tasks.reward_wp,
+            $t_reward,
             tasks.status,
-            tasks.creator_id,
+            $t_creator,
             users.user_id AS worker_id,
-            users.name AS worker_name,
-            submissions.submission_id,
-            submissions.submission_text,
-            submissions.status AS submission_status,
-            submissions.created_at
+            $u_name,
+            $s_id,
+            $s_text,
+            $s_status AS submission_status,
+            $s_created AS created_at
         FROM tasks
 
         INNER JOIN submissions
-            ON tasks.task_id = submissions.task_id
+            ON tasks.task_id = $s_task
 
         INNER JOIN users
-            ON submissions.user_id = users.user_id
+            ON $s_user = users.user_id
 
         WHERE tasks.task_id = ?
-        AND tasks.creator_id = ?
-        AND submissions.status = 'SUBMITTED'";
+        AND $t_creator = ?
+        AND $s_status = 'SUBMITTED'";
 
 $stmt = mysqli_prepare($conn, $sql);
 

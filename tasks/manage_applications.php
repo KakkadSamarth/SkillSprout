@@ -19,16 +19,52 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
 
 $task_id = (int) $_GET["id"];
 
+$t_cols = [];
+$tcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM tasks");
+if ($tcol_res) {
+    while ($tc = mysqli_fetch_assoc($tcol_res)) {
+        $t_cols[$tc['Field']] = true;
+    }
+}
+$t_creator = isset($t_cols['creator_id']) ? 'creator_id' : (isset($t_cols['user_id']) ? 'user_id' : 'creator_id');
+$t_assigned = isset($t_cols['assigned_user_id']) ? 'assigned_user_id' : 'assigned_user_id';
+
+$app_cols = [];
+$appcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM applications");
+if ($appcol_res) {
+    while ($ac = mysqli_fetch_assoc($appcol_res)) {
+        $app_cols[$ac['Field']] = true;
+    }
+}
+$a_id = isset($app_cols['application_id']) ? 'application_id' : (isset($app_cols['id']) ? 'id' : 'application_id');
+$a_id_select = isset($app_cols['application_id']) ? 'applications.application_id' : (isset($app_cols['id']) ? 'applications.id AS application_id' : '1 AS application_id');
+$a_msg = isset($app_cols['message']) ? 'applications.message' : (isset($app_cols['proposal']) ? 'applications.proposal AS message' : "'' AS message");
+$a_status = isset($app_cols['status']) ? 'status' : 'status';
+$a_created = isset($app_cols['created_at']) ? 'applications.created_at' : (isset($app_cols['applied_at']) ? 'applications.applied_at' : 'CURRENT_TIMESTAMP');
+$a_user = isset($app_cols['user_id']) ? 'user_id' : (
+    isset($app_cols['applicant_id']) ? 'applicant_id' : (
+    isset($app_cols['worker_id']) ? 'worker_id' : 'user_id'));
+$a_task = isset($app_cols['task_id']) ? 'task_id' : 'task_id';
+
+$u_cols = [];
+$ucol_res = @mysqli_query($conn, "SHOW COLUMNS FROM users");
+if ($ucol_res) {
+    while ($uc = mysqli_fetch_assoc($ucol_res)) {
+        $u_cols[$uc['Field']] = true;
+    }
+}
+$u_name = isset($u_cols['name']) ? 'users.name' : (isset($u_cols['username']) ? 'users.username AS name' : 'users.email AS name');
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $application_id = (int) $_POST["application_id"];
     $action = $_POST["action"];
 
-    $sql = "SELECT user_id
+    $sql = "SELECT $a_user AS user_id
             FROM applications
-            WHERE application_id = ?
-            AND task_id = ?
-            AND status = 'PENDING'";
+            WHERE $a_id = ?
+            AND $a_task = ?
+            AND $a_status = 'PENDING'";
 
     $stmt = mysqli_prepare($conn, $sql);
 
@@ -59,9 +95,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
 
             $sql = "UPDATE applications
-                    SET status = 'ACCEPTED'
-                    WHERE application_id = ?
-                    AND task_id = ?";
+                    SET $a_status = 'ACCEPTED'
+                    WHERE $a_id = ?
+                    AND $a_task = ?";
 
             $stmt = mysqli_prepare($conn, $sql);
 
@@ -77,10 +113,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mysqli_stmt_close($stmt);
 
             $sql = "UPDATE applications
-                    SET status = 'REJECTED'
-                    WHERE task_id = ?
-                    AND application_id != ?
-                    AND status = 'PENDING'";
+                    SET $a_status = 'REJECTED'
+                    WHERE $a_task = ?
+                    AND $a_id != ?
+                    AND $a_status = 'PENDING'";
 
             $stmt = mysqli_prepare($conn, $sql);
 
@@ -99,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $sql = "UPDATE tasks
                     SET status = 'ASSIGNED',
-                        assigned_user_id = ?
+                        $t_assigned = ?
                     WHERE task_id = ?";
 
             $stmt = mysqli_prepare($conn, $sql);
@@ -132,10 +168,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($action == "reject") {
 
         $sql = "UPDATE applications
-                SET status = 'REJECTED'
-                WHERE application_id = ?
-                AND task_id = ?
-                AND status = 'PENDING'";
+                SET $a_status = 'REJECTED'
+                WHERE $a_id = ?
+                AND $a_task = ?
+                AND $a_status = 'PENDING'";
 
         $stmt = mysqli_prepare($conn, $sql);
 
@@ -161,7 +197,7 @@ $sql = "SELECT
             status
         FROM tasks
         WHERE task_id = ?
-        AND creator_id = ?";
+        AND $t_creator = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
 
@@ -181,18 +217,18 @@ if (!$task) {
 }
 
 $sql = "SELECT
-            applications.application_id,
-            applications.message,
-            applications.status AS application_status,
-            applications.created_at,
+            $a_id_select,
+            $a_msg,
+            applications.$a_status AS application_status,
+            $a_created AS created_at,
             users.user_id,
-            users.name,
+            $u_name,
             users.email
         FROM applications
         INNER JOIN users
-            ON applications.user_id = users.user_id
-        WHERE applications.task_id = ?
-        ORDER BY applications.created_at ASC";
+            ON applications.$a_user = users.user_id
+        WHERE applications.$a_task = ?
+        ORDER BY $a_created ASC";
 
 $stmt = mysqli_prepare($conn, $sql);
 

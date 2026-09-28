@@ -158,7 +158,7 @@ if (!isset($conn) || !$conn instanceof mysqli) {
         }
     }
 
-    // 3. Ensure applications table
+    // 3. Ensure applications table and columns
     @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `applications` (
         `application_id` INT AUTO_INCREMENT PRIMARY KEY,
         `task_id` INT NOT NULL,
@@ -168,7 +168,73 @@ if (!isset($conn) || !$conn instanceof mysqli) {
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    // 4. Ensure submissions table
+    $app_check = @mysqli_query($conn, "SHOW TABLES LIKE 'applications'");
+    if ($app_check && mysqli_num_rows($app_check) > 0) {
+        $app_cols = [];
+        $app_col_res = @mysqli_query($conn, "SHOW COLUMNS FROM applications");
+        if ($app_col_res) {
+            while ($ac = mysqli_fetch_assoc($app_col_res)) {
+                $app_cols[$ac['Field']] = true;
+            }
+        }
+
+        if (!isset($app_cols['application_id'])) {
+            if (isset($app_cols['id'])) {
+                @mysqli_query($conn, "ALTER TABLE applications ADD COLUMN `application_id` INT NOT NULL DEFAULT 0 FIRST");
+                @mysqli_query($conn, "UPDATE applications SET `application_id` = `id`");
+            } else {
+                @mysqli_query($conn, "ALTER TABLE applications ADD COLUMN `application_id` INT AUTO_INCREMENT PRIMARY KEY FIRST");
+            }
+        }
+
+        if (!isset($app_cols['task_id'])) {
+            @mysqli_query($conn, "ALTER TABLE applications ADD COLUMN `task_id` INT NOT NULL DEFAULT 1");
+        }
+
+        if (!isset($app_cols['user_id'])) {
+            $user_src = null;
+            if (isset($app_cols['applicant_id'])) $user_src = 'applicant_id';
+            elseif (isset($app_cols['worker_id'])) $user_src = 'worker_id';
+            elseif (isset($app_cols['candidate_id'])) $user_src = 'candidate_id';
+            elseif (isset($app_cols['student_id'])) $user_src = 'student_id';
+
+            if ($user_src) {
+                @mysqli_query($conn, "ALTER TABLE applications ADD COLUMN `user_id` INT NOT NULL DEFAULT 1 AFTER `task_id`");
+                @mysqli_query($conn, "UPDATE applications SET `user_id` = `$user_src`");
+            } else {
+                @mysqli_query($conn, "ALTER TABLE applications ADD COLUMN `user_id` INT NOT NULL DEFAULT 1 AFTER `task_id`");
+            }
+        }
+
+        if (!isset($app_cols['message'])) {
+            $msg_src = null;
+            if (isset($app_cols['proposal'])) $msg_src = 'proposal';
+            elseif (isset($app_cols['cover_letter'])) $msg_src = 'cover_letter';
+            elseif (isset($app_cols['description'])) $msg_src = 'description';
+
+            if ($msg_src) {
+                @mysqli_query($conn, "ALTER TABLE applications ADD COLUMN `message` TEXT NULL AFTER `user_id`");
+                @mysqli_query($conn, "UPDATE applications SET `message` = `$msg_src`");
+            } else {
+                @mysqli_query($conn, "ALTER TABLE applications ADD COLUMN `message` TEXT NULL AFTER `user_id`");
+            }
+        }
+
+        if (!isset($app_cols['status'])) {
+            @mysqli_query($conn, "ALTER TABLE applications ADD COLUMN `status` VARCHAR(20) NOT NULL DEFAULT 'PENDING' AFTER `message`");
+        }
+
+        if (!isset($app_cols['created_at'])) {
+            if (isset($app_cols['applied_at'])) {
+                @mysqli_query($conn, "ALTER TABLE applications ADD COLUMN `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+                @mysqli_query($conn, "UPDATE applications SET `created_at` = `applied_at`");
+            } else {
+                @mysqli_query($conn, "ALTER TABLE applications ADD COLUMN `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+            }
+        }
+    }
+
+    // 4. Ensure submissions table and columns
     @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `submissions` (
         `submission_id` INT AUTO_INCREMENT PRIMARY KEY,
         `task_id` INT NOT NULL,
@@ -178,16 +244,129 @@ if (!isset($conn) || !$conn instanceof mysqli) {
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    // 5. Ensure transactions table
+    $sub_check = @mysqli_query($conn, "SHOW TABLES LIKE 'submissions'");
+    if ($sub_check && mysqli_num_rows($sub_check) > 0) {
+        $sub_cols = [];
+        $sub_col_res = @mysqli_query($conn, "SHOW COLUMNS FROM submissions");
+        if ($sub_col_res) {
+            while ($sc = mysqli_fetch_assoc($sub_col_res)) {
+                $sub_cols[$sc['Field']] = true;
+            }
+        }
+
+        if (!isset($sub_cols['submission_id'])) {
+            if (isset($sub_cols['id'])) {
+                @mysqli_query($conn, "ALTER TABLE submissions ADD COLUMN `submission_id` INT NOT NULL DEFAULT 0 FIRST");
+                @mysqli_query($conn, "UPDATE submissions SET `submission_id` = `id`");
+            } else {
+                @mysqli_query($conn, "ALTER TABLE submissions ADD COLUMN `submission_id` INT AUTO_INCREMENT PRIMARY KEY FIRST");
+            }
+        }
+
+        if (!isset($sub_cols['task_id'])) {
+            @mysqli_query($conn, "ALTER TABLE submissions ADD COLUMN `task_id` INT NOT NULL DEFAULT 1");
+        }
+
+        if (!isset($sub_cols['user_id'])) {
+            $user_src = null;
+            if (isset($sub_cols['worker_id'])) $user_src = 'worker_id';
+            elseif (isset($sub_cols['submitter_id'])) $user_src = 'submitter_id';
+            elseif (isset($sub_cols['applicant_id'])) $user_src = 'applicant_id';
+
+            if ($user_src) {
+                @mysqli_query($conn, "ALTER TABLE submissions ADD COLUMN `user_id` INT NOT NULL DEFAULT 1 AFTER `task_id`");
+                @mysqli_query($conn, "UPDATE submissions SET `user_id` = `$user_src`");
+            } else {
+                @mysqli_query($conn, "ALTER TABLE submissions ADD COLUMN `user_id` INT NOT NULL DEFAULT 1 AFTER `task_id`");
+            }
+        }
+
+        if (!isset($sub_cols['submission_text'])) {
+            $txt_src = null;
+            if (isset($sub_cols['text'])) $txt_src = 'text';
+            elseif (isset($sub_cols['content'])) $txt_src = 'content';
+            elseif (isset($sub_cols['description'])) $txt_src = 'description';
+            elseif (isset($sub_cols['message'])) $txt_src = 'message';
+
+            if ($txt_src) {
+                @mysqli_query($conn, "ALTER TABLE submissions ADD COLUMN `submission_text` TEXT NOT NULL");
+                @mysqli_query($conn, "UPDATE submissions SET `submission_text` = `$txt_src`");
+            } else {
+                @mysqli_query($conn, "ALTER TABLE submissions ADD COLUMN `submission_text` TEXT NOT NULL");
+            }
+        }
+
+        if (!isset($sub_cols['status'])) {
+            @mysqli_query($conn, "ALTER TABLE submissions ADD COLUMN `status` VARCHAR(20) NOT NULL DEFAULT 'SUBMITTED'");
+        }
+
+        if (!isset($sub_cols['created_at'])) {
+            @mysqli_query($conn, "ALTER TABLE submissions ADD COLUMN `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+        }
+    }
+
+    // 5. Ensure transactions table and columns
     @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `transactions` (
         `transaction_id` INT AUTO_INCREMENT PRIMARY KEY,
         `user_id` INT NOT NULL,
         `amount_wp` INT NOT NULL,
         `price_paid` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-        `payment_method` VARCHAR(50) NOT NULL DEFAULT 'Mock Card / Test Payment',
+        `payment_method` VARCHAR(150) NOT NULL DEFAULT 'Mock Card / Test Payment',
         `status` ENUM('COMPLETED', 'PENDING', 'FAILED') NOT NULL DEFAULT 'COMPLETED',
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    $txn_check = @mysqli_query($conn, "SHOW TABLES LIKE 'transactions'");
+    if ($txn_check && mysqli_num_rows($txn_check) > 0) {
+        $txn_cols = [];
+        $txn_col_res = @mysqli_query($conn, "SHOW COLUMNS FROM transactions");
+        if ($txn_col_res) {
+            while ($tc = mysqli_fetch_assoc($txn_col_res)) {
+                $txn_cols[$tc['Field']] = true;
+            }
+        }
+
+        if (!isset($txn_cols['transaction_id'])) {
+            if (isset($txn_cols['id'])) {
+                @mysqli_query($conn, "ALTER TABLE transactions ADD COLUMN `transaction_id` INT NOT NULL DEFAULT 0 FIRST");
+                @mysqli_query($conn, "UPDATE transactions SET `transaction_id` = `id`");
+            } else {
+                @mysqli_query($conn, "ALTER TABLE transactions ADD COLUMN `transaction_id` INT AUTO_INCREMENT PRIMARY KEY FIRST");
+            }
+        }
+
+        if (!isset($txn_cols['user_id'])) {
+            @mysqli_query($conn, "ALTER TABLE transactions ADD COLUMN `user_id` INT NOT NULL DEFAULT 1");
+        }
+
+        if (!isset($txn_cols['amount_wp'])) {
+            if (isset($txn_cols['amount'])) {
+                @mysqli_query($conn, "ALTER TABLE transactions ADD COLUMN `amount_wp` INT NOT NULL DEFAULT 0");
+                @mysqli_query($conn, "UPDATE transactions SET `amount_wp` = `amount`");
+            } elseif (isset($txn_cols['points'])) {
+                @mysqli_query($conn, "ALTER TABLE transactions ADD COLUMN `amount_wp` INT NOT NULL DEFAULT 0");
+                @mysqli_query($conn, "UPDATE transactions SET `amount_wp` = `points`");
+            } else {
+                @mysqli_query($conn, "ALTER TABLE transactions ADD COLUMN `amount_wp` INT NOT NULL DEFAULT 0");
+            }
+        }
+
+        if (!isset($txn_cols['price_paid'])) {
+            @mysqli_query($conn, "ALTER TABLE transactions ADD COLUMN `price_paid` DECIMAL(10,2) NOT NULL DEFAULT 0.00");
+        }
+
+        if (!isset($txn_cols['payment_method'])) {
+            @mysqli_query($conn, "ALTER TABLE transactions ADD COLUMN `payment_method` VARCHAR(150) NOT NULL DEFAULT 'Mock Card / Test Payment'");
+        }
+
+        if (!isset($txn_cols['status'])) {
+            @mysqli_query($conn, "ALTER TABLE transactions ADD COLUMN `status` VARCHAR(20) NOT NULL DEFAULT 'COMPLETED'");
+        }
+
+        if (!isset($txn_cols['created_at'])) {
+            @mysqli_query($conn, "ALTER TABLE transactions ADD COLUMN `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+        }
+    }
 
     require_once __DIR__ . "/session.php";
     init_skillsprout_session($conn);

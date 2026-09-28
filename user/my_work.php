@@ -25,16 +25,34 @@ $t_status = isset($t_cols['status']) ? 'tasks.status' : "'OPEN' AS status";
 $t_creator = isset($t_cols['creator_id']) ? 'tasks.creator_id' : (isset($t_cols['user_id']) ? 'tasks.user_id' : 'tasks.creator_id');
 $t_assigned = isset($t_cols['assigned_user_id']) ? 'tasks.assigned_user_id' : 'tasks.task_id';
 
+$app_cols = [];
+$appcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM applications");
+if ($appcol_res) {
+    while ($ac = mysqli_fetch_assoc($appcol_res)) {
+        $app_cols[$ac['Field']] = true;
+    }
+}
+$a_id = isset($app_cols['application_id']) ? 'applications.application_id' : (isset($app_cols['id']) ? 'applications.id AS application_id' : '1 AS application_id');
+$a_count = isset($app_cols['application_id']) ? 'applications.application_id' : (isset($app_cols['id']) ? 'applications.id' : '*');
+$a_task = isset($app_cols['task_id']) ? 'applications.task_id' : 'tasks.task_id';
+$a_user = isset($app_cols['user_id']) ? 'applications.user_id' : (
+    isset($app_cols['applicant_id']) ? 'applications.applicant_id' : (
+    isset($app_cols['worker_id']) ? 'applications.worker_id' : (
+    isset($app_cols['candidate_id']) ? 'applications.candidate_id' : (
+    isset($app_cols['student_id']) ? 'applications.student_id' : 'applications.user_id'))));
+$a_status = isset($app_cols['status']) ? 'applications.status' : "'PENDING'";
+$a_created = isset($app_cols['created_at']) ? 'applications.created_at' : (isset($app_cols['applied_at']) ? 'applications.applied_at' : 'tasks.created_at');
+
 $sql = "SELECT
             tasks.task_id,
             tasks.title,
             $t_reward,
             $t_deadline,
             $t_status,
-            COUNT(applications.application_id) AS applicant_count
+            COUNT($a_count) AS applicant_count
         FROM tasks
         LEFT JOIN applications
-            ON tasks.task_id = applications.task_id
+            ON tasks.task_id = $a_task
         WHERE $t_creator = ?
         GROUP BY
             tasks.task_id,
@@ -52,18 +70,18 @@ mysqli_stmt_execute($stmt);
 $created_tasks = mysqli_stmt_get_result($stmt);
 
 $sql = "SELECT
-            applications.application_id,
-            applications.status AS application_status,
+            $a_id,
+            $a_status AS application_status,
             tasks.task_id,
             tasks.title,
             $t_reward,
             $t_deadline
         FROM applications
         INNER JOIN tasks
-            ON applications.task_id = tasks.task_id
-        WHERE applications.user_id = ?
-        AND applications.status = 'PENDING'
-        ORDER BY applications.created_at DESC";
+            ON $a_task = tasks.task_id
+        WHERE $a_user = ?
+        AND $a_status = 'PENDING'
+        ORDER BY $a_created DESC";
 
 $stmt = mysqli_prepare($conn, $sql);
 
