@@ -80,6 +80,12 @@ include __DIR__ . "/../includes/header2.php";
 
             <td class="task-details-box">
 
+                <?php if (isset($_GET['err']) && $_GET['err'] === 'own_task') { ?>
+                    <div class="alert-box alert-warning">
+                        You created this task. As the task creator, you cannot apply to your own task. You can manage incoming applications below.
+                    </div>
+                <?php } ?>
+
                 <h1>
                     <?php echo htmlspecialchars($task["title"]); ?>
                 </h1>
@@ -131,19 +137,26 @@ include __DIR__ . "/../includes/header2.php";
                 </p>
 
 <?php
+$user_id = (int)$_SESSION["user_id"];
+$user_applied = false;
+$app_status = '';
+$app_check = @mysqli_query($conn, "SELECT status FROM applications WHERE task_id = $task_id AND (user_id = $user_id OR applicant_id = $user_id) LIMIT 1");
+if ($app_check && ($ar = mysqli_fetch_assoc($app_check))) {
+    $user_applied = true;
+    $app_status = $ar['status'];
+}
 
-if ($task["creator_id"] == $_SESSION["user_id"]) {
+if ((int)$task["creator_id"] === $user_id) {
+    ?>
+    <div class="alert-box alert-info mt-2 mb-2">
+        <strong>You are the Creator of this Task:</strong> You posted this task offering <strong><?php echo (int) $task['reward_wp']; ?> WP</strong>. As the creator, you cannot apply to your own task. You can manage incoming applications or cancel the task below.
+    </div>
 
-    if ($task["status"] == "OPEN") {
-        ?>
-
-        <p>
+    <?php if ($task["status"] == "OPEN") { ?>
+        <p class="mt-2">
             <a href="<?= BASE_URL ?>tasks/manage_applications.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-primary mr-1">
                 Manage Applications
             </a>
-        </p>
-
-        <p>
             <form action="<?= BASE_URL ?>tasks/cancel_task.php" method="post" class="inline-block" onsubmit="return confirm('Are you sure you want to cancel this task? Your <?php echo (int) $task['reward_wp']; ?> WP will be refunded to your balance.');">
                 <input type="hidden" name="task_id" value="<?php echo $task['task_id']; ?>">
                 <button type="submit" class="btn btn-danger">
@@ -151,59 +164,41 @@ if ($task["creator_id"] == $_SESSION["user_id"]) {
                 </button>
             </form>
         </p>
-
-        <?php
-    } else {
-        ?>
-
-        <p>
-            This task is no longer accepting applications.
+    <?php } else { ?>
+        <p class="text-muted mt-2">
+            This task is no longer accepting applications (Current status: <?php echo htmlspecialchars($task["status"]); ?>).
         </p>
+    <?php } ?>
 
-        <?php
-    }
+<?php } else { ?>
 
-} else {
-
-    if ($task["status"] == "OPEN") {
-        ?>
-
-        <p>
-            <a href="<?= BASE_URL ?>tasks/apply_task.php?id=<?php echo $task["task_id"]; ?>">
-                Apply for Task
+    <?php if ($user_applied) { ?>
+        <div class="alert-box alert-success mt-2 mb-2">
+            <strong>Application Submitted:</strong> You have applied for this task. Your application status is <strong><?php echo htmlspecialchars($app_status); ?></strong>.
+            <br>
+            <a href="<?= BASE_URL ?>user/my_work.php" class="btn btn-secondary mt-1">View in My Applications &rarr;</a>
+        </div>
+    <?php } elseif ($task["status"] == "OPEN") { ?>
+        <p class="mt-2">
+            <a href="<?= BASE_URL ?>tasks/apply_task.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-primary">
+                Apply for this Task &rarr;
             </a>
         </p>
-
-        <?php
-    } elseif ($task["status"] == "ASSIGNED") {
-        ?>
-
-        <p>
-            This task has already been assigned to a worker.
-        </p>
-
-        <?php
-    } elseif ($task["status"] == "SUBMITTED") {
-        ?>
-
-        <p>
-            This task is waiting for the creator to review the work.
-        </p>
-
-        <?php
-    } elseif ($task["status"] == "COMPLETED") {
-        ?>
-
-        <p>
+    <?php } elseif ($task["status"] == "ASSIGNED") { ?>
+        <div class="alert-box alert-warning mt-2">
+            This task has already been assigned to another worker.
+        </div>
+    <?php } elseif ($task["status"] == "SUBMITTED") { ?>
+        <div class="alert-box alert-warning mt-2">
+            This task is waiting for the creator to review submitted work.
+        </div>
+    <?php } elseif ($task["status"] == "COMPLETED") { ?>
+        <div class="alert-box alert-info mt-2">
             This task has been completed.
-        </p>
+        </div>
+    <?php } ?>
 
-        <?php
-    }
-
-}
-
-?>
+<?php } ?>
 
             </td>
 

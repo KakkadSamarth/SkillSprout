@@ -22,9 +22,13 @@ $f_skills = isset($t_cols['required_skills']) ? 'required_skills' : (isset($t_co
 $f_reward = isset($t_cols['reward_wp']) ? 'reward_wp' : (isset($t_cols['reward']) ? 'reward AS reward_wp' : (isset($t_cols['points']) ? 'points AS reward_wp' : (isset($t_cols['budget']) ? 'budget AS reward_wp' : '10 AS reward_wp')));
 $f_deadline = isset($t_cols['deadline']) ? 'deadline' : 'CURRENT_DATE AS deadline';
 $f_status = isset($t_cols['status']) ? 'status' : "'OPEN' AS status";
+$t_creator = isset($t_cols['creator_id']) ? 'creator_id' : (isset($t_cols['client_id']) ? 'client_id' : (isset($t_cols['user_id']) ? 'user_id' : 'creator_id'));
+
+$user_id = $_SESSION["user_id"];
 
 $sql = "SELECT
             task_id,
+            $t_creator AS creator_id,
             title,
             description,
             $f_domain,
@@ -37,6 +41,14 @@ $sql = "SELECT
         ORDER BY created_at DESC";
 
 $result = mysqli_query($conn, $sql);
+
+$applied_map = [];
+$app_res = @mysqli_query($conn, "SELECT task_id, status FROM applications WHERE user_id = $user_id");
+if ($app_res) {
+    while ($ar = mysqli_fetch_assoc($app_res)) {
+        $applied_map[(int)$ar['task_id']] = $ar['status'];
+    }
+}
 
 include __DIR__ . "/../includes/header2.php";
 ?>
@@ -52,7 +64,7 @@ include __DIR__ . "/../includes/header2.php";
     <h1>Available Tasks</h1>
 
     <p>
-        Browse available tasks and find work you can complete.
+        Browse available tasks and find work you can complete to earn Work Points.
     </p>
 
     <?php if (mysqli_num_rows($result) > 0) { ?>
@@ -92,9 +104,33 @@ include __DIR__ . "/../includes/header2.php";
                     </td>
 
                     <td>
-                        <a href="<?= BASE_URL ?>tasks/task_details.php?id=<?php echo $task["task_id"]; ?>">
-                            View Details
-                        </a>
+                        <?php if ((int)$task["creator_id"] === (int)$user_id) { ?>
+                            <span class="badge badge-warning">Your Task</span>
+                            <div class="mt-1">
+                                <a href="<?= BASE_URL ?>tasks/manage_applications.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-primary">
+                                    Manage
+                                </a>
+                                <a href="<?= BASE_URL ?>tasks/task_details.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-secondary">
+                                    Details
+                                </a>
+                            </div>
+                        <?php } elseif (isset($applied_map[(int)$task["task_id"]])) { ?>
+                            <span class="badge badge-success">Applied (<?php echo htmlspecialchars($applied_map[(int)$task["task_id"]]); ?>)</span>
+                            <div class="mt-1">
+                                <a href="<?= BASE_URL ?>tasks/task_details.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-secondary">
+                                    View Details
+                                </a>
+                            </div>
+                        <?php } else { ?>
+                            <a href="<?= BASE_URL ?>tasks/apply_task.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-primary">
+                                Apply Now &rarr;
+                            </a>
+                            <div class="mt-1">
+                                <a href="<?= BASE_URL ?>tasks/task_details.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-secondary">
+                                    View Details
+                                </a>
+                            </div>
+                        <?php } ?>
                     </td>
 
                 </tr>

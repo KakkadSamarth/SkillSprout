@@ -63,7 +63,7 @@ if (!$task) {
 }
 
 if ($task["creator_id"] == $user_id) {
-    header("Location: " . BASE_URL . "tasks/task_details.php?id=" . $task_id);
+    header("Location: " . BASE_URL . "tasks/task_details.php?id=" . $task_id . "&err=own_task");
     exit();
 }
 

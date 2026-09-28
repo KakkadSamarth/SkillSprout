@@ -407,6 +407,39 @@ if (!isset($conn) || !$conn instanceof mysqli) {
         }
     }
 
+    // 6. Ensure open community demo tasks exist so new users always have available tasks to apply for
+    $demo_user_res = @mysqli_query($conn, "SELECT user_id FROM users WHERE email = 'demo.client@skillsprout.org' LIMIT 1");
+    $demo_user_id = null;
+    if ($demo_user_res && ($du = mysqli_fetch_assoc($demo_user_res))) {
+        $demo_user_id = (int)$du['user_id'];
+    } else {
+        $hash = password_hash('demo1234', PASSWORD_DEFAULT);
+        @mysqli_query($conn, "INSERT INTO users (name, email, password, wp_balance) VALUES ('SkillSprout Community', 'demo.client@skillsprout.org', '$hash', 500)");
+        $demo_user_id = mysqli_insert_id($conn);
+    }
+
+    if ($demo_user_id) {
+        $demo_task_check = @mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM tasks WHERE creator_id = $demo_user_id OR client_id = $demo_user_id");
+        $demo_cnt = 0;
+        if ($demo_task_check && ($dtc = mysqli_fetch_assoc($demo_task_check))) {
+            $demo_cnt = (int)$dtc['cnt'];
+        }
+        if ($demo_cnt === 0) {
+            $d1 = date('Y-m-d', strtotime('+7 days'));
+            $d2 = date('Y-m-d', strtotime('+12 days'));
+            $d3 = date('Y-m-d', strtotime('+15 days'));
+
+            @mysqli_query($conn, "INSERT INTO tasks (creator_id, client_id, user_id, title, description, domain, category, required_skills, skills, reward_wp, reward, points, budget, deadline, status) 
+                VALUES ($demo_user_id, $demo_user_id, $demo_user_id, 'Build a Responsive Portfolio Website', 'Design and implement a modern 3-page responsive personal portfolio with clean HTML, CSS, and interactive JavaScript projects gallery.', 'Web Development', 'Web Development', 'HTML5, CSS3, JavaScript', 'HTML5, CSS3, JavaScript', 50, 50, 50, 50, '$d1', 'OPEN')");
+
+            @mysqli_query($conn, "INSERT INTO tasks (creator_id, client_id, user_id, title, description, domain, category, required_skills, skills, reward_wp, reward, points, budget, deadline, status) 
+                VALUES ($demo_user_id, $demo_user_id, $demo_user_id, 'Design Logo and Brand Identity Pack', 'Looking for an experienced graphic designer to create a modern logo concept, favicon, and brand color palette for a fintech platform.', 'Graphic Design', 'Graphic Design', 'Figma, Adobe Illustrator, Branding', 'Figma, Adobe Illustrator, Branding', 45, 45, 45, 45, '$d2', 'OPEN')");
+
+            @mysqli_query($conn, "INSERT INTO tasks (creator_id, client_id, user_id, title, description, domain, category, required_skills, skills, reward_wp, reward, points, budget, deadline, status) 
+                VALUES ($demo_user_id, $demo_user_id, $demo_user_id, 'Write Technical Documentation & API Guide', 'Draft comprehensive Markdown documentation and getting-started guide for a REST API service.', 'Content Writing', 'Content Writing', 'Technical Writing, Markdown, API Documentation', 'Technical Writing, Markdown, API Documentation', 35, 35, 35, 35, '$d3', 'OPEN')");
+        }
+    }
+
     require_once __DIR__ . "/session.php";
     init_skillsprout_session($conn);
 }
