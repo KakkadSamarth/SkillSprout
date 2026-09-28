@@ -1,0 +1,8 @@
+{
+  "name": "kakkadsamarth/skillsprout",
+  "description": "SkillSprout - Collaborative Task & Skill Exchange Platform",
+  "type": "project",
+  "require": {
+    "php": ">=7.4"
+  }
+}

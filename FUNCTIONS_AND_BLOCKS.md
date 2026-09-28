@@ -436,11 +436,28 @@ function validateTaskForm() {
 
 ### Deep Dive: `config/database.php`
 
-#### Block 1: Centralized Database Connection
-* **Inbuilt Functions**: `mysqli_connect()`, `mysqli_connect_error()`, `define()`, `defined()`.
-* **Defined Work**: Exposes `$conn` and sets `BASE_URL` to `/SkillSprout/`.
+#### Block 1: Centralized Database Connection & Environment Config
+* **Inbuilt Functions**: `getenv()`, `parse_url()`, `mysqli_init()`, `mysqli_ssl_set()`, `mysqli_real_connect()`, `mysqli_connect_error()`, `defined()`, `define()`, `rtrim()`, `substr()`, `strpos()`.
+* **Defined Work**: Inspects `DATABASE_URL` or `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT`, `DB_SSL`. Initializes connection with SSL if requested. Falls back safely to local XAMPP (`localhost:3306`). Initializes session handler and dynamically defines `BASE_URL` (`/` on Vercel, `/SkillSprout/` on XAMPP).
 
 ---
+
+### Deep Dive: `config/session.php`
+
+#### Block 1: Serverless MySQL Session Save Handler (`SkillSproutSessionHandler`)
+* **Inbuilt Functions & Interfaces**: Implements `SessionHandlerInterface` (`open()`, `close()`, `read()`, `write()`, `destroy()`, `gc()`), `session_set_save_handler()`, `session_status()`.
+* **Defined Work**: Automatically creates `sessions` table in MySQL (`CREATE TABLE IF NOT EXISTS`). Reads and writes serialized session payloads directly to MySQL so users stay logged in across ephemeral serverless invocations on Vercel.
+
+---
+
+### Deep Dive: `api/index.php`
+
+#### Block 1: Vercel Serverless Function Front Controller & Routing
+* **Inbuilt Functions**: `ob_start()`, `parse_url()`, `substr()`, `strlen()`, `trim()`, `preg_match()`, `file_exists()`, `is_dir()`, `pathinfo()`, `header()`, `readfile()`, `http_response_code()`, `chdir()`, `dirname()`, `require`.
+* **Defined Work**: Intercepts all incoming requests on Vercel. Normalizes URL path, resolves clean URLs (`/login`, `/dashboard`, `/tasks`, `/create-task`), provides static file fallbacks for assets with correct MIME types, boots session and database configuration, and delegates execution to the matched page script.
+
+---
+
 
 ### Deep Dive: `includes/header1.php` & `includes/header2.php`
 

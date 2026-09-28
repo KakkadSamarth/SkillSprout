@@ -365,12 +365,32 @@ This document explains the work, role, inputs, workflows, database queries, and 
 ## 6. Configuration & Schema
 
 ### `config/database.php`
-* **Purpose**: Centralized database connection and project configuration.
+* **Purpose**: Centralized database connection, SSL configuration, and environment-aware `BASE_URL`.
 * **Work & Workflow**:
-  - Defines database host, credentials (`root`, empty password), database name (`workpoint`), and port (`3306`).
-  - Creates MySQL connection using `mysqli_connect()`.
-  - Checks connection error; terminates with error message if failed.
-  - Defines global constant `BASE_URL = '/SkillSprout/'` if not already defined.
+  - Dynamically extracts credentials from `DATABASE_URL`, `MYSQL_URL`, or individual `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT` variables.
+  - Automatically falls back to local XAMPP configuration (`localhost:3306`, `root`, `""`, `workpoint`).
+  - Supports SSL encryption (`MYSQLI_CLIENT_SSL`) for cloud providers like TiDB Cloud, Aiven, or PlanetScale.
+  - Loads and registers the serverless session handler (`config/session.php`).
+  - Automatically resolves `BASE_URL` to `/` for Vercel and `/SkillSprout/` for local XAMPP.
+
+---
+
+### `config/session.php`
+* **Purpose**: Database-backed session save handler (`SkillSproutSessionHandler`) implementing PHP's `SessionHandlerInterface`.
+* **Work & Workflow**:
+  - Automatically creates the `sessions` table in MySQL (`CREATE TABLE IF NOT EXISTS sessions ...`).
+  - Intercepts `session_start()`, `session_write_close()`, and `session_destroy()`.
+  - Serializes and deserializes session state directly to/from MySQL, allowing seamless logins across stateless, ephemeral Vercel serverless containers.
+
+---
+
+### `api/index.php`
+* **Purpose**: Vercel Serverless Function entry point and front controller.
+* **Work & Workflow**:
+  - Captures incoming `REQUEST_URI` and normalizes the target path.
+  - Resolves clean extensionless URLs (e.g. `/login`, `/dashboard`, `/tasks`, `/create-task`).
+  - Provides a static file fallback handler with MIME type headers for assets.
+  - Boots database and session handlers before handing control over to the target PHP page script.
 
 ---
 
@@ -380,3 +400,5 @@ This document explains the work, role, inputs, workflows, database queries, and 
   - `tasks`: Task attributes, reward amount, deadline, status enum, foreign keys to `users`.
   - `applications`: Application messages, status enum (`PENDING`, `ACCEPTED`, `REJECTED`), foreign keys to `tasks` and `users`.
   - `submissions`: Worker deliverable text, status enum (`SUBMITTED`, `APPROVED`, `REJECTED`), foreign keys to `tasks` and `users`.
+  - `sessions`: Serverless session persistence (`id`, `data`, `last_activity`).
+

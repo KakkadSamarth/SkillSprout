@@ -53,3 +53,9 @@ CREATE TABLE IF NOT EXISTS `submissions` (
     CONSTRAINT `fk_submissions_task` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`task_id`) ON DELETE CASCADE,
     CONSTRAINT `fk_submissions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `sessions` (
+    `id` VARCHAR(128) NOT NULL PRIMARY KEY,
+    `data` MEDIUMTEXT NOT NULL,
+    `last_activity` INT UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

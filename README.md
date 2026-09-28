@@ -116,7 +116,7 @@ The `.htaccess` configuration running under Apache mod_rewrite provides:
 
 ---
 
-## 5. Getting Started & Installation
+## 5. Getting Started & Local Installation
 
 1. Place the project folder into `C:/xampp/htdocs/SkillSprout`.
 2. Start **Apache** and **MySQL** in XAMPP Control Panel.
@@ -125,3 +125,17 @@ The `.htaccess` configuration running under Apache mod_rewrite provides:
    ```
    http://localhost/SkillSprout/
    ```
+
+---
+
+## 6. Vercel Deployment
+
+SkillSprout is fully configured for serverless deployment on **Vercel** with:
+* Native PHP serverless execution via `vercel-php@0.9.0` configured in `vercel.json`.
+* Unified serverless front controller at `api/index.php`.
+* Cloud database connection support with SSL encryption (TiDB Cloud, Aiven, Railway, AWS RDS).
+* Serverless database-backed session handler maintaining state across ephemeral containers.
+* Dynamic base URL auto-resolution for both local XAMPP and production domains.
+
+For a complete step-by-step walkthrough, see [VERCEL_DEPLOYMENT.md](file:///c:/xampp/htdocs/SkillSprout/VERCEL_DEPLOYMENT.md).
+

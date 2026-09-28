@@ -1,0 +1,4 @@
+.git
+.github
+database/*.sql
+.htaccess

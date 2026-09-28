@@ -1,6 +1,17 @@
 <?php
 if (!defined('BASE_URL')) {
-    define('BASE_URL', '/SkillSprout/');
+    $envBase = getenv('BASE_URL');
+    if ($envBase !== false && $envBase !== '') {
+        define('BASE_URL', rtrim($envBase, '/') . '/');
+    } else {
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        if (strpos($uri, '/SkillSprout/') === 0 || strpos($scriptName, '/SkillSprout/') === 0) {
+            define('BASE_URL', '/SkillSprout/');
+        } else {
+            define('BASE_URL', '/');
+        }
+    }
 }
 
 if (session_status() === PHP_SESSION_NONE) {
