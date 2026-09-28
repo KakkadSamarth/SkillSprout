@@ -29,27 +29,27 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION["user_id"])) {
-    header("Location: /auth/login.php");
+    header("Location: " . BASE_URL . "auth/login.php");
     exit();
 }
 ?>
-<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 <header>
 
     <div class="logo">
-        <a href="/user/dashboard.php">SkillSprout</a>
+        <a href="<?= BASE_URL ?>user/dashboard.php">SkillSprout</a>
     </div>
 
     <nav>
-        <a href="/user/dashboard.php">Home</a>
-        <a href="/tasks/tasks.php">Tasks</a>
-        <a href="/user/my_work.php">My Work</a>
-        <a href="/user/wallet.php">Wallet</a>
-        <a href="/user/profile.php">Profile</a>
+        <a href="<?= BASE_URL ?>user/dashboard.php">Home</a>
+        <a href="<?= BASE_URL ?>tasks/tasks.php">Tasks</a>
+        <a href="<?= BASE_URL ?>user/my_work.php">My Work</a>
+        <a href="<?= BASE_URL ?>user/wallet.php">Wallet</a>
+        <a href="<?= BASE_URL ?>user/profile.php">Profile</a>
     </nav>
 
     <div class="account">
-        <a href="/auth/logout.php">Logout</a>
+        <a href="<?= BASE_URL ?>auth/logout.php">Logout</a>
     </div>
 
 </header>

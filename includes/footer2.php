@@ -38,16 +38,16 @@ if (!defined('BASE_URL')) {
 
             <td width="40%">
                 <h3>Quick Links</h3>
-                <a href="/user/dashboard.php">Home</a><br>
-                <a href="/tasks/tasks.php">Tasks</a><br>
-                <a href="/user/my_work.php">My Work</a><br>
-                <a href="/user/wallet.php">Wallet</a>
+                <a href="<?= BASE_URL ?>user/dashboard.php">Home</a><br>
+                <a href="<?= BASE_URL ?>tasks/tasks.php">Tasks</a><br>
+                <a href="<?= BASE_URL ?>user/my_work.php">My Work</a><br>
+                <a href="<?= BASE_URL ?>user/wallet.php">Wallet</a>
             </td>
 
             <td>
                 <h3>Account</h3>
-                <a href="/user/profile.php">Profile</a><br>
-                <a href="/auth/logout.php">Logout</a>
+                <a href="<?= BASE_URL ?>user/profile.php">Profile</a><br>
+                <a href="<?= BASE_URL ?>auth/logout.php">Logout</a>
             </td>
 
         </tr>

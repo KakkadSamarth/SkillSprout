@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
     <title>Login - SkillSprout</title>
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 </head>
 <body>
     <?php include __DIR__ . "/../includes/header1.php"; ?>
@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <p>
                 Don't have an account?
-                <a href="/auth/register.php">Register here</a>
+                <a href="<?= BASE_URL ?>auth/register.php">Register here</a>
             </p>
 
         </div>
@@ -103,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <?php include __DIR__ . "/../includes/footer1.php"; ?>
 
-    <script src="/assets/js/login.js"></script>
+    <script src="<?= BASE_URL ?>assets/js/login.js"></script>
 
 </body>
 </html>

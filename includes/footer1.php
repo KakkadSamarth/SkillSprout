@@ -29,11 +29,11 @@ if (!defined('BASE_URL')) {
         <tr>
             <td width="35%">
                 <h3>Quick Links</h3>
-                <a href="/index.php">Home</a><br>
-                <a href="/tasks/tasks.php">Tasks</a><br>
-                <a href="/about.php">About</a><br>
-                <a href="/auth/login.php">Login</a><br>
-                <a href="/auth/register.php">Register</a>
+                <a href="<?= BASE_URL ?>index.php">Home</a><br>
+                <a href="<?= BASE_URL ?>tasks/tasks.php">Tasks</a><br>
+                <a href="<?= BASE_URL ?>about.php">About</a><br>
+                <a href="<?= BASE_URL ?>auth/login.php">Login</a><br>
+                <a href="<?= BASE_URL ?>auth/register.php">Register</a>
             </td>
 
             <td width="40%">

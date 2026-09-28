@@ -24,21 +24,21 @@ if (!defined('BASE_URL')) {
     }
 }
 ?>
-<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 
 <header>
     <div class="logo">
-        <a href="/index.php">SkillSprout</a>
+        <a href="<?= BASE_URL ?>index.php">SkillSprout</a>
     </div>
 
     <nav>
-        <a href="/index.php">Home</a>
-        <a href="/tasks/tasks.php">Tasks</a>
-        <a href="/about.php">About</a>
+        <a href="<?= BASE_URL ?>index.php">Home</a>
+        <a href="<?= BASE_URL ?>tasks/tasks.php">Tasks</a>
+        <a href="<?= BASE_URL ?>about.php">About</a>
     </nav>
 
     <div class="account">
-        <a href="/auth/login.php">Login</a>
-        <a href="/auth/register.php">Register</a>
+        <a href="<?= BASE_URL ?>auth/login.php">Login</a>
+        <a href="<?= BASE_URL ?>auth/register.php">Register</a>
     </div>
 </header>
