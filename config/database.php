@@ -33,10 +33,11 @@ if (!isset($conn) || !$conn instanceof mysqli) {
     }
 
     if (!$connected) {
+        error_log("Database connection failed: " . mysqli_connect_error());
         if (getenv('VERCEL')) {
-            die("Database connection failed: " . mysqli_connect_error() . "<br><br><strong>Tip for Vercel Deployment:</strong> Please configure your MySQL database credentials in Vercel Project Settings (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT or DATABASE_URL).");
+            die("Database connection failed. Please configure your MySQL database credentials in Vercel Project Settings (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT or DATABASE_URL).");
         } else {
-            die("Database connection failed: " . mysqli_connect_error());
+            die("Database connection failed. Please check your database configuration.");
         }
     }
 
@@ -45,9 +46,19 @@ if (!isset($conn) || !$conn instanceof mysqli) {
 }
 
 if (!defined('BASE_URL')) {
-    $envBase = getenv('BASE_URL');
-    if ($envBase !== false && $envBase !== '') {
-        define('BASE_URL', rtrim($envBase, '/') . '/');
+    $rawBase = getenv('BASE_URL') ?: getenv('APP_URL');
+    $validBase = null;
+    if ($rawBase !== false && $rawBase !== '') {
+        $rawBase = trim($rawBase);
+        $isDbScheme = preg_match('#^(mysql|mysqli|postgres|postgresql|sqlite|mongodb|redis)://#i', $rawBase);
+        $hasAuth = strpos($rawBase, '@') !== false;
+        $isHttpOrPath = preg_match('#^(https?://|/)#i', $rawBase);
+        if (!$isDbScheme && !$hasAuth && $isHttpOrPath) {
+            $validBase = rtrim($rawBase, '/') . '/';
+        }
+    }
+    if ($validBase !== null) {
+        define('BASE_URL', $validBase);
     } else {
         $uri = $_SERVER['REQUEST_URI'] ?? '';
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';

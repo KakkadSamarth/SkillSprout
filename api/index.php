@@ -5,9 +5,19 @@ $raw_uri = $_SERVER['REQUEST_URI'] ?? '/';
 $path = parse_url($raw_uri, PHP_URL_PATH) ?? '/';
 
 if (!defined('BASE_URL')) {
-    $envBase = getenv('BASE_URL');
-    if ($envBase !== false && $envBase !== '') {
-        define('BASE_URL', rtrim($envBase, '/') . '/');
+    $rawBase = getenv('BASE_URL') ?: getenv('APP_URL');
+    $validBase = null;
+    if ($rawBase !== false && $rawBase !== '') {
+        $rawBase = trim($rawBase);
+        $isDbScheme = preg_match('#^(mysql|mysqli|postgres|postgresql|sqlite|mongodb|redis)://#i', $rawBase);
+        $hasAuth = strpos($rawBase, '@') !== false;
+        $isHttpOrPath = preg_match('#^(https?://|/)#i', $rawBase);
+        if (!$isDbScheme && !$hasAuth && $isHttpOrPath) {
+            $validBase = rtrim($rawBase, '/') . '/';
+        }
+    }
+    if ($validBase !== null) {
+        define('BASE_URL', $validBase);
     } else {
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
         if (preg_match('#^/SkillSprout(/|$)#i', $raw_uri) || preg_match('#^/SkillSprout(/|$)#i', $scriptName)) {
@@ -204,10 +214,10 @@ if ($target && file_exists($target)) {
 
 http_response_code(404);
 echo "<!DOCTYPE html><html><head><title>404 Not Found - SkillSprout</title>";
-echo "<link rel='stylesheet' href='" . BASE_URL . "assets/css/style.css'>";
+echo "<link rel='stylesheet' href='/assets/css/style.css'>";
 echo "</head><body><main><div class='card content-box text-center'>";
 echo "<h1>404 Not Found</h1>";
 echo "<p>The requested page <code>" . htmlspecialchars($path) . "</code> could not be found.</p>";
-echo "<a href='" . BASE_URL . "' class='btn btn-primary'>Return to Home</a>";
+echo "<a href='/index.php' class='btn btn-primary'>Return to Home</a>";
 echo "</div></main></body></html>";
 exit();

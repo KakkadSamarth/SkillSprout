@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
     <title>Register - SkillSprout</title>
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 
@@ -99,12 +99,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         </form>
 
-        <script src="<?= BASE_URL ?>assets/js/register.js"></script>
+        <script src="/assets/js/register.js"></script>
 
         <div class="login-link">
             <p>
                 Already have an account?
-                <a href="<?= BASE_URL ?>auth/login.php">Login here</a>
+                <a href="/auth/login.php">Login here</a>
             </p>
         </div>
 

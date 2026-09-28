@@ -169,7 +169,7 @@ include __DIR__ . "/../includes/header2.php";
 <html>
 <head>
     <title>Purchase Work Points - SkillSprout Wallet</title>
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 

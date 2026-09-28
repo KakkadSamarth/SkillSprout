@@ -1,8 +1,18 @@
 <?php
 if (!defined('BASE_URL')) {
-    $envBase = getenv('BASE_URL');
-    if ($envBase !== false && $envBase !== '') {
-        define('BASE_URL', rtrim($envBase, '/') . '/');
+    $rawBase = getenv('BASE_URL') ?: getenv('APP_URL');
+    $validBase = null;
+    if ($rawBase !== false && $rawBase !== '') {
+        $rawBase = trim($rawBase);
+        $isDbScheme = preg_match('#^(mysql|mysqli|postgres|postgresql|sqlite|mongodb|redis)://#i', $rawBase);
+        $hasAuth = strpos($rawBase, '@') !== false;
+        $isHttpOrPath = preg_match('#^(https?://|/)#i', $rawBase);
+        if (!$isDbScheme && !$hasAuth && $isHttpOrPath) {
+            $validBase = rtrim($rawBase, '/') . '/';
+        }
+    }
+    if ($validBase !== null) {
+        define('BASE_URL', $validBase);
     } else {
         $uri = $_SERVER['REQUEST_URI'] ?? '';
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
@@ -19,11 +29,11 @@ if (!defined('BASE_URL')) {
         <tr>
             <td width="35%">
                 <h3>Quick Links</h3>
-                <a href="<?= BASE_URL ?>index.php">Home</a><br>
-                <a href="<?= BASE_URL ?>tasks/tasks.php">Tasks</a><br>
-                <a href="<?= BASE_URL ?>about.php">About</a><br>
-                <a href="<?= BASE_URL ?>auth/login.php">Login</a><br>
-                <a href="<?= BASE_URL ?>auth/register.php">Register</a>
+                <a href="/index.php">Home</a><br>
+                <a href="/tasks/tasks.php">Tasks</a><br>
+                <a href="/about.php">About</a><br>
+                <a href="/auth/login.php">Login</a><br>
+                <a href="/auth/register.php">Register</a>
             </td>
 
             <td width="40%">
