@@ -26,8 +26,8 @@ if ($tcol_res) {
         $t_cols[$tc['Field']] = true;
     }
 }
-$t_reward = isset($t_cols['reward_wp']) ? 'tasks.reward_wp' : (isset($t_cols['reward']) ? 'tasks.reward AS reward_wp' : (isset($t_cols['points']) ? 'tasks.points AS reward_wp' : '10 AS reward_wp'));
-$t_creator = isset($t_cols['creator_id']) ? 'tasks.creator_id' : (isset($t_cols['user_id']) ? 'tasks.user_id' : 'tasks.creator_id');
+$t_reward = isset($t_cols['reward_wp']) ? 'tasks.reward_wp' : (isset($t_cols['reward']) ? 'tasks.reward AS reward_wp' : (isset($t_cols['points']) ? 'tasks.points AS reward_wp' : (isset($t_cols['budget']) ? 'tasks.budget AS reward_wp' : '10 AS reward_wp')));
+$t_creator = isset($t_cols['creator_id']) ? 'tasks.creator_id' : (isset($t_cols['client_id']) ? 'tasks.client_id' : (isset($t_cols['user_id']) ? 'tasks.user_id' : 'tasks.creator_id'));
 
 $u_cols = [];
 $ucol_res = @mysqli_query($conn, "SHOW COLUMNS FROM users");

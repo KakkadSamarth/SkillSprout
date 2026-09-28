@@ -27,7 +27,7 @@ if ($tcol_res) {
         $t_cols[$tc['Field']] = true;
     }
 }
-$t_creator_col = isset($t_cols['creator_id']) ? 'creator_id' : (isset($t_cols['user_id']) ? 'user_id' : 'creator_id');
+$t_creator_col = isset($t_cols['creator_id']) ? 'creator_id' : (isset($t_cols['client_id']) ? 'client_id' : (isset($t_cols['user_id']) ? 'user_id' : 'creator_id'));
 
 $app_cols = [];
 $appcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM applications");

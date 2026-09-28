@@ -102,6 +102,9 @@ if (!isset($conn) || !$conn instanceof mysqli) {
             if (isset($t_cols['user_id'])) {
                 @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `creator_id` INT NOT NULL DEFAULT 1 AFTER `task_id`");
                 @mysqli_query($conn, "UPDATE tasks SET `creator_id` = `user_id`");
+            } elseif (isset($t_cols['client_id'])) {
+                @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `creator_id` INT NOT NULL DEFAULT 1 AFTER `task_id`");
+                @mysqli_query($conn, "UPDATE tasks SET `creator_id` = `client_id`");
             } else {
                 @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `creator_id` INT NOT NULL DEFAULT 1 AFTER `task_id`");
             }
@@ -109,9 +112,21 @@ if (!isset($conn) || !$conn instanceof mysqli) {
         if (isset($t_cols['user_id'])) {
             @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `user_id` INT NULL DEFAULT NULL");
         }
+        if (isset($t_cols['client_id'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `client_id` INT NULL DEFAULT NULL");
+        }
 
         if (!isset($t_cols['assigned_user_id'])) {
             @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `assigned_user_id` INT NULL DEFAULT NULL AFTER `creator_id`");
+        }
+        if (isset($t_cols['assigned_user_id'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `assigned_user_id` INT NULL DEFAULT NULL");
+        }
+        if (isset($t_cols['freelancer_id'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `freelancer_id` INT NULL DEFAULT NULL");
+        }
+        if (isset($t_cols['worker_id'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `worker_id` INT NULL DEFAULT NULL");
         }
 
         if (!isset($t_cols['domain'])) {
@@ -145,6 +160,9 @@ if (!isset($conn) || !$conn instanceof mysqli) {
             } elseif (isset($t_cols['points'])) {
                 @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `reward_wp` INT NOT NULL DEFAULT 10 AFTER `required_skills`");
                 @mysqli_query($conn, "UPDATE tasks SET `reward_wp` = `points`");
+            } elseif (isset($t_cols['budget'])) {
+                @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `reward_wp` INT NOT NULL DEFAULT 10 AFTER `required_skills`");
+                @mysqli_query($conn, "UPDATE tasks SET `reward_wp` = `budget`");
             } elseif (isset($t_cols['work_points'])) {
                 @mysqli_query($conn, "ALTER TABLE tasks ADD COLUMN `reward_wp` INT NOT NULL DEFAULT 10 AFTER `required_skills`");
                 @mysqli_query($conn, "UPDATE tasks SET `reward_wp` = `work_points`");
@@ -157,6 +175,9 @@ if (!isset($conn) || !$conn instanceof mysqli) {
         }
         if (isset($t_cols['points'])) {
             @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `points` INT NULL DEFAULT 10");
+        }
+        if (isset($t_cols['budget'])) {
+            @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `budget` INT NULL DEFAULT 10");
         }
         if (isset($t_cols['work_points'])) {
             @mysqli_query($conn, "ALTER TABLE tasks MODIFY COLUMN `work_points` INT NULL DEFAULT 10");

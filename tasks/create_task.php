@@ -107,10 +107,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 mysqli_stmt_close($deduct_stmt);
 
                 // 2. Insert into tasks with dynamic column mapping for both standard and legacy schemas
+                $raw_col_meta = [];
                 $t_cols = [];
                 $tcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM tasks");
                 if ($tcol_res) {
                     while ($c = mysqli_fetch_assoc($tcol_res)) {
+                        $raw_col_meta[$c['Field']] = $c;
                         $t_cols[$c['Field']] = true;
                     }
                 }
@@ -132,9 +134,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $insert_types .= "s";
                 $insert_values[] = $description;
 
-                // Creator ID / User ID
+                // Creator ID / User ID / Client ID
                 if (isset($t_cols['creator_id'])) {
                     $insert_cols[] = "creator_id";
+                    $insert_placeholders[] = "?";
+                    $insert_types .= "i";
+                    $insert_values[] = $user_id;
+                }
+                if (isset($t_cols['client_id'])) {
+                    $insert_cols[] = "client_id";
                     $insert_placeholders[] = "?";
                     $insert_types .= "i";
                     $insert_values[] = $user_id;
@@ -145,7 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $insert_types .= "i";
                     $insert_values[] = $user_id;
                 }
-                if (!isset($t_cols['creator_id']) && !isset($t_cols['user_id'])) {
+                if (!isset($t_cols['creator_id']) && !isset($t_cols['client_id']) && !isset($t_cols['user_id'])) {
                     $insert_cols[] = "creator_id";
                     $insert_placeholders[] = "?";
                     $insert_types .= "i";
@@ -186,7 +194,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $insert_values[] = $required_skills;
                 }
 
-                // Reward / Points
+                // Reward / Points / Budget
                 if (isset($t_cols['reward_wp'])) {
                     $insert_cols[] = "reward_wp";
                     $insert_placeholders[] = "?";
@@ -205,13 +213,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $insert_types .= "i";
                     $insert_values[] = $reward_wp;
                 }
+                if (isset($t_cols['budget'])) {
+                    $insert_cols[] = "budget";
+                    $insert_placeholders[] = "?";
+                    $insert_types .= "i";
+                    $insert_values[] = $reward_wp;
+                }
                 if (isset($t_cols['work_points'])) {
                     $insert_cols[] = "work_points";
                     $insert_placeholders[] = "?";
                     $insert_types .= "i";
                     $insert_values[] = $reward_wp;
                 }
-                if (!isset($t_cols['reward_wp']) && !isset($t_cols['reward']) && !isset($t_cols['points']) && !isset($t_cols['work_points'])) {
+                if (!isset($t_cols['reward_wp']) && !isset($t_cols['reward']) && !isset($t_cols['points']) && !isset($t_cols['budget']) && !isset($t_cols['work_points'])) {
                     $insert_cols[] = "reward_wp";
                     $insert_placeholders[] = "?";
                     $insert_types .= "i";
@@ -230,6 +244,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if (isset($t_cols['status']) || empty($t_cols)) {
                     $insert_cols[] = "status";
                     $insert_placeholders[] = "'OPEN'";
+                }
+
+                // Exhaustive fallback: populate any other NOT NULL column without default
+                foreach ($raw_col_meta as $field => $meta) {
+                    if (in_array($field, $insert_cols, true)) {
+                        continue;
+                    }
+                    if (stripos($meta['Extra'] ?? '', 'auto_increment') !== false) {
+                        continue;
+                    }
+                    if (($meta['Null'] ?? '') === 'NO' && ($meta['Default'] === null)) {
+                        $type = strtolower($meta['Type'] ?? '');
+                        if (preg_match('/int|decimal|float|double|numeric/i', $type)) {
+                            if (preg_match('/(user|creator|client|author|poster|employer|owner)_id$/i', $field)) {
+                                $insert_cols[] = $field;
+                                $insert_placeholders[] = "?";
+                                $insert_types .= "i";
+                                $insert_values[] = $user_id;
+                            } else {
+                                $insert_cols[] = $field;
+                                $insert_placeholders[] = "?";
+                                $insert_types .= "i";
+                                $insert_values[] = 0;
+                            }
+                        } elseif (preg_match('/date|time/i', $type)) {
+                            $insert_cols[] = $field;
+                            $insert_placeholders[] = "?";
+                            $insert_types .= "s";
+                            $insert_values[] = date('Y-m-d');
+                        } elseif (preg_match('/enum\((.+)\)/i', $type, $matches)) {
+                            $first_enum = trim(explode(',', $matches[1])[0], "'\"");
+                            $insert_cols[] = $field;
+                            $insert_placeholders[] = "?";
+                            $insert_types .= "s";
+                            $insert_values[] = $first_enum;
+                        } else {
+                            $insert_cols[] = $field;
+                            $insert_placeholders[] = "?";
+                            $insert_types .= "s";
+                            $insert_values[] = "";
+                        }
+                    }
                 }
 
                 $task_sql = "INSERT INTO tasks (" . implode(", ", $insert_cols) . ") VALUES (" . implode(", ", $insert_placeholders) . ")";

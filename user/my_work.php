@@ -19,11 +19,11 @@ if ($tcol_res) {
         $t_cols[$tc['Field']] = true;
     }
 }
-$t_reward = isset($t_cols['reward_wp']) ? 'tasks.reward_wp' : (isset($t_cols['reward']) ? 'tasks.reward AS reward_wp' : (isset($t_cols['points']) ? 'tasks.points AS reward_wp' : '10 AS reward_wp'));
+$t_reward = isset($t_cols['reward_wp']) ? 'tasks.reward_wp' : (isset($t_cols['reward']) ? 'tasks.reward AS reward_wp' : (isset($t_cols['points']) ? 'tasks.points AS reward_wp' : (isset($t_cols['budget']) ? 'tasks.budget AS reward_wp' : '10 AS reward_wp')));
 $t_deadline = isset($t_cols['deadline']) ? 'tasks.deadline' : 'CURRENT_DATE AS deadline';
 $t_status = isset($t_cols['status']) ? 'tasks.status' : "'OPEN' AS status";
-$t_creator = isset($t_cols['creator_id']) ? 'tasks.creator_id' : (isset($t_cols['user_id']) ? 'tasks.user_id' : 'tasks.creator_id');
-$t_assigned = isset($t_cols['assigned_user_id']) ? 'tasks.assigned_user_id' : 'tasks.task_id';
+$t_creator = isset($t_cols['creator_id']) ? 'tasks.creator_id' : (isset($t_cols['client_id']) ? 'tasks.client_id' : (isset($t_cols['user_id']) ? 'tasks.user_id' : 'tasks.creator_id'));
+$t_assigned = isset($t_cols['assigned_user_id']) ? 'tasks.assigned_user_id' : (isset($t_cols['worker_id']) ? 'tasks.worker_id' : (isset($t_cols['freelancer_id']) ? 'tasks.freelancer_id' : 'tasks.task_id'));
 
 $app_cols = [];
 $appcol_res = @mysqli_query($conn, "SHOW COLUMNS FROM applications");
