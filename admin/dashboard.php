@@ -60,7 +60,7 @@ $logs = mysqli_query($conn, "SELECT al.*, u.name FROM admin_logs al JOIN users u
                 <div class="stat-icon"><i class="fas fa-coins"></i></div>
                 <div class="stat-info">
                     <div class="stat-number"><?php echo number_format($total_wp ?? 0); ?></div>
-                    <div class="stat-label">WP in Circulation</div>
+                    <div class="stat-label">WP in Circulation (Rs. <?php echo number_format($total_wp ?? 0); ?>)</div>
                 </div>
             </div>
 

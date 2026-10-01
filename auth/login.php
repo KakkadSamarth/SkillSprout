@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // --- Prepare SQL query ---
         // Using a prepared statement (?) prevents SQL injection attacks.
         // We select the user record matching the given email.
-        $sql  = "SELECT user_id, name, email, password, role, status FROM users WHERE email = ?";
+        $sql  = "SELECT user_id, name, email, password, role, status, status_reason FROM users WHERE email = ?";
         $stmt = mysqli_prepare($conn, $sql);
 
         // Bind the email variable to the placeholder (?)
@@ -62,9 +62,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             // Check if account is banned or suspended
             if ($user["status"] === "banned") {
-                $error = "Your account has been banned. Contact support.";
+                $reason_msg = !empty($user["status_reason"]) ? " Reason: " . htmlspecialchars($user["status_reason"]) : "";
+                $error = "Your account has been banned." . $reason_msg . " Please contact support.";
             } elseif ($user["status"] === "suspended") {
-                $error = "Your account is temporarily suspended.";
+                $reason_msg = !empty($user["status_reason"]) ? " Reason: " . htmlspecialchars($user["status_reason"]) : "";
+                $error = "Your account is temporarily suspended." . $reason_msg . " Please contact support.";
             }
             // --- Verify password ---
             // password_verify() compares the plain-text password with the stored hash

@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `wp_balance`   INT NOT NULL DEFAULT 100,              -- Work Points balance (starts at 100)
   `role`         ENUM('user','moderator','admin') NOT NULL DEFAULT 'user',
   `status`       ENUM('active','warned','suspended','banned') NOT NULL DEFAULT 'active',
+  `status_reason` TEXT DEFAULT NULL,                   -- Admin reason for warning, suspension, or ban
   `created_at`   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at`   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
@@ -200,4 +201,4 @@ INSERT INTO `skill_categories` (`name`, `description`) VALUES
 -- Insert a default admin account (password: admin123 - change immediately)
 -- The hash below is for the password "admin123" using PASSWORD_DEFAULT (bcrypt)
 INSERT INTO `users` (`name`, `email`, `password`, `role`, `wp_balance`) VALUES
-  ('Admin', 'admin@skillsprout.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 99999);
+  ('Admin', 'admin@skillsprout.com', '$2y$10$1eOkT8uLSdzn7WIoXGFm9uIRmKP0DDQZqYq8Tw4q24ioNwqDMuLL6', 'admin', 99999);

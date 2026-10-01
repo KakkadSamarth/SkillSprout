@@ -33,14 +33,14 @@ $total_debits  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COALESCE(SUM(amo
                 <div class="stat-icon"><i class="fas fa-arrow-down"></i></div>
                 <div class="stat-info">
                     <div class="stat-number">+<?php echo number_format($total_credits); ?></div>
-                    <div class="stat-label">Total Credits</div>
+                    <div class="stat-label">Total Credits (Rs. <?php echo number_format($total_credits); ?>)</div>
                 </div>
             </div>
             <div class="stat-card accent-red">
                 <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
                 <div class="stat-info">
                     <div class="stat-number"><?php echo number_format($total_debits); ?></div>
-                    <div class="stat-label">Total Debits</div>
+                    <div class="stat-label">Total Debits (Rs. <?php echo number_format(abs($total_debits)); ?>)</div>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@ $total_debits  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COALESCE(SUM(amo
                             <td><?php echo htmlspecialchars($tx["name"]); ?></td>
                             <td><span class="badge"><?php echo str_replace("_", " ", $tx["type"]); ?></span></td>
                             <td class="<?php echo ($tx["amount_wp"] >= 0) ? 'text-green' : 'text-red'; ?>">
-                                <?php echo ($tx["amount_wp"] >= 0) ? '+' : ''; ?><?php echo $tx["amount_wp"]; ?> WP
+                                <?php echo ($tx["amount_wp"] >= 0) ? '+' : ''; ?><?php echo $tx["amount_wp"]; ?> WP <span class="text-muted">(Rs. <?php echo abs($tx["amount_wp"]); ?>)</span>
                             </td>
                             <td><?php echo htmlspecialchars($tx["description"] ?? "—"); ?></td>
                             <td><?php echo date("M d, Y H:i", strtotime($tx["created_at"])); ?></td>

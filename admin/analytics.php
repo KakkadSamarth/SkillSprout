@@ -84,11 +84,11 @@ $dispute_rate    = ($total_tasks_all > 0) ? round(($total_disputes / $total_task
                 <div class="breakdown-list">
                     <div class="breakdown-item">
                         <span>Total WP in Circulation</span>
-                        <span class="breakdown-count"><?php echo number_format($total_wp ?? 0); ?></span>
+                        <span class="breakdown-count"><?php echo number_format($total_wp ?? 0); ?> WP (Rs. <?php echo number_format($total_wp ?? 0); ?>)</span>
                     </div>
                     <div class="breakdown-item">
                         <span>Average WP per User</span>
-                        <span class="breakdown-count"><?php echo number_format($avg_wp ?? 0); ?></span>
+                        <span class="breakdown-count"><?php echo number_format($avg_wp ?? 0); ?> WP (Rs. <?php echo number_format($avg_wp ?? 0); ?>)</span>
                     </div>
                     <div class="breakdown-item">
                         <span>Tasks Cancelled (Month)</span>

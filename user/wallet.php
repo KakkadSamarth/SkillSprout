@@ -30,11 +30,11 @@ $transactions = mysqli_stmt_get_result($trans_stmt);
         <div class="wallet-balance-card">
             <div class="wallet-icon"><i class="fas fa-wallet"></i></div>
             <div class="wallet-info">
-                <p class="wallet-label">Available Balance</p>
-                <h2 class="wallet-amount"><?php echo number_format($balance); ?> <span>WP</span></h2>
+                <p class="wallet-label">Available Balance (1 WP = Rs. 1)</p>
+                <h2 class="wallet-amount"><?php echo number_format($balance); ?> <span>WP</span> <span class="wallet-subtext">(Rs. <?php echo number_format($balance); ?>)</span></h2>
             </div>
             <a href="<?php echo BASE_URL; ?>/user/purchase_wallet.php" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Top Up
+                <i class="fas fa-plus"></i> Top Up Wallet
             </a>
         </div>
 
@@ -61,7 +61,7 @@ $transactions = mysqli_stmt_get_result($trans_stmt);
                                     </span>
                                 </td>
                                 <td class="<?php echo ($tx["amount_wp"] >= 0) ? 'text-green' : 'text-red'; ?>">
-                                    <?php echo ($tx["amount_wp"] >= 0) ? '+' : ''; ?><?php echo $tx["amount_wp"]; ?> WP
+                                    <?php echo ($tx["amount_wp"] >= 0) ? '+' : ''; ?><?php echo $tx["amount_wp"]; ?> WP <span class="text-muted">(Rs. <?php echo abs($tx["amount_wp"]); ?>)</span>
                                 </td>
                                 <td><?php echo htmlspecialchars($tx["description"] ?? "—"); ?></td>
                             </tr>

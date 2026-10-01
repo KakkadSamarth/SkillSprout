@@ -47,13 +47,27 @@ $pending_apps = mysqli_fetch_assoc(mysqli_stmt_get_result($apps_stmt))["count"];
             <p class="text-muted">Here's your Skill Sprout overview</p>
         </div>
 
+        <?php if ($user["status"] === 'warned'): ?>
+            <div class="alert alert-warning" style="margin-bottom: 24px; border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 14px 18px; border-radius: 8px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 1.25rem; color: #f59e0b; margin-top: 2px;"></i>
+                    <div>
+                        <strong style="color: #fbbf24; font-size: 0.95rem;">Account Warning Notice from Administration:</strong>
+                        <p style="margin: 4px 0 0; color: var(--text-primary); font-size: 0.9rem;">
+                            <?php echo !empty($user["status_reason"]) ? nl2br(htmlspecialchars($user["status_reason"])) : "Please ensure all platform rules, guidelines, and task commitments are followed."; ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <!-- Stats Cards Row -->
         <div class="dashboard-stats">
             <div class="stat-card accent-green">
                 <div class="stat-icon"><i class="fas fa-wallet"></i></div>
                 <div class="stat-info">
                     <div class="stat-number"><?php echo number_format($user["wp_balance"]); ?></div>
-                    <div class="stat-label">Work Points</div>
+                    <div class="stat-label">Work Points (Rs. <?php echo number_format($user["wp_balance"]); ?>)</div>
                 </div>
             </div>
 

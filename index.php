@@ -57,7 +57,7 @@ include 'includes/header1.php';
                     <i class="fas fa-coins"></i>
                 </div>
                 <h3>Earn & Grow</h3>
-                <p>Once your work is approved, Work Points are released to you. Use them to post your own tasks or build your reputation.</p>
+                <p>Once your work is approved, Work Points are released to you (1 WP = Rs. 1). Use them to post your own tasks or build your platform reputation.</p>
             </div>
         </div>
     </div>

@@ -81,7 +81,7 @@ $app_count = mysqli_fetch_assoc(mysqli_stmt_get_result($app_count_stmt))["count"
                 <div class="info-item">
                     <i class="fas fa-coins"></i>
                     <span class="info-label">Reward</span>
-                    <span class="info-value"><?php echo $task["reward"]; ?> WP</span>
+                    <span class="info-value"><?php echo $task["reward"]; ?> WP <span class="text-muted" style="font-size:0.85rem; font-weight:normal;">(Rs. <?php echo $task["reward"]; ?>)</span></span>
                 </div>
                 <?php if ($task["domain"]): ?>
                 <div class="info-item">

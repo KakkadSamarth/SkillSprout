@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="container">
         <div class="form-container form-wide">
             <h1 class="form-title">Post a New Task</h1>
-            <p class="form-subtitle">Your available balance: <strong><?php echo number_format($balance); ?> WP</strong></p>
+            <p class="form-subtitle">Your available balance: <strong><?php echo number_format($balance); ?> WP (Rs. <?php echo number_format($balance); ?>)</strong> • Rate: 1 WP = Rs. 1</p>
 
             <?php if (!empty($success)): ?>
                 <div class="alert alert-success"><i class="fas fa-check-circle"></i> <?php echo $success; ?></div>
@@ -135,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <div class="form-group">
                         <label for="reward"><i class="fas fa-coins"></i> Reward (WP) *</label>
                         <input type="number" id="reward" name="reward" min="5" max="<?php echo $balance; ?>" required
-                               value="<?php echo isset($reward) ? $reward : ''; ?>" placeholder="Min 5 WP">
+                               value="<?php echo isset($reward) ? $reward : ''; ?>" placeholder="Min 5 WP (Rs. 5)">
                     </div>
                 </div>
 

@@ -20,7 +20,7 @@ include 'includes/header1.php';
 
             <div class="about-block">
                 <h2><i class="fas fa-lightbulb"></i> How It Works</h2>
-                <p>Users post tasks they need help with and offer Work Points as rewards. Other users with matching skills apply, deliver quality work, and earn those points. An atomic escrow system ensures both parties are protected throughout the entire process.</p>
+                <p>Users post tasks they need help with and offer Work Points as rewards, pegged at 1 Work Point = Rs. 1. Other users with matching skills apply, deliver quality work, and earn those points. An atomic escrow system ensures both parties are protected throughout the entire process.</p>
             </div>
 
             <div class="about-block">

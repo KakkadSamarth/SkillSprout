@@ -11,12 +11,13 @@ include '../includes/header2.php';
 $success = "";
 $error   = "";
 
-// Define WP packages available for purchase
+// Define WP packages available for purchase (1 WP = Rs. 1)
 $packages = [
-    ["wp" => 50,   "price" => 1.99,  "label" => "Starter"],
-    ["wp" => 150,  "price" => 4.99,  "label" => "Popular"],
-    ["wp" => 500,  "price" => 14.99, "label" => "Pro"],
-    ["wp" => 1000, "price" => 24.99, "label" => "Enterprise"],
+    ["wp" => 50,   "price" => 50,   "label" => "Starter"],
+    ["wp" => 100,  "price" => 100,  "label" => "Popular"],
+    ["wp" => 250,  "price" => 250,  "label" => "Growth"],
+    ["wp" => 500,  "price" => 500,  "label" => "Pro"],
+    ["wp" => 1000, "price" => 1000, "label" => "Enterprise"],
 ];
 
 // --- Process Purchase ---
@@ -36,14 +37,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["package_index"])) {
             mysqli_stmt_execute($update_stmt);
 
             // Log the purchase transaction
-            $desc = "Purchased " . $pkg["wp"] . " WP (" . $pkg["label"] . " package)";
+            $desc = "Purchased " . $pkg["wp"] . " WP for Rs. " . $pkg["price"] . " (" . $pkg["label"] . " package)";
             $trans_sql = "INSERT INTO transactions (user_id, type, amount_wp, description, price_paid, payment_method) VALUES (?, 'PURCHASE', ?, ?, ?, 'simulated')";
             $trans_stmt = mysqli_prepare($conn, $trans_sql);
             mysqli_stmt_bind_param($trans_stmt, "iisd", $session_user_id, $pkg["wp"], $desc, $pkg["price"]);
             mysqli_stmt_execute($trans_stmt);
 
             mysqli_commit($conn);
-            $success = "Successfully purchased " . $pkg["wp"] . " Work Points!";
+            $success = "Successfully purchased " . $pkg["wp"] . " Work Points for Rs. " . number_format($pkg["price"]) . "!";
         } catch (Exception $e) {
             mysqli_rollback($conn);
             $error = "Purchase failed. Please try again.";
@@ -57,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["package_index"])) {
 <section class="section">
     <div class="container">
         <h1 class="page-title">Purchase Work Points</h1>
-        <p class="page-subtitle">Choose a package to top up your balance</p>
+        <p class="page-subtitle">Instant Top-Up • <strong>1 Work Point = Rs. 1</strong> (1 WP = 1 Rupee)</p>
 
         <?php if (!empty($success)): ?>
             <div class="alert alert-success"><i class="fas fa-check-circle"></i> <?php echo $success; ?></div>
@@ -74,10 +75,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["package_index"])) {
                     <?php endif; ?>
                     <h3 class="package-label"><?php echo $pkg["label"]; ?></h3>
                     <div class="package-wp"><?php echo $pkg["wp"]; ?> WP</div>
-                    <div class="package-price">$<?php echo number_format($pkg["price"], 2); ?></div>
+                    <div class="package-price">Rs. <?php echo number_format($pkg["price"]); ?></div>
                     <form action="" method="POST">
                         <input type="hidden" name="package_index" value="<?php echo $i; ?>">
-                        <button type="submit" class="btn btn-primary btn-block">Purchase</button>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-coins"></i> Pay Rs. <?php echo number_format($pkg["price"]); ?>
+                        </button>
                     </form>
                 </div>
             <?php endforeach; ?>

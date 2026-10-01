@@ -84,7 +84,7 @@ $cats = mysqli_query($conn, "SELECT * FROM skill_categories ORDER BY name");
                         <?php endif; ?>
                         <p class="task-description"><?php echo htmlspecialchars(substr($task["description"], 0, 120)) . "..."; ?></p>
                         <div class="task-meta">
-                            <span class="task-reward"><i class="fas fa-coins"></i> <?php echo $task["reward"]; ?> WP</span>
+                            <span class="task-reward"><i class="fas fa-coins"></i> <?php echo $task["reward"]; ?> WP (Rs. <?php echo $task["reward"]; ?>)</span>
                             <?php if ($task["deadline"]): ?>
                                 <span class="task-deadline"><i class="fas fa-clock"></i> <?php echo date("M d, Y", strtotime($task["deadline"])); ?></span>
                             <?php endif; ?>

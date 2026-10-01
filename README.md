@@ -18,12 +18,12 @@ Supported by an atomic escrow mechanism, rigorous moderation standards, and a de
 
 Skill Sprout operates on three foundational principles:
 
-1. **Talent as Currency**: Every user possesses valuable expertise. By completing tasks for others, users transform their skills into Work Points (WP), removing monetary friction.
-2. **Collaborative Growth**: Whether seeking code reviews, creative designs, tutoring, or technical troubleshooting, users can post structured tasks with clear requirements, milestones, and reward allocations.
+1. **Talent as Currency**: Every user possesses valuable expertise. By completing tasks for others, users transform their skills into Work Points (WP). The economy is strictly pegged at **1 Work Point = Rs. 1** (1 WP = 1 Rupee), ensuring transparent real-world value alignment.
+2. **Collaborative Growth**: Whether seeking code reviews, creative designs, tutoring, or technical troubleshooting, users can post structured tasks with clear requirements, milestones, and reward allocations. Task deadlines must strictly be scheduled for future dates (at least tomorrow).
 3. **Guaranteed Trust via Escrow**: When a task is commissioned, the reward points are locked securely in an escrow engine. The funds are released to the worker only once the task creator reviews and accepts the submitted deliverables, ensuring protection for both parties.
 
 ### Primary User Roles
-* **Task Creator (Client / Learner)**: Posts task requirements, defines deadlines, locks reward points in escrow, selects applicants, and reviews submitted deliverables.
+* **Task Creator (Client / Learner)**: Posts task requirements, defines future deadlines, locks reward points in escrow, selects applicants, and reviews submitted deliverables.
 * **Task Worker (Contributor / Mentor)**: Browses open opportunities matching their skill set, submits proposals, delivers completed work, and earns Work Points upon approval.
 * **Platform Administrator**: Supervises system operations, arbitrates disputes, ensures content integrity, oversees financial/point health, and maintains platform security.
 
@@ -91,9 +91,16 @@ flowchart LR
 
 ---
 
-## 🛠️ Technology Stack (Planned)
-
-* **Frontend**: HTML5, Semantic CSS3 (Responsive Design System), Vanilla JavaScript
+## 🛠️ Technology Stack
+* **Frontend**: HTML5, Semantic CSS3 (Unified Monochromatic 3-Gray & Green System), Vanilla JavaScript
 * **Backend**: PHP (Modular, secure prepared statements, session management)
 * **Database**: MySQL / MariaDB (InnoDB engine, relational foreign keys, atomic transactions)
 * **Web Server**: Apache (XAMPP Environment, URL rewriting via `.htaccess`)
+
+### 🎨 Design System: Monochromatic (3 Grays + Green)
+The platform user interface—spanning public pages, authenticated user views, and the admin panel—adheres to a cohesive, unified palette:
+* **Gray 1 (Canvas / Body Background)**: `#111215` (Deep dark canvas)
+* **Gray 2 (Surfaces / Cards / Elevated Panels)**: `#1c1d22` (Card surface)
+* **Gray 3 (Structural Borders & Dividers)**: `#2e3038` (Precision outlines)
+* **Signature Emerald Green**: `#10b981` (Primary actions, brand emblems, and progress states)
+* **Unified Admin Panel**: Admin controls share the identical surface tokens and design hierarchy as the user portal.
