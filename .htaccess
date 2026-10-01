@@ -1,0 +1,62 @@
+# Apache URL Rewriting & Security Rules
+# ============================================================
+# This file controls how Apache handles incoming URLs.
+# It enables clean URLs (without .php), protects directories,
+# and redirects legacy paths to the correct locations.
+# ============================================================
+
+# --- Enable Rewrite Engine ---
+RewriteEngine On
+
+# --- Set the base path for all rewrites ---
+RewriteBase /SkillSprout/
+
+# --- Disable Directory Listing ---
+# Prevents users from seeing a list of files when visiting a directory
+Options -Indexes
+
+# --- Security: Block access to sensitive files ---
+<FilesMatch "\.(sql|md|gitignore|htaccess)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# --- Feature Directory Default Pages ---
+# Visiting /auth/ redirects to the login page
+RewriteRule ^auth/?$ auth/login.php [L,R=301]
+# Visiting /user/ redirects to the dashboard
+RewriteRule ^user/?$ user/dashboard.php [L,R=301]
+# Visiting /tasks/ redirects to the task listing
+RewriteRule ^tasks/?$ tasks/tasks.php [L,R=301]
+# Visiting /admin/ redirects to the admin login
+RewriteRule ^admin/?$ admin/login.php [L,R=301]
+
+# --- Legacy Root File Redirects ---
+# If someone visits /SkillSprout/login.php at the root, redirect to /auth/login.php
+RewriteRule ^login\.php$ auth/login.php [L,R=301,QSA]
+RewriteRule ^register\.php$ auth/register.php [L,R=301,QSA]
+RewriteRule ^dashboard\.php$ user/dashboard.php [L,R=301,QSA]
+RewriteRule ^tasks\.php$ tasks/tasks.php [L,R=301,QSA]
+RewriteRule ^create_task\.php$ tasks/create_task.php [L,R=301,QSA]
+RewriteRule ^profile\.php$ user/profile.php [L,R=301,QSA]
+RewriteRule ^wallet\.php$ user/wallet.php [L,R=301,QSA]
+
+# --- Clean URLs (No .php extension needed) ---
+# Only rewrite if the request is not an existing file or directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Map clean URLs to actual PHP files
+RewriteRule ^home$ index.php [L]
+RewriteRule ^about$ about.php [L]
+RewriteRule ^login$ auth/login.php [L]
+RewriteRule ^register$ auth/register.php [L]
+RewriteRule ^logout$ auth/logout.php [L]
+RewriteRule ^dashboard$ user/dashboard.php [L]
+RewriteRule ^my-work$ user/my_work.php [L]
+RewriteRule ^wallet$ user/wallet.php [L]
+RewriteRule ^profile$ user/profile.php [L]
+RewriteRule ^browse-tasks$ tasks/tasks.php [L]
+
+# --- Error Pages ---
+ErrorDocument 404 /SkillSprout/index.php
