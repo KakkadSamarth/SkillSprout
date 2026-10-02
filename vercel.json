@@ -1,142 +1,17 @@
 {
   "functions": {
-    "*.php": {
-      "runtime": "vercel-php@0.9.0"
-    },
-    "admin/*.php": {
-      "runtime": "vercel-php@0.9.0"
-    },
-    "auth/*.php": {
-      "runtime": "vercel-php@0.9.0"
-    },
-    "tasks/*.php": {
-      "runtime": "vercel-php@0.9.0"
-    },
-    "user/*.php": {
-      "runtime": "vercel-php@0.9.0"
+    "api/index.php": {
+      "runtime": "vercel-php@0.7.2"
     }
   },
-  "redirects": [
+  "routes": [
     {
-      "source": "/auth",
-      "destination": "/auth/login.php",
-      "permanent": true
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
     },
     {
-      "source": "/auth/",
-      "destination": "/auth/login.php",
-      "permanent": true
-    },
-    {
-      "source": "/user",
-      "destination": "/user/dashboard.php",
-      "permanent": true
-    },
-    {
-      "source": "/user/",
-      "destination": "/user/dashboard.php",
-      "permanent": true
-    },
-    {
-      "source": "/tasks",
-      "destination": "/tasks/tasks.php",
-      "permanent": true
-    },
-    {
-      "source": "/tasks/",
-      "destination": "/tasks/tasks.php",
-      "permanent": true
-    },
-    {
-      "source": "/admin",
-      "destination": "/admin/login.php",
-      "permanent": true
-    },
-    {
-      "source": "/admin/",
-      "destination": "/admin/login.php",
-      "permanent": true
-    },
-    {
-      "source": "/login.php",
-      "destination": "/auth/login.php",
-      "permanent": true
-    },
-    {
-      "source": "/register.php",
-      "destination": "/auth/register.php",
-      "permanent": true
-    },
-    {
-      "source": "/dashboard.php",
-      "destination": "/user/dashboard.php",
-      "permanent": true
-    },
-    {
-      "source": "/tasks.php",
-      "destination": "/tasks/tasks.php",
-      "permanent": true
-    },
-    {
-      "source": "/create_task.php",
-      "destination": "/tasks/create_task.php",
-      "permanent": true
-    },
-    {
-      "source": "/profile.php",
-      "destination": "/user/profile.php",
-      "permanent": true
-    },
-    {
-      "source": "/wallet.php",
-      "destination": "/user/wallet.php",
-      "permanent": true
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/index.php"
-    },
-    {
-      "source": "/home",
-      "destination": "/index.php"
-    },
-    {
-      "source": "/about",
-      "destination": "/about.php"
-    },
-    {
-      "source": "/login",
-      "destination": "/auth/login.php"
-    },
-    {
-      "source": "/register",
-      "destination": "/auth/register.php"
-    },
-    {
-      "source": "/logout",
-      "destination": "/auth/logout.php"
-    },
-    {
-      "source": "/dashboard",
-      "destination": "/user/dashboard.php"
-    },
-    {
-      "source": "/my-work",
-      "destination": "/user/my_work.php"
-    },
-    {
-      "source": "/wallet",
-      "destination": "/user/wallet.php"
-    },
-    {
-      "source": "/profile",
-      "destination": "/user/profile.php"
-    },
-    {
-      "source": "/browse-tasks",
-      "destination": "/tasks/tasks.php"
+      "src": "/(.*)",
+      "dest": "/api/index.php"
     }
   ]
 }
