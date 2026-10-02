@@ -6,7 +6,7 @@
 //          change account status (activate, warn, suspend, ban).
 // ============================================================
 
-include '../includes/header3.php';
+include '../includes/header3php';
 
 $message = "";
 

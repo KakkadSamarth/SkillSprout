@@ -93,8 +93,11 @@ $applications = mysqli_stmt_get_result($apps_stmt);
                 <?php while ($app = mysqli_fetch_assoc($applications)): ?>
                     <div class="application-card">
                         <div class="application-header">
-                            <div>
-                                <h3><i class="fas fa-user"></i> <?php echo htmlspecialchars($app["name"]); ?></h3>
+                                <h3>
+                                    <a href="<?php echo BASE_URL; ?>/user/profile.php?id=<?php echo $app["user_id"]; ?>" style="color: var(--text-primary); text-decoration: none;">
+                                        <i class="fas fa-user-circle text-green"></i> <?php echo htmlspecialchars($app["name"]); ?>
+                                    </a>
+                                </h3>
                                 <p class="text-muted"><?php echo htmlspecialchars($app["email"]); ?></p>
                                 <?php if ($app["skills"]): ?>
                                     <div class="task-skills">

@@ -136,6 +136,26 @@ CREATE TABLE IF NOT EXISTS `disputes` (
 ) ENGINE=InnoDB;
 
 -- ============================================================
+-- TABLE: reviews
+-- Peer review and rating system where users rate and review
+-- each other with 1-5 stars and feedback comments.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `reviews` (
+  `review_id`        INT AUTO_INCREMENT PRIMARY KEY,
+  `reviewer_id`      INT NOT NULL,                        -- User writing the review
+  `reviewed_user_id` INT NOT NULL,                        -- User receiving the review
+  `task_id`          INT DEFAULT NULL,                    -- Optional: related completed task
+  `rating`           TINYINT NOT NULL CHECK (`rating` >= 1 AND `rating` <= 5), -- 1 to 5 stars
+  `comment`          TEXT NOT NULL,                       -- Review feedback text
+  `created_at`       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (`reviewer_id`)      REFERENCES `users`(`user_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`reviewed_user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`task_id`)          REFERENCES `tasks`(`task_id`) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- ============================================================
 -- TABLE: admin_logs
 -- Audit trail for every significant action taken by admins.
 -- ============================================================

@@ -69,7 +69,7 @@ $app_count = mysqli_fetch_assoc(mysqli_stmt_get_result($app_count_stmt))["count"
             <div class="task-detail-header">
                 <div>
                     <h1><?php echo htmlspecialchars($task["title"]); ?></h1>
-                    <p class="text-muted">Posted by <?php echo htmlspecialchars($task["creator_name"]); ?> on <?php echo date("M d, Y", strtotime($task["created_at"])); ?></p>
+                    <p class="text-muted">Posted by <a href="<?php echo BASE_URL; ?>/user/profile.php?id=<?php echo $task["creator_id"]; ?>" style="color: var(--primary); font-weight: 600; text-decoration: none;"><i class="fas fa-user-circle"></i> <?php echo htmlspecialchars($task["creator_name"]); ?></a> on <?php echo date("M d, Y", strtotime($task["created_at"])); ?></p>
                 </div>
                 <span class="badge badge-lg badge-<?php echo strtolower($task["status"]); ?>">
                     <?php echo $task["status"]; ?>
@@ -101,7 +101,11 @@ $app_count = mysqli_fetch_assoc(mysqli_stmt_get_result($app_count_stmt))["count"
                 <div class="info-item">
                     <i class="fas fa-user-check"></i>
                     <span class="info-label">Assigned To</span>
-                    <span class="info-value"><?php echo htmlspecialchars($worker_name); ?></span>
+                    <span class="info-value">
+                        <a href="<?php echo BASE_URL; ?>/user/profile.php?id=<?php echo $task["assigned_user_id"]; ?>" style="color: var(--primary); text-decoration: none;">
+                            <?php echo htmlspecialchars($worker_name); ?>
+                        </a>
+                    </span>
                 </div>
                 <?php endif; ?>
             </div>
@@ -127,7 +131,7 @@ $app_count = mysqli_fetch_assoc(mysqli_stmt_get_result($app_count_stmt))["count"
             <!-- Context-Aware Action Buttons -->
             <div class="task-actions-bar">
                 <?php if ($is_creator): ?>
-                    <!-- Creator sees: manage apps, cancel task, review -->
+                    <!-- Creator sees: manage apps, cancel task, review submission, review worker -->
                     <?php if ($task["status"] === 'OPEN'): ?>
                         <a href="<?php echo BASE_URL; ?>/tasks/manage_applications.php?id=<?php echo $task_id; ?>" class="btn btn-primary">
                             <i class="fas fa-users"></i> Manage Applications (<?php echo $app_count; ?>)
@@ -140,12 +144,20 @@ $app_count = mysqli_fetch_assoc(mysqli_stmt_get_result($app_count_stmt))["count"
                         <a href="<?php echo BASE_URL; ?>/tasks/review_submission.php?id=<?php echo $task_id; ?>" class="btn btn-primary">
                             <i class="fas fa-eye"></i> Review Submission
                         </a>
+                    <?php elseif ($task["status"] === 'COMPLETED' && $task["assigned_user_id"]): ?>
+                        <a href="<?php echo BASE_URL; ?>/user/profile.php?id=<?php echo $task["assigned_user_id"]; ?>&task_id=<?php echo $task_id; ?>#write-review" class="btn btn-primary">
+                            <i class="fas fa-star text-gold"></i> Review Worker (<?php echo htmlspecialchars($worker_name); ?>)
+                        </a>
                     <?php endif; ?>
                 <?php elseif ($is_assigned): ?>
-                    <!-- Assigned worker sees: submit work -->
+                    <!-- Assigned worker sees: submit work or review creator -->
                     <?php if ($task["status"] === 'ASSIGNED'): ?>
                         <a href="<?php echo BASE_URL; ?>/tasks/submit_work.php?id=<?php echo $task_id; ?>" class="btn btn-primary">
                             <i class="fas fa-upload"></i> Submit Work
+                        </a>
+                    <?php elseif ($task["status"] === 'COMPLETED'): ?>
+                        <a href="<?php echo BASE_URL; ?>/user/profile.php?id=<?php echo $task["creator_id"]; ?>&task_id=<?php echo $task_id; ?>#write-review" class="btn btn-primary">
+                            <i class="fas fa-star text-gold"></i> Review Creator (<?php echo htmlspecialchars($task["creator_name"]); ?>)
                         </a>
                     <?php endif; ?>
                 <?php else: ?>

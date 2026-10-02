@@ -97,7 +97,7 @@ $cats = mysqli_query($conn, "SELECT * FROM skill_categories ORDER BY name");
                             </div>
                         <?php endif; ?>
                         <div class="task-card-footer">
-                            <span class="task-author"><i class="fas fa-user"></i> <?php echo htmlspecialchars($task["creator_name"]); ?></span>
+                            <a href="<?php echo BASE_URL; ?>/user/profile.php?id=<?php echo $task["creator_id"]; ?>" class="task-author" style="text-decoration: none; color: var(--text-muted);"><i class="fas fa-user-circle"></i> <?php echo htmlspecialchars($task["creator_name"]); ?></a>
                             <a href="<?php echo BASE_URL; ?>/tasks/task_details.php?id=<?php echo $task["task_id"]; ?>" class="btn btn-sm btn-primary">View Details</a>
                         </div>
                     </div>

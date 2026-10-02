@@ -6,21 +6,68 @@
 // ============================================================
 
 // --- Database Credentials ---
-// These variables store the information needed to connect to MySQL.
-$host   = "localhost";       // The database server address (localhost for XAMPP)
-$port   = 3306;              // The MySQL port (default 3306)
-$user   = "root";            // The MySQL username (default "root" in XAMPP)
-$pass   = "";                // The MySQL password (set your MySQL root password here)
-$dbname = "skillsprout";     // The name of the database we created
+// Vercel deployments provide these values as project environment variables.
+$isVercel = getenv('VERCEL') !== false;
+$host     = getenv('DB_HOST');
+$port     = getenv('DB_PORT');
+$user     = getenv('DB_USER');
+$pass     = getenv('DB_PASSWORD');
+$dbname   = getenv('DB_NAME');
+
+if ($isVercel) {
+    $missingVariables = [];
+    foreach ([
+        'DB_HOST' => $host,
+        'DB_PORT' => $port,
+        'DB_USER' => $user,
+        'DB_PASSWORD' => $pass,
+        'DB_NAME' => $dbname,
+    ] as $variable => $value) {
+        if ($value === false || $value === '') {
+            $missingVariables[] = $variable;
+        }
+    }
+
+    if ($missingVariables) {
+        http_response_code(500);
+        error_log('SkillSprout is missing database environment variables: ' . implode(', ', $missingVariables));
+        echo 'The application database is not configured. Set the required DB_* environment variables.';
+        exit;
+    }
+} else {
+    $host   = $host === false ? 'localhost' : $host;
+    $port   = $port === false ? '3306' : $port;
+    $user   = $user === false ? 'root' : $user;
+    $pass   = $pass === false ? '' : $pass;
+    $dbname = $dbname === false ? 'skillsprout' : $dbname;
+}
+
+$port = filter_var($port, FILTER_VALIDATE_INT, [
+    'options' => ['min_range' => 1, 'max_range' => 65535],
+]);
+if ($port === false) {
+    http_response_code(500);
+    error_log('SkillSprout DB_PORT must be an integer between 1 and 65535.');
+    echo 'The application database is not configured correctly. Check DB_PORT.';
+    exit;
+}
 
 // --- Create Connection with Exception Handling ---
 // In PHP 8.1+, mysqli throws mysqli_sql_exception on connection errors.
 // We catch this to display helpful setup guidance instead of an uncaught crash.
 $conn = null;
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 try {
     $conn = mysqli_connect($host, $user, $pass, $dbname, $port);
 } catch (mysqli_sql_exception $e) {
     $error_msg = $e->getMessage();
+
+    if ($isVercel || getenv('APP_ENV') === 'production') {
+        http_response_code(500);
+        error_log('SkillSprout database connection failed: ' . $error_msg);
+        echo 'The application database is unavailable. Check the DB_* environment variables.';
+        exit;
+    }
 
     // Check specific common issues and provide clear instructions
     echo "<div style='font-family: Inter, -apple-system, sans-serif; max-width: 600px; margin: 3rem auto; padding: 2rem; background: #1e293b; color: #f1f5f9; border-radius: 12px; border: 1px solid #ef4444; box-shadow: 0 10px 25px rgba(0,0,0,0.5);'>";
@@ -61,12 +108,18 @@ try {
 mysqli_set_charset($conn, "utf8mb4");
 
 // --- Define BASE_URL ---
-// This constant builds the root URL of our application dynamically.
-// It detects whether we're on HTTP or HTTPS, gets the server name,
-// and appends the project folder path.
-// This way, all links in the app work correctly regardless of environment.
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
-$host_val = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$base     = $protocol . "://" . $host_val . "/SkillSprout";
-define("BASE_URL", $base);
+// Vercel serves the app from the domain root; retain the XAMPP subfolder locally.
+$configuredUrl = getenv('APP_URL');
+if ($configuredUrl !== false && $configuredUrl !== '') {
+    $base = rtrim($configuredUrl, '/');
+} else {
+    $forwardedProtocol = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+    $isHttps = $forwardedProtocol === 'https'
+        || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+    $protocol = $isHttps ? 'https' : 'http';
+    $hostValue = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $localPath = $isVercel ? '' : '/SkillSprout';
+    $base = $protocol . '://' . $hostValue . $localPath;
+}
+define('BASE_URL', $base);
 ?>

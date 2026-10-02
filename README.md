@@ -104,3 +104,32 @@ The platform user interface—spanning public pages, authenticated user views, a
 * **Gray 3 (Structural Borders & Dividers)**: `#2e3038` (Precision outlines)
 * **Signature Emerald Green**: `#10b981` (Primary actions, brand emblems, and progress states)
 * **Unified Admin Panel**: Admin controls share the identical surface tokens and design hierarchy as the user portal.
+
+## Deploying to Vercel
+
+The repository includes a Vercel configuration for the community PHP runtime. Import the repository into Vercel with the project root set to this directory; no build command or output directory is required. The Vercel configuration maps the PHP entry points to serverless functions and replaces the Apache rewrite rules for the app's clean URLs. `.htaccess` is still used for local Apache/XAMPP development.
+
+### Environment variables
+
+Create a hosted MySQL database, import `database/database.sql` into it, and add these variables to the Vercel project for each deployment environment:
+
+| Variable | Value |
+| --- | --- |
+| `DB_HOST` | Hosted MySQL server hostname |
+| `DB_PORT` | MySQL server port |
+| `DB_NAME` | Database name |
+| `DB_USER` | Database username |
+| `DB_PASSWORD` | Database password |
+| `APP_URL` | Optional canonical origin, such as `https://skillsprout.example.com` |
+| `APP_ENV` | Set to `production` |
+
+Redeploy after setting variables. Keep credentials in Vercel's environment-variable settings, not in source control. Local XAMPP defaults remain available when running outside Vercel. If the local app is installed in a different subdirectory, set `APP_URL` and update `.htaccess`'s `RewriteBase` accordingly.
+
+### Persistent data requirements
+
+Vercel function instances are serverless and their local filesystem is not durable or shared between requests. Before using this deployment for real users:
+
+- Configure PHP sessions to use a shared session store; the default file-based sessions may not persist reliably across function instances.
+- Move submission-file uploads from `assets/uploads` to persistent object storage. Files written to the deployment filesystem are not durable.
+
+The current app still uses file-based sessions and local-disk uploads, so login state and uploaded deliverables are not production-ready on Vercel until those external storage integrations are implemented. Static files committed under `assets/` are served normally.

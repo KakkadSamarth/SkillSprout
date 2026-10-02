@@ -64,7 +64,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["decision"])) {
             mysqli_stmt_execute($trans_stmt);
 
             mysqli_commit($conn);
-            $message = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Work approved! ' . $task["reward"] . ' WP has been paid to the worker.</div>';
+            $message = '<div class="alert alert-success" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">' .
+                       '<span><i class="fas fa-check-circle"></i> Work approved! ' . $task["reward"] . ' WP has been paid to the worker.</span>' .
+                       '<a href="' . BASE_URL . '/user/profile.php?id=' . $task["assigned_user_id"] . '&task_id=' . $task_id . '#write-review" class="btn btn-sm btn-primary" style="margin-left:auto;">' .
+                       '<i class="fas fa-star text-gold"></i> Rate & Review ' . htmlspecialchars($submission["worker_name"]) . '</a>' .
+                       '</div>';
         } catch (Exception $e) {
             mysqli_rollback($conn);
             $message = '<div class="alert alert-danger">Failed to process approval.</div>';

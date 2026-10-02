@@ -37,14 +37,35 @@ $apps_stmt = mysqli_prepare($conn, $apps_sql);
 mysqli_stmt_bind_param($apps_stmt, "i", $session_user_id);
 mysqli_stmt_execute($apps_stmt);
 $pending_apps = mysqli_fetch_assoc(mysqli_stmt_get_result($apps_stmt))["count"];
+
+// --- Fetch user reviews rating & count ---
+$rev_sql  = "SELECT COUNT(*) as total_reviews, COALESCE(AVG(rating), 0) as avg_rating FROM reviews WHERE reviewed_user_id = ?";
+$rev_stmt = mysqli_prepare($conn, $rev_sql);
+mysqli_stmt_bind_param($rev_stmt, "i", $session_user_id);
+mysqli_stmt_execute($rev_stmt);
+$rev_stats          = mysqli_fetch_assoc(mysqli_stmt_get_result($rev_stmt));
+$user_reviews_count = intval($rev_stats["total_reviews"]);
+$user_avg_rating    = round(floatval($rev_stats["avg_rating"]), 1);
 ?>
 
 <section class="section">
     <div class="container">
         <!-- Welcome Header -->
-        <div class="dashboard-header">
-            <h1>Welcome back, <?php echo htmlspecialchars($user["name"]); ?>! 👋</h1>
-            <p class="text-muted">Here's your Skill Sprout overview</p>
+        <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1>Welcome <?php echo htmlspecialchars($user["name"]); ?>!</h1>
+                <p class="text-muted">Here's your Skill Sprout overview</p>
+            </div>
+            <div>
+                <a href="<?php echo BASE_URL; ?>/user/profile.php#reviews-section" class="profile-rating-pill" style="margin-bottom: 0; text-decoration: none;">
+                    <i class="fas fa-star text-gold"></i>
+                    <?php if ($user_reviews_count > 0): ?>
+                        <span><strong><?php echo number_format($user_avg_rating, 1); ?> ★</strong> (<?php echo $user_reviews_count; ?> <?php echo $user_reviews_count === 1 ? 'review' : 'reviews'; ?>)</span>
+                    <?php else: ?>
+                        <span>My Reviews (0)</span>
+                    <?php endif; ?>
+                </a>
+            </div>
         </div>
 
         <?php if ($user["status"] === 'warned'): ?>
@@ -118,6 +139,11 @@ $pending_apps = mysqli_fetch_assoc(mysqli_stmt_get_result($apps_stmt))["count"];
                 <i class="fas fa-coins"></i>
                 <h3>My Wallet</h3>
                 <p>View balance and purchase Work Points</p>
+            </a>
+            <a href="<?php echo BASE_URL; ?>/user/profile.php" class="action-card">
+                <i class="fas fa-user-circle"></i>
+                <h3>Profile & Reviews</h3>
+                <p>Manage your bio, skills, and peer ratings</p>
             </a>
         </div>
     </div>

@@ -6,10 +6,6 @@
 // ============================================================
 
 include '../includes/header3.php';
-
-// --- Gather Analytics Data ---
-
-// Users registered this month
 $this_month = date("Y-m-01");
 $new_users_month = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c FROM users WHERE created_at >= '$this_month'"))["c"];
 
