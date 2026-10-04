@@ -1,125 +1,82 @@
 <?php
-// ============================================================
-// FILE: config/database.php
-// PURPOSE: Establishes the MySQL database connection and
-//          defines the BASE_URL constant used across all pages.
-// ============================================================
+// Determine database configuration from Railway/standard environment variables
+$db_url = getenv('DATABASE_URL') ?: getenv('MYSQL_URL');
 
-// --- Database Credentials ---
-// Vercel deployments provide these values as project environment variables.
-$isVercel = getenv('VERCEL') !== false;
-$host     = getenv('DB_HOST');
-$port     = getenv('DB_PORT');
-$user     = getenv('DB_USER');
-$pass     = getenv('DB_PASSWORD');
-$dbname   = getenv('DB_NAME');
+if ($db_url) {
+    $parsed_url = parse_url($db_url);
+    $host     = $parsed_url['host'] ?? '127.0.0.1';
+    $port     = isset($parsed_url['port']) ? (int)$parsed_url['port'] : 3306;
+    $username = isset($parsed_url['user']) ? rawurldecode($parsed_url['user']) : 'root';
+    $password = isset($parsed_url['pass']) ? rawurldecode($parsed_url['pass']) : '';
+    $raw_db   = isset($parsed_url['path']) ? ltrim($parsed_url['path'], '/') : 'railway';
+    $database = rawurldecode(explode('?', $raw_db)[0]);
+} else {
+    // Check Railway's standard variables (MYSQLHOST, MYSQLUSER, etc.) alongside DB_*
+    $host     = getenv('MYSQLHOST') ?: (getenv('DB_HOST') ?: (getenv('MYSQL_HOST') ?: '127.0.0.1'));
+    $username = getenv('MYSQLUSER') ?: (getenv('DB_USER') ?: (getenv('MYSQL_USER') ?: 'root'));
+    $password = getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : (getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : (getenv('MYSQL_PASSWORD') !== false ? getenv('MYSQL_PASSWORD') : ''));
+    $database = getenv('MYSQLDATABASE') ?: (getenv('DB_NAME') ?: (getenv('MYSQL_DATABASE') ?: 'railway'));
+    $port     = (int)(getenv('MYSQLPORT') ?: (getenv('DB_PORT') ?: (getenv('MYSQL_PORT') ?: 3306)));
+}
 
-if ($isVercel) {
-    $missingVariables = [];
-    foreach ([
-        'DB_HOST' => $host,
-        'DB_PORT' => $port,
-        'DB_USER' => $user,
-        'DB_PASSWORD' => $pass,
-        'DB_NAME' => $dbname,
-    ] as $variable => $value) {
-        if ($value === false || $value === '') {
-            $missingVariables[] = $variable;
+// 1. Initialize PDO
+try {
+    $pdo = new PDO("mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4", $username, $password, [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+    ]);
+} catch (PDOException $e) {
+    error_log("PDO Connection notice: " . $e->getMessage());
+}
+
+// 2. Initialize MySQLi
+if (!isset($conn) || !$conn instanceof mysqli) {
+    $conn = mysqli_init();
+
+    $is_remote = ($host !== 'localhost' && $host !== '127.0.0.1' && $host !== '');
+    $use_ssl   = getenv('DB_SSL') === 'true' || getenv('MYSQL_SSL') === 'true';
+
+    if ($use_ssl && defined('MYSQLI_CLIENT_SSL')) {
+        mysqli_ssl_set($conn, NULL, NULL, getenv('DB_SSL_CA') ?: NULL, NULL, NULL);
+        $connected = @mysqli_real_connect($conn, $host, $username, $password, $database, $port, NULL, MYSQLI_CLIENT_SSL);
+        if (!$connected) {
+            $connected = @mysqli_real_connect($conn, $host, $username, $password, $database, $port);
+        }
+    } else {
+        $connected = @mysqli_real_connect($conn, $host, $username, $password, $database, $port);
+    }
+
+    if (!$connected) {
+        $conn_err = mysqli_connect_error();
+        error_log("Database connection failed: " . $conn_err);
+        die("Database connection failed (" . htmlspecialchars($conn_err) . "). Please check your Railway environment variables.");
+    }
+
+    if (function_exists('mysqli_report')) {
+        @mysqli_report(MYSQLI_REPORT_OFF);
+    }
+
+    require_once __DIR__ . "/session.php";
+    init_skillsprout_session($conn);
+}
+
+// 3. Define BASE_URL
+if (!defined('BASE_URL')) {
+    $rawBase = getenv('BASE_URL') ?: getenv('APP_URL');
+    $validBase = null;
+    if ($rawBase !== false && $rawBase !== '') {
+        $rawBase = trim($rawBase);
+        $isDbScheme = preg_match('#^(mysql|mysqli|postgres|postgresql|sqlite|mongodb|redis)://#i', $rawBase);
+        $hasAuth = strpos($rawBase, '@') !== false;
+        $isHttpOrPath = preg_match('#^(https?://|/)#i', $rawBase);
+        if (!$isDbScheme && !$hasAuth && $isHttpOrPath) {
+            $validBase = rtrim($rawBase, '/') . '/';
         }
     }
-
-    if ($missingVariables) {
-        http_response_code(500);
-        error_log('SkillSprout is missing database environment variables: ' . implode(', ', $missingVariables));
-        echo 'The application database is not configured. Set the required DB_* environment variables.';
-        exit;
-    }
-} else {
-    $host   = $host === false ? 'localhost' : $host;
-    $port   = $port === false ? '3306' : $port;
-    $user   = $user === false ? 'root' : $user;
-    $pass   = $pass === false ? '' : $pass;
-    $dbname = $dbname === false ? 'skillsprout' : $dbname;
-}
-
-$port = filter_var($port, FILTER_VALIDATE_INT, [
-    'options' => ['min_range' => 1, 'max_range' => 65535],
-]);
-if ($port === false) {
-    http_response_code(500);
-    error_log('SkillSprout DB_PORT must be an integer between 1 and 65535.');
-    echo 'The application database is not configured correctly. Check DB_PORT.';
-    exit;
-}
-
-// --- Create Connection with Exception Handling ---
-// In PHP 8.1+, mysqli throws mysqli_sql_exception on connection errors.
-// We catch this to display helpful setup guidance instead of an uncaught crash.
-$conn = null;
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-try {
-    $conn = mysqli_connect($host, $user, $pass, $dbname, $port);
-} catch (mysqli_sql_exception $e) {
-    $error_msg = $e->getMessage();
-
-    if ($isVercel || getenv('APP_ENV') === 'production') {
-        http_response_code(500);
-        error_log('SkillSprout database connection failed: ' . $error_msg);
-        echo 'The application database is unavailable. Check the DB_* environment variables.';
-        exit;
-    }
-
-    // Check specific common issues and provide clear instructions
-    echo "<div style='font-family: Inter, -apple-system, sans-serif; max-width: 600px; margin: 3rem auto; padding: 2rem; background: #1e293b; color: #f1f5f9; border-radius: 12px; border: 1px solid #ef4444; box-shadow: 0 10px 25px rgba(0,0,0,0.5);'>";
-    echo "<h2 style='color: #ef4444; margin-top: 0;'>⚠️ Database Connection Failed</h2>";
-    echo "<p style='color: #94a3b8; font-size: 0.95rem; line-height: 1.6;'>SkillSprout could not connect to MySQL on <code>{$host}:{$port}</code>.</p>";
-    
-    echo "<div style='background: #0f172a; padding: 1rem; border-radius: 8px; border-left: 4px solid #ef4444; margin: 1rem 0; font-family: monospace; font-size: 0.85rem; color: #f87171; word-break: break-all;'>";
-    echo "<strong>Error:</strong> " . htmlspecialchars($error_msg);
-    echo "</div>";
-
-    if (strpos($error_msg, "Access denied") !== false) {
-        echo "<h3 style='color: #f59e0b; font-size: 1rem; margin-top: 1.5rem;'>🔑 How to fix this:</h3>";
-        echo "<ol style='color: #cbd5e1; font-size: 0.9rem; line-height: 1.7; padding-left: 1.25rem;'>";
-        echo "<li>Your MySQL server on port <code>{$port}</code> has a password set for user <code>root</code>.</li>";
-        echo "<li>Open <code>config/database.php</code> in your editor.</li>";
-        echo "<li>Update line 13: <code>\$pass = \"your_actual_password\";</code></li>";
-        echo "<li>Save the file and refresh this page.</li>";
-        echo "</ol>";
-    } elseif (strpos($error_msg, "Unknown database") !== false) {
-        echo "<h3 style='color: #3b82f6; font-size: 1rem; margin-top: 1.5rem;'>📦 How to fix this:</h3>";
-        echo "<ol style='color: #cbd5e1; font-size: 0.9rem; line-height: 1.7; padding-left: 1.25rem;'>";
-        echo "<li>The database <code>skillsprout</code> has not been created yet.</li>";
-        echo "<li>Open phpMyAdmin or MySQL CLI and run: <code>CREATE DATABASE skillsprout;</code></li>";
-        echo "<li>Import the file <code>database/database.sql</code> into the <code>skillsprout</code> database.</li>";
-        echo "<li>Save and refresh this page.</li>";
-        echo "</ol>";
+    if ($validBase !== null) {
+        define('BASE_URL', $validBase);
     } else {
-        echo "<h3 style='color: #f59e0b; font-size: 1rem; margin-top: 1.5rem;'>🔧 Troubleshooting:</h3>";
-        echo "<p style='color: #cbd5e1; font-size: 0.9rem;'>Ensure MySQL service is running on port {$port} and that credentials in <code>config/database.php</code> are correct.</p>";
+        define('BASE_URL', '/');
     }
-    echo "</div>";
-    exit;
 }
-
-// --- Set Character Encoding ---
-// Ensures all data sent/received uses UTF-8 encoding.
-// This prevents garbled text for special characters.
-mysqli_set_charset($conn, "utf8mb4");
-
-// --- Define BASE_URL ---
-// Vercel serves the app from the domain root; retain the XAMPP subfolder locally.
-$configuredUrl = getenv('APP_URL');
-if ($configuredUrl !== false && $configuredUrl !== '') {
-    $base = rtrim($configuredUrl, '/');
-} else {
-    $forwardedProtocol = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
-    $isHttps = $forwardedProtocol === 'https'
-        || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
-    $protocol = $isHttps ? 'https' : 'http';
-    $hostValue = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $localPath = $isVercel ? '' : '/SkillSprout';
-    $base = $protocol . '://' . $hostValue . $localPath;
-}
-define('BASE_URL', $base);
-?>
