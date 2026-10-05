@@ -186,5 +186,3 @@ if ($configuredUrl !== false && $configuredUrl !== '') {
     $base = $protocol . '://' . $hostValue . $localPath;
 }
 define('BASE_URL', $base);
-?>
-    
