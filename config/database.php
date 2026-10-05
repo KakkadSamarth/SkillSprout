@@ -123,3 +123,4 @@ if ($configuredUrl !== false && $configuredUrl !== '') {
 }
 define('BASE_URL', $base);
 ?>
+    

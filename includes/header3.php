@@ -55,7 +55,7 @@ $admin_role = $_SESSION["role"];
                 <li><a href="<?php echo BASE_URL; ?>/admin/disputes.php"><i class="fas fa-gavel"></i> Disputes</a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/transactions.php"><i class="fas fa-receipt"></i> Transactions</a></li>
                 <?php if ($admin_role === 'admin'): ?>
-                <li><a href="<?php echo BASE_URL; ?>/admin/settings.php"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="<?php echo BASE_URL; ?>/admin/settings.php"><i class="fas fa-tags"></i> Categories</a></li>
                 <?php endif; ?>
                 <li><a href="<?php echo BASE_URL; ?>/admin/analytics.php"><i class="fas fa-chart-pie"></i> Analytics</a></li>
                 <li class="nav-user-section">

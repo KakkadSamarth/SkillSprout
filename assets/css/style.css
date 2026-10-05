@@ -1,69 +1,45 @@
-/* ============================================================
-   FILE: assets/css/style.css
-   PURPOSE: Unified Monochromatic Design System for SkillSprout
-            Public, User, and Admin Portals
-            Palette: 3 Grays + Signature Emerald Green
-   ============================================================ */
-
-/* ===== DESIGN TOKENS (3 Grays & Green) ===== */
 :root {
-    /* --- The 3 Grays --- */
-    --gray-bg: #111215;         /* Gray 1: Deep canvas & page background */
-    --gray-surface: #1c1d22;    /* Gray 2: Elevated surfaces, cards, inputs */
-    --gray-surface-hover: #25262c; /* Interactive surface hover */
-    --gray-border: #2e3038;     /* Gray 3: Clean borders, dividers, outlines */
+    --gray-bg: #111215;
+    --gray-surface: #1c1d22;
+    --gray-surface-hover: #25262c;
+    --gray-border: #2e3038;
     --gray-border-light: #3e414c;
-
-    /* Semantic mappings to standard variables */
     --bg-body: var(--gray-bg);
     --bg-card: var(--gray-surface);
     --bg-card-hover: var(--gray-surface-hover);
     --bg-input: #17181c;
     --border: var(--gray-border);
-
-    /* Text Tones (Neutral grays) */
     --text-primary: #f4f4f6;
     --text-secondary: #9da0aa;
     --text-muted: #6b6e79;
-
-    /* --- The Signature Green --- */
     --primary: #10b981;
     --primary-dark: #059669;
     --primary-light: #34d399;
     --primary-soft: rgba(16, 185, 129, 0.12);
     --primary-glow: 0 0 20px rgba(16, 185, 129, 0.18);
-
-    /* Functional Semantic Red (Used strictly for errors/debits/disputes) */
     --accent-red: #ef4444;
     --accent-red-soft: rgba(239, 68, 68, 0.12);
-
-    /* Neutral Accents (Monochromatic Gray Badges/Icons) */
     --accent-blue: #9da0aa;
     --accent-purple: #9da0aa;
     --accent-orange: #9da0aa;
-
-    /* Typography & Sizing */
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --radius: 12px;
     --radius-sm: 8px;
     --radius-lg: 16px;
-
-    /* Elevation Shadows */
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.5)
 }
 
-/* ===== RESET & BASE STYLES ===== */
 *,
 *::before,
 *::after {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    box-sizing: border-box
 }
 
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: smooth
 }
 
 body,
@@ -74,25 +50,24 @@ body,
     line-height: 1.6;
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
+    flex-direction: column
 }
 
 a {
     color: var(--primary);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease
 }
 
 a:hover {
-    color: var(--primary-light);
+    color: var(--primary-light)
 }
 
 img {
     max-width: 100%;
-    height: auto;
+    height: auto
 }
 
-/* ===== NAVIGATION (Public, User, and Admin) ===== */
 .navbar,
 .admin-navbar {
     background: rgba(17, 18, 21, 0.95);
@@ -101,7 +76,7 @@ img {
     padding: 0.75rem 0;
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1000
 }
 
 .nav-container {
@@ -110,7 +85,7 @@ img {
     padding: 0 1.5rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between
 }
 
 .nav-logo {
@@ -119,18 +94,18 @@ img {
     color: var(--primary) !important;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
 .nav-logo i {
-    font-size: 1.45rem;
+    font-size: 1.45rem
 }
 
 .nav-links {
     list-style: none;
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.4rem
 }
 
 .nav-links a {
@@ -142,21 +117,20 @@ img {
     transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.4rem
 }
 
 .nav-links a:hover {
     color: var(--text-primary);
-    background: var(--bg-card);
+    background: var(--bg-card)
 }
 
 .nav-user {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
-/* Unified Admin Badge — Clean Monochromatic Green */
 .nav-admin-badge {
     background: var(--primary-soft);
     color: var(--primary);
@@ -167,7 +141,7 @@ img {
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.4rem
 }
 
 .nav-toggle {
@@ -176,81 +150,78 @@ img {
     border: none;
     color: var(--text-primary);
     font-size: 1.4rem;
-    cursor: pointer;
+    cursor: pointer
 }
 
-/* ===== LAYOUT & CONTAINERS ===== */
 .main-content {
-    flex: 1;
+    flex: 1
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 1.5rem
 }
 
 .section {
-    padding: 3rem 0;
+    padding: 3rem 0
 }
 
 .section-dark {
-    background: var(--bg-card);
+    background: var(--bg-card)
 }
 
 .text-center {
-    text-align: center;
+    text-align: center
 }
 
 .text-muted {
-    color: var(--text-muted);
+    color: var(--text-muted)
 }
 
 .text-green {
-    color: var(--primary) !important;
+    color: var(--primary) !important
 }
 
 .text-red {
-    color: var(--accent-red) !important;
+    color: var(--accent-red) !important
 }
 
-/* ===== TYPOGRAPHY ===== */
 .page-title {
     font-size: 2rem;
     font-weight: 800;
     margin-bottom: 0.4rem;
-    color: var(--text-primary);
+    color: var(--text-primary)
 }
 
 .page-subtitle,
 .section-subtitle {
     color: var(--text-secondary);
     margin-bottom: 2rem;
-    font-size: 0.98rem;
+    font-size: 0.98rem
 }
 
 .section-title {
     font-size: 1.5rem;
     font-weight: 700;
     margin: 2rem 0 1rem;
-    color: var(--text-primary);
+    color: var(--text-primary)
 }
 
 .highlight {
-    color: var(--primary);
+    color: var(--primary)
 }
 
-/* ===== HERO SECTION ===== */
 .hero {
     padding: 5.5rem 1.5rem;
     text-align: center;
     background: radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.12), transparent 70%);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border)
 }
 
 .hero-content {
     max-width: 720px;
-    margin: 0 auto;
+    margin: 0 auto
 }
 
 .hero h1 {
@@ -258,23 +229,22 @@ img {
     font-weight: 800;
     line-height: 1.15;
     margin-bottom: 1.25rem;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.5px
 }
 
 .hero-subtitle {
     font-size: 1.15rem;
     color: var(--text-secondary);
-    margin-bottom: 2rem;
+    margin-bottom: 2rem
 }
 
 .hero-buttons {
     display: flex;
     gap: 1rem;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: wrap
 }
 
-/* ===== BUTTON SYSTEM ===== */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -287,13 +257,13 @@ img {
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none;
-    line-height: 1.4;
+    line-height: 1.4
 }
 
 .btn-primary,
 .btn-success {
     background: var(--primary);
-    color: #fff;
+    color: #fff
 }
 
 .btn-primary:hover,
@@ -301,66 +271,64 @@ img {
     background: var(--primary-dark);
     color: #fff;
     transform: translateY(-1px);
-    box-shadow: var(--primary-glow);
+    box-shadow: var(--primary-glow)
 }
 
 .btn-outline {
     background: transparent;
     border: 1.5px solid var(--border);
-    color: var(--text-primary);
+    color: var(--text-primary)
 }
 
 .btn-outline:hover {
     border-color: var(--primary);
     color: var(--primary);
-    background: var(--primary-soft);
+    background: var(--primary-soft)
 }
 
 .btn-danger {
     background: var(--accent-red);
-    color: #fff;
+    color: #fff
 }
 
 .btn-danger:hover {
     background: #dc2626;
-    color: #fff;
+    color: #fff
 }
 
 .btn-warning,
 .btn-orange {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    color: var(--text-primary);
+    color: var(--text-primary)
 }
 
 .btn-warning:hover,
 .btn-orange:hover {
     background: var(--bg-card-hover);
-    border-color: var(--gray-border-light);
+    border-color: var(--gray-border-light)
 }
 
 .btn-lg {
     padding: 0.85rem 1.75rem;
-    font-size: 1rem;
+    font-size: 1rem
 }
 
 .btn-sm {
     padding: 0.4rem 0.85rem;
-    font-size: 0.82rem;
+    font-size: 0.82rem
 }
 
 .btn-xs {
     padding: 0.3rem 0.6rem;
-    font-size: 0.75rem;
+    font-size: 0.75rem
 }
 
 .btn-block {
     width: 100%;
-    justify-content: center;
+    justify-content: center
 }
 
-/* ===== REUSABLE SURFACE CARDS ===== */
-/* Consolidated base styles for all card variants across public, user & admin */
 .feature-card,
 .stat-card,
 .action-card,
@@ -374,7 +342,7 @@ img {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.5rem;
-    transition: all 0.25s ease;
+    transition: all 0.25s ease
 }
 
 .feature-card:hover,
@@ -383,10 +351,9 @@ img {
 .package-card:hover {
     border-color: var(--gray-border-light);
     transform: translateY(-2px);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow)
 }
 
-/* Large Container Cards */
 .task-detail,
 .submission-review,
 .profile-info-card,
@@ -394,53 +361,51 @@ img {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 2rem;
+    padding: 2rem
 }
 
 .form-container {
     padding: 2.5rem;
     max-width: 500px;
-    margin: 0 auto;
+    margin: 0 auto
 }
 
 .form-container.form-wide {
-    max-width: 700px;
+    max-width: 700px
 }
 
 .about-block {
-    padding: 1.75rem;
+    padding: 1.75rem
 }
 
-/* ===== REUSABLE GRIDS ===== */
 .stats-grid,
 .dashboard-stats,
 .admin-stats-grid,
 .packages-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 1.25rem;
+    gap: 1.25rem
 }
 
 .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+    gap: 1.5rem
 }
 
 .action-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.25rem;
+    gap: 1.25rem
 }
 
 .admin-panels {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.25rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2rem
 }
 
-/* ===== FEATURE CARDS ===== */
 .feature-icon {
     width: 56px;
     height: 56px;
@@ -452,25 +417,24 @@ img {
     justify-content: center;
     font-size: 1.4rem;
     color: var(--primary);
-    margin-bottom: 1rem;
+    margin-bottom: 1rem
 }
 
 .feature-card h3 {
     margin-bottom: 0.5rem;
-    font-size: 1.15rem;
+    font-size: 1.15rem
 }
 
 .feature-card p {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.9rem
 }
 
-/* ===== STATS CARDS (Monochromatic Style for User & Admin) ===== */
 .stat-card {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1.25rem;
+    padding: 1.25rem
 }
 
 .stat-icon {
@@ -483,14 +447,13 @@ img {
     font-size: 1.3rem;
     background: var(--primary-soft);
     color: var(--primary);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.2)
 }
 
-/* Subtle Semantic Accents */
 .accent-green .stat-icon {
     background: var(--primary-soft);
     color: var(--primary);
-    border-color: rgba(16, 185, 129, 0.25);
+    border-color: rgba(16, 185, 129, 0.25)
 }
 
 .accent-blue .stat-icon,
@@ -498,104 +461,102 @@ img {
 .accent-orange .stat-icon {
     background: var(--bg-body);
     color: var(--text-primary);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border)
 }
 
 .accent-red .stat-icon {
     background: var(--accent-red-soft);
     color: var(--accent-red);
-    border-color: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.25)
 }
 
 .stat-number {
     font-size: 1.75rem;
-    font-weight: 800;
+    font-weight: 800
 }
 
 .stat-label {
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 0.85rem
 }
 
-/* ===== ACTION CARDS ===== */
 .action-card {
     text-align: center;
-    color: var(--text-primary);
+    color: var(--text-primary)
 }
 
 .action-card i {
     font-size: 2rem;
     color: var(--primary);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem
 }
 
 .action-card h3 {
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.4rem
 }
 
 .action-card p {
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 0.85rem
 }
 
-/* ===== TASK CARDS ===== */
 .task-grid,
 .task-list {
     display: grid;
-    gap: 1.25rem;
+    gap: 1.25rem
 }
 
 .task-grid {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))
 }
 
 .task-card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem
 }
 
 .task-card-header h3 {
     font-size: 1.1rem;
     flex: 1;
-    margin-right: 0.75rem;
+    margin-right: 0.75rem
 }
 
 .task-domain {
     color: var(--primary);
     font-size: 0.85rem;
     margin-bottom: 0.5rem;
-    font-weight: 500;
+    font-weight: 500
 }
 
 .task-description {
     color: var(--text-secondary);
     font-size: 0.88rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem
 }
 
 .task-meta {
     display: flex;
     gap: 1rem;
     margin-bottom: 0.75rem;
-    font-size: 0.85rem;
+    font-size: 0.85rem
 }
 
 .task-reward {
     color: var(--primary);
-    font-weight: 600;
+    font-weight: 600
 }
 
 .task-deadline {
-    color: var(--text-muted);
+    color: var(--text-muted)
 }
 
 .task-skills {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem
 }
 
 .skill-tag {
@@ -605,7 +566,7 @@ img {
     padding: 0.2rem 0.6rem;
     border-radius: 20px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 500
 }
 
 .task-card-footer {
@@ -614,38 +575,37 @@ img {
     align-items: center;
     margin-top: 0.75rem;
     padding-top: 0.75rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border)
 }
 
 .task-author {
     color: var(--text-muted);
-    font-size: 0.82rem;
+    font-size: 0.82rem
 }
 
 .task-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
-/* ===== TASK DETAILS ===== */
 .task-detail-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 1.5rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border)
 }
 
 .task-detail-header h1 {
-    font-size: 1.75rem;
+    font-size: 1.75rem
 }
 
 .task-info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2rem
 }
 
 .info-item {
@@ -653,36 +613,36 @@ img {
     border: 1px solid var(--border);
     padding: 1rem;
     border-radius: var(--radius-sm);
-    text-align: center;
+    text-align: center
 }
 
 .info-item i {
     font-size: 1.5rem;
     color: var(--primary);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.4rem
 }
 
 .info-label {
     display: block;
     color: var(--text-muted);
     font-size: 0.8rem;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.2rem
 }
 
 .info-value {
     display: block;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1rem
 }
 
 .task-section {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem
 }
 
 .task-section h2 {
     font-size: 1.15rem;
     margin-bottom: 0.75rem;
-    color: var(--text-primary);
+    color: var(--text-primary)
 }
 
 .task-actions-bar {
@@ -691,10 +651,9 @@ img {
     flex-wrap: wrap;
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border)
 }
 
-/* ===== BADGE SYSTEM ===== */
 .badge {
     display: inline-block;
     padding: 0.25rem 0.65rem;
@@ -703,22 +662,21 @@ img {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border: 1px solid transparent;
+    border: 1px solid transparent
 }
 
 .badge-lg {
     padding: 0.35rem 0.9rem;
-    font-size: 0.82rem;
+    font-size: 0.82rem
 }
 
-/* Monochromatic Badges: Green vs Gray vs Red */
 .badge-open,
 .badge-completed,
 .badge-accepted,
 .badge-active {
     background: var(--primary-soft);
     color: var(--primary);
-    border-color: rgba(16, 185, 129, 0.25);
+    border-color: rgba(16, 185, 129, 0.25)
 }
 
 .badge-assigned,
@@ -727,7 +685,7 @@ img {
 .badge-warned {
     background: var(--bg-body);
     color: var(--text-secondary);
-    border-color: var(--border);
+    border-color: var(--border)
 }
 
 .badge-cancelled,
@@ -736,25 +694,24 @@ img {
 .badge-suspended {
     background: var(--accent-red-soft);
     color: var(--accent-red);
-    border-color: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.25)
 }
 
-/* ===== FORM SYSTEM ===== */
 .form-title {
     font-size: 1.75rem;
     font-weight: 800;
     text-align: center;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.3rem
 }
 
 .form-subtitle {
     text-align: center;
     color: var(--text-muted);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem
 }
 
 .form-group {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.25rem
 }
 
 .form-group label {
@@ -762,10 +719,9 @@ img {
     margin-bottom: 0.4rem;
     font-weight: 500;
     font-size: 0.88rem;
-    color: var(--text-secondary);
+    color: var(--text-secondary)
 }
 
-/* Unified Input Styles */
 .form-group input,
 .form-group textarea,
 .form-group select,
@@ -776,7 +732,7 @@ img {
     color: var(--text-primary);
     font-family: var(--font-family);
     font-size: 0.9rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease
 }
 
 .form-group input,
@@ -784,7 +740,7 @@ img {
 .form-group select {
     width: 100%;
     padding: 0.7rem 0.85rem;
-    background: var(--bg-input);
+    background: var(--bg-input)
 }
 
 .search-input-group input,
@@ -792,7 +748,7 @@ img {
     padding: 0.65rem 0.85rem;
     background: var(--bg-card);
     flex: 1;
-    min-width: 200px;
+    min-width: 200px
 }
 
 .form-group input:focus,
@@ -802,28 +758,27 @@ img {
 .search-input-group select:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15)
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-    color: var(--text-muted);
+    color: var(--text-muted)
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 1rem
 }
 
 .form-footer {
     text-align: center;
     margin-top: 1.25rem;
     color: var(--text-muted);
-    font-size: 0.88rem;
+    font-size: 0.88rem
 }
 
-/* ===== ALERTS ===== */
 .alert {
     padding: 0.85rem 1.15rem;
     border-radius: var(--radius-sm);
@@ -831,29 +786,28 @@ img {
     font-size: 0.9rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
 .alert-success {
     background: var(--primary-soft);
     border: 1px solid rgba(16, 185, 129, 0.3);
-    color: var(--primary);
+    color: var(--primary)
 }
 
 .alert-danger {
     background: var(--accent-red-soft);
     border: 1px solid rgba(239, 68, 68, 0.3);
-    color: var(--accent-red);
+    color: var(--accent-red)
 }
 
-/* ===== DATA TABLES ===== */
 .table-responsive {
-    overflow-x: auto;
+    overflow-x: auto
 }
 
 .data-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse
 }
 
 .data-table th,
@@ -861,7 +815,7 @@ img {
     padding: 0.75rem 1rem;
     text-align: left;
     border-bottom: 1px solid var(--border);
-    font-size: 0.88rem;
+    font-size: 0.88rem
 }
 
 .data-table th {
@@ -869,21 +823,20 @@ img {
     color: var(--text-muted);
     text-transform: uppercase;
     font-size: 0.75rem;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.5px
 }
 
 .data-table tr:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.02)
 }
 
-/* ===== TABS ===== */
 .tabs {
     display: flex;
     gap: 0.4rem;
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.5rem
 }
 
 .tab-btn {
@@ -897,39 +850,37 @@ img {
     cursor: pointer;
     border-radius: var(--radius-sm);
     transition: all 0.2s ease;
-    text-decoration: none;
+    text-decoration: none
 }
 
 .tab-btn:hover {
     color: var(--text-primary);
-    background: var(--bg-card);
+    background: var(--bg-card)
 }
 
 .tab-btn.active {
     background: var(--primary);
-    color: #fff;
+    color: #fff
 }
 
 .tab-content {
-    display: none;
+    display: none
 }
 
 .tab-content.active {
-    display: block;
+    display: block
 }
 
-/* ===== SEARCH BAR ===== */
 .search-bar {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem
 }
 
 .search-input-group {
     display: flex;
     gap: 0.5rem;
-    flex-wrap: wrap;
+    flex-wrap: wrap
 }
 
-/* ===== WALLET & PACKAGES (1 WP = Rs. 1) ===== */
 .wallet-balance-card {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), var(--gray-surface));
     border: 1px solid rgba(16, 185, 129, 0.35);
@@ -939,48 +890,48 @@ img {
     align-items: center;
     gap: 1.5rem;
     margin-bottom: 2rem;
-    flex-wrap: wrap;
+    flex-wrap: wrap
 }
 
 .wallet-icon {
     font-size: 2.5rem;
-    color: var(--primary);
+    color: var(--primary)
 }
 
 .wallet-info {
-    flex: 1;
+    flex: 1
 }
 
 .wallet-label {
     color: var(--text-muted);
-    font-size: 0.88rem;
+    font-size: 0.88rem
 }
 
 .wallet-amount {
     font-size: 2.25rem;
-    font-weight: 800;
+    font-weight: 800
 }
 
 .wallet-amount span {
     color: var(--primary);
-    font-size: 1rem;
+    font-size: 1rem
 }
 
 .wallet-subtext {
     font-size: 1rem;
     color: var(--text-secondary);
     font-weight: 500;
-    margin-left: 0.5rem;
+    margin-left: 0.5rem
 }
 
 .package-card {
     text-align: center;
-    position: relative;
+    position: relative
 }
 
 .package-featured {
     border-color: var(--primary);
-    box-shadow: var(--primary-glow);
+    box-shadow: var(--primary-glow)
 }
 
 .package-badge {
@@ -993,34 +944,33 @@ img {
     padding: 0.2rem 0.8rem;
     border-radius: 20px;
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 700
 }
 
 .package-label {
     color: var(--text-muted);
     font-size: 0.88rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem
 }
 
 .package-wp {
     font-size: 2rem;
     font-weight: 800;
     color: var(--primary);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.25rem
 }
 
 .package-price {
     color: var(--text-secondary);
     font-size: 1.15rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1rem
 }
 
-/* ===== USER PROFILE & REVIEWS ===== */
 .profile-container {
     display: grid;
     grid-template-columns: 320px 1fr;
     gap: 2rem;
-    align-items: start;
+    align-items: start
 }
 
 .profile-info-card {
@@ -1030,28 +980,28 @@ img {
     border-radius: var(--radius-lg);
     padding: 2rem 1.5rem;
     position: sticky;
-    top: 90px;
+    top: 90px
 }
 
 .profile-avatar {
     font-size: 4.5rem;
     color: var(--primary);
     margin-bottom: 0.75rem;
-    display: inline-block;
+    display: inline-block
 }
 
 .profile-name {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 0.25rem;
-    color: var(--text-primary);
+    color: var(--text-primary)
 }
 
 .profile-email {
     color: var(--text-muted);
     font-size: 0.88rem;
     word-break: break-all;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem
 }
 
 .profile-rating-pill {
@@ -1065,7 +1015,7 @@ img {
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 600;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.25rem
 }
 
 .profile-meta {
@@ -1077,26 +1027,26 @@ img {
     border-top: 1px solid var(--border);
     color: var(--text-secondary);
     font-size: 0.88rem;
-    text-align: left;
+    text-align: left
 }
 
 .profile-meta-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between
 }
 
 .profile-meta-item span:first-child {
     color: var(--text-muted);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
 .profile-content-area {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.5rem
 }
 
 .profile-view-card {
@@ -1104,11 +1054,11 @@ img {
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 1.75rem;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease
 }
 
 .profile-view-card:hover {
-    border-color: var(--gray-border-light);
+    border-color: var(--gray-border-light)
 }
 
 .profile-card-header {
@@ -1117,7 +1067,7 @@ img {
     align-items: center;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border)
 }
 
 .profile-card-header h3 {
@@ -1126,36 +1076,36 @@ img {
     color: var(--text-primary);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
 .profile-card-header h3 i {
-    color: var(--primary);
+    color: var(--primary)
 }
 
 .profile-bio-text {
     color: var(--text-secondary);
     line-height: 1.7;
     font-size: 0.95rem;
-    white-space: pre-line;
+    white-space: pre-line
 }
 
 .profile-bio-text.empty-text {
     color: var(--text-muted);
-    font-style: italic;
+    font-style: italic
 }
 
 .profile-skills-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
 .profile-stats-mini {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem
 }
 
 .mini-stat-card {
@@ -1163,14 +1113,14 @@ img {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.1rem;
-    text-align: center;
+    text-align: center
 }
 
 .mini-stat-num {
     font-size: 1.5rem;
     font-weight: 800;
     color: var(--text-primary);
-    line-height: 1.2;
+    line-height: 1.2
 }
 
 .mini-stat-label {
@@ -1178,22 +1128,28 @@ img {
     color: var(--text-muted);
     margin-top: 0.25rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.5px
 }
 
-/* Edit Profile Mode Form */
 .profile-edit-container {
     background: var(--bg-card);
     border: 1.5px solid var(--primary);
     border-radius: var(--radius-lg);
     padding: 2rem;
     box-shadow: var(--primary-glow);
-    animation: fadeIn 0.25s ease;
+    animation: fadeIn 0.25s ease
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-8px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
 }
 
 .edit-form-header {
@@ -1202,7 +1158,7 @@ img {
     align-items: center;
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border)
 }
 
 .edit-form-header h3 {
@@ -1210,7 +1166,7 @@ img {
     color: var(--text-primary);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
 .form-actions-inline {
@@ -1219,21 +1175,20 @@ img {
     align-items: center;
     margin-top: 1.5rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border)
 }
 
-/* ===== REVIEWS & RATINGS SYSTEM ===== */
 .reviews-section {
     margin-top: 3rem;
     padding-top: 2.5rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border)
 }
 
 .reviews-summary-grid {
     display: grid;
     grid-template-columns: 260px 1fr;
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2rem
 }
 
 .rating-overview-card {
@@ -1245,7 +1200,7 @@ img {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: center
 }
 
 .rating-score-large {
@@ -1253,7 +1208,7 @@ img {
     font-weight: 800;
     line-height: 1;
     color: var(--text-primary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem
 }
 
 .rating-stars-gold {
@@ -1261,16 +1216,16 @@ img {
     font-size: 1.25rem;
     display: inline-flex;
     gap: 4px;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.4rem
 }
 
 .text-gold {
-    color: #f59e0b !important;
+    color: #f59e0b !important
 }
 
 .rating-count-label {
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: var(--text-muted)
 }
 
 .rating-bars-card {
@@ -1281,7 +1236,7 @@ img {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.75rem
 }
 
 .rating-bar-row {
@@ -1289,13 +1244,13 @@ img {
     align-items: center;
     gap: 0.75rem;
     font-size: 0.82rem;
-    color: var(--text-secondary);
+    color: var(--text-secondary)
 }
 
 .rating-bar-label {
     width: 48px;
     text-align: right;
-    font-weight: 600;
+    font-weight: 600
 }
 
 .rating-bar-track {
@@ -1304,34 +1259,33 @@ img {
     background: var(--bg-body);
     border: 1px solid var(--border);
     border-radius: 4px;
-    overflow: hidden;
+    overflow: hidden
 }
 
 .rating-bar-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--primary), #f59e0b);
     border-radius: 4px;
-    transition: width 0.4s ease;
+    transition: width 0.4s ease
 }
 
 .rating-bar-count {
     width: 32px;
     text-align: left;
     color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 0.8rem
 }
 
-/* Interactive Star Rating Selector */
 .interactive-stars-container {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 0;
+    padding: 0.5rem 0
 }
 
 .interactive-stars {
     display: inline-flex;
-    gap: 0.35rem;
+    gap: 0.35rem
 }
 
 .star-rating-item {
@@ -1339,32 +1293,31 @@ img {
     color: var(--gray-border-light);
     cursor: pointer;
     transition: all 0.15s ease;
-    user-select: none;
+    user-select: none
 }
 
 .star-rating-item:hover {
-    transform: scale(1.15);
+    transform: scale(1.15)
 }
 
 .star-rating-item.active,
 .star-rating-item.hovered {
-    color: #f59e0b;
+    color: #f59e0b
 }
 
 .rating-text-feedback {
     font-size: 0.9rem;
     font-weight: 600;
     color: #fbbf24;
-    margin-left: 0.75rem;
+    margin-left: 0.75rem
 }
 
-/* Write Review Form Card */
 .write-review-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 1.75rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2rem
 }
 
 .write-review-card h3 {
@@ -1374,14 +1327,13 @@ img {
     color: var(--text-primary);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
-/* Review Feed Cards */
 .reviews-feed-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1rem
 }
 
 .review-item-card {
@@ -1389,11 +1341,11 @@ img {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.35rem 1.5rem;
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    transition: border-color 0.2s ease, transform 0.2s ease
 }
 
 .review-item-card:hover {
-    border-color: var(--gray-border-light);
+    border-color: var(--gray-border-light)
 }
 
 .review-item-header {
@@ -1402,13 +1354,13 @@ img {
     align-items: center;
     margin-bottom: 0.75rem;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
 .reviewer-meta {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.75rem
 }
 
 .reviewer-avatar-circle {
@@ -1421,22 +1373,22 @@ img {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.2rem
 }
 
 .reviewer-name {
     font-weight: 600;
     color: var(--text-primary);
-    font-size: 0.95rem;
+    font-size: 0.95rem
 }
 
 .reviewer-name:hover {
-    color: var(--primary);
+    color: var(--primary)
 }
 
 .review-date {
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: var(--text-muted)
 }
 
 .review-task-tag {
@@ -1449,30 +1401,29 @@ img {
     border-radius: 6px;
     font-size: 0.78rem;
     color: var(--text-secondary);
-    margin-top: 0.5rem;
+    margin-top: 0.5rem
 }
 
 .review-task-tag i {
-    color: var(--primary);
+    color: var(--primary)
 }
 
 .review-item-comment {
     color: var(--text-secondary);
     line-height: 1.65;
-    font-size: 0.93rem;
+    font-size: 0.93rem
 }
 
-/* ===== APPLICATIONS & SUBMISSIONS ===== */
 .applications-list {
     display: grid;
-    gap: 1rem;
+    gap: 1rem
 }
 
 .application-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1rem;
+    margin-bottom: 1rem
 }
 
 .application-pitch {
@@ -1480,32 +1431,32 @@ img {
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1rem
 }
 
 .application-pitch h4 {
     color: var(--text-muted);
     font-size: 0.82rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem
 }
 
 .application-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
 .submission-info {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border)
 }
 
 .submission-content {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem
 }
 
 .submission-content h3 {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem
 }
 
 .review-actions {
@@ -1513,48 +1464,46 @@ img {
     gap: 1rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border);
-    flex-wrap: wrap;
+    flex-wrap: wrap
 }
 
-/* ===== DISPUTES ===== */
 .dispute-card {
-    margin-bottom: 1rem;
+    margin-bottom: 1rem
 }
 
 .dispute-resolved {
-    opacity: 0.65;
+    opacity: 0.65
 }
 
 .dispute-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem
 }
 
 .dispute-resolve-form {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border)
 }
 
 .dispute-actions {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
-    margin-top: 0.75rem;
+    margin-top: 0.75rem
 }
 
-/* ===== ADMIN SPECIFICS (Unified with user aesthetic) ===== */
 .admin-panel h3 {
     margin-bottom: 1rem;
-    font-size: 1.05rem;
+    font-size: 1.05rem
 }
 
 .breakdown-list {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.6rem
 }
 
 .breakdown-item {
@@ -1562,137 +1511,132 @@ img {
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border)
 }
 
 .breakdown-count {
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1.05rem
 }
 
 .admin-action-btns {
     display: flex;
-    gap: 0.3rem;
+    gap: 0.3rem
 }
 
-/* Admin Login Page */
 .admin-login-form {
-    max-width: 420px;
+    max-width: 420px
 }
 
 .admin-logo {
     text-align: center;
     font-size: 3rem;
     color: var(--primary);
-    margin-bottom: 1rem;
+    margin-bottom: 1rem
 }
 
-/* ===== ABOUT PAGE ===== */
 .about-content {
     display: grid;
-    gap: 1.5rem;
+    gap: 1.5rem
 }
 
 .about-block h2 {
     font-size: 1.2rem;
     margin-bottom: 0.75rem;
-    color: var(--primary);
+    color: var(--primary)
 }
 
 .about-block p {
     color: var(--text-secondary);
-    line-height: 1.7;
+    line-height: 1.7
 }
 
-/* ===== EMPTY STATE ===== */
 .empty-state {
     text-align: center;
     padding: 3rem 1rem;
-    color: var(--text-muted);
+    color: var(--text-muted)
 }
 
 .empty-state i {
     font-size: 3rem;
     margin-bottom: 1rem;
-    opacity: 0.35;
+    opacity: 0.35
 }
 
 .empty-state p {
-    margin-bottom: 1rem;
+    margin-bottom: 1rem
 }
 
-/* ===== CTA SECTION ===== */
 .cta-section {
     background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.08), transparent 70%);
     border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border)
 }
 
 .cta-section h2 {
     font-size: 2rem;
     font-weight: 800;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem
 }
 
 .cta-section p {
     color: var(--text-secondary);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem
 }
 
-/* ===== FOOTER (User & Admin) ===== */
 .footer,
 .admin-footer {
     background: var(--bg-card);
     border-top: 1px solid var(--border);
     padding: 3rem 0 1.5rem;
-    margin-top: auto;
+    margin-top: auto
 }
 
 .footer-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 1.5rem
 }
 
 .footer-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2rem
 }
 
 .footer-col h3 {
     color: var(--primary);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem
 }
 
 .footer-col h4 {
     margin-bottom: 0.75rem;
-    color: var(--text-primary);
+    color: var(--text-primary)
 }
 
 .footer-col p {
     color: var(--text-muted);
     font-size: 0.88rem;
-    line-height: 1.6;
+    line-height: 1.6
 }
 
 .footer-col ul {
-    list-style: none;
+    list-style: none
 }
 
 .footer-col ul li {
     padding: 0.25rem 0;
     color: var(--text-muted);
-    font-size: 0.88rem;
+    font-size: 0.88rem
 }
 
 .footer-col ul li a {
-    color: var(--text-secondary);
+    color: var(--text-secondary)
 }
 
 .footer-col ul li a:hover {
-    color: var(--primary);
+    color: var(--primary)
 }
 
 .footer-bottom {
@@ -1700,15 +1644,14 @@ img {
     padding-top: 1.5rem;
     border-top: 1px solid var(--border);
     color: var(--text-muted);
-    font-size: 0.82rem;
+    font-size: 0.82rem
 }
 
 .footer-meta {
     font-size: 0.75rem;
-    margin-top: 0.3rem;
+    margin-top: 0.3rem
 }
 
-/* ===== MODAL DIALOGS ===== */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -1721,11 +1664,11 @@ img {
     align-items: center;
     justify-content: center;
     z-index: 2000;
-    padding: 1.5rem;
+    padding: 1.5rem
 }
 
 .modal-overlay.active {
-    display: flex;
+    display: flex
 }
 
 .modal-box {
@@ -1736,12 +1679,19 @@ img {
     max-width: 520px;
     width: 100%;
     box-shadow: var(--shadow-lg);
-    animation: modalSlide 0.2s ease-out;
+    animation: modalSlide 0.2s ease-out
 }
 
 @keyframes modalSlide {
-    from { opacity: 0; transform: translateY(-12px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-12px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
 }
 
 .modal-header {
@@ -1750,14 +1700,14 @@ img {
     align-items: center;
     margin-bottom: 1.25rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border)
 }
 
 .modal-header h3 {
     font-size: 1.2rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5rem
 }
 
 .modal-close {
@@ -1766,24 +1716,23 @@ img {
     color: var(--text-muted);
     font-size: 1.2rem;
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color 0.2s
 }
 
 .modal-close:hover {
-    color: var(--text-primary);
+    color: var(--text-primary)
 }
 
 .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
-    margin-top: 1.5rem;
+    margin-top: 1.5rem
 }
 
-/* ===== RESPONSIVE BREAKPOINTS ===== */
-@media (max-width: 768px) {
+@media (max-width:768px) {
     .nav-toggle {
-        display: block;
+        display: block
     }
 
     .nav-links {
@@ -1795,66 +1744,65 @@ img {
         background: var(--bg-card);
         flex-direction: column;
         padding: 1rem;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--border)
     }
 
     .nav-links.active {
-        display: flex;
+        display: flex
     }
 
     .hero h1 {
-        font-size: 2rem;
+        font-size: 2rem
     }
 
     .hero {
-        padding: 3rem 1rem;
+        padding: 3rem 1rem
     }
 
     .form-row,
     .profile-container,
     .reviews-summary-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr
     }
 
     .profile-info-card {
-        position: static;
+        position: static
     }
 
     .task-info-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr
     }
 
     .task-detail-header,
     .wallet-balance-card,
     .review-actions {
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.75rem
     }
 
     .admin-panels {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width:480px) {
     .hero h1 {
-        font-size: 1.6rem;
+        font-size: 1.6rem
     }
 
     .stat-card {
         flex-direction: column;
-        text-align: center;
+        text-align: center
     }
 
     .task-grid,
     .search-input-group,
     .packages-grid {
         grid-template-columns: 1fr;
-        flex-direction: column;
+        flex-direction: column
     }
 }
 
-/* Modal Dialog */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -1867,7 +1815,7 @@ img {
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    padding: 1rem;
+    padding: 1rem
 }
 
 .modal-box {
@@ -1878,17 +1826,18 @@ img {
     max-width: 500px;
     padding: 1.5rem;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
-    animation: modalFadeIn 0.2s ease-out;
+    animation: modalFadeIn 0.2s ease-out
 }
 
 @keyframes modalFadeIn {
     from {
         opacity: 0;
-        transform: translateY(-10px) scale(0.98);
+        transform: translateY(-10px) scale(0.98)
     }
+
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0) scale(1)
     }
 }
 
@@ -1898,7 +1847,7 @@ img {
     align-items: center;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border)
 }
 
 .modal-close {
@@ -1908,16 +1857,16 @@ img {
     font-size: 1.5rem;
     line-height: 1;
     cursor: pointer;
-    transition: var(--transition);
+    transition: var(--transition)
 }
 
 .modal-close:hover {
-    color: var(--text-primary);
+    color: var(--text-primary)
 }
 
 .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
-    margin-top: 1.25rem;
+    margin-top: 1.25rem
 }
