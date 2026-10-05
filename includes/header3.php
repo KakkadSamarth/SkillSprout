@@ -62,7 +62,6 @@ $admin_role = $_SESSION["role"];
                     <span class="nav-admin-badge">
                         <i class="fas fa-user-shield"></i>
                         <?php echo htmlspecialchars($admin_name); ?>
-                        (<?php echo ucfirst($admin_role); ?>)
                     </span>
                 </li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/logout.php" class="btn btn-outline btn-sm">Logout</a></li>

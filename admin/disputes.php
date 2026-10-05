@@ -130,7 +130,7 @@ $disputes = mysqli_query($conn, "SELECT d.*, t.title as task_title, t.reward, u.
                             </div>
                         </form>
                     <?php else: ?>
-                        <p class="text-muted"><strong>Resolution:</strong> <?php echo str_replace("_", " ", $d["resolution"]); ?></p>
+                        <p class="text-muted"><strong>Resolution:</strong> <?php echo str_replace("_", " ", $d["resolution"] ?? ''); ?></p>
                         <?php if ($d["admin_notes"]): ?>
                             <p class="text-muted"><strong>Admin Notes:</strong> <?php echo htmlspecialchars($d["admin_notes"]); ?></p>
                         <?php endif; ?>
