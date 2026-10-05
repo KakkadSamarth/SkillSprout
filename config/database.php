@@ -144,6 +144,31 @@ if (!function_exists('ensureDatabaseTablesExist')) {
         ensureColumnExists($conn, 'tasks', 'reward', "INT NOT NULL DEFAULT 0");
         ensureColumnExists($conn, 'tasks', 'status', "ENUM('OPEN','ASSIGNED','SUBMITTED','COMPLETED','CANCELLED') NOT NULL DEFAULT 'OPEN'");
 
+        ensureColumnExists($conn, 'applications', 'pitch', "TEXT DEFAULT NULL");
+        ensureColumnExists($conn, 'applications', 'status', "ENUM('PENDING','ACCEPTED','REJECTED') NOT NULL DEFAULT 'PENDING'");
+        ensureColumnExists($conn, 'applications', 'applied_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+
+        ensureColumnExists($conn, 'submissions', 'file_path', "VARCHAR(500) DEFAULT NULL");
+        ensureColumnExists($conn, 'submissions', 'status', "ENUM('SUBMITTED','APPROVED','REJECTED') NOT NULL DEFAULT 'SUBMITTED'");
+        ensureColumnExists($conn, 'submissions', 'submitted_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+        ensureColumnExists($conn, 'submissions', 'reviewed_at', "TIMESTAMP NULL DEFAULT NULL");
+
+        ensureColumnExists($conn, 'disputes', 'evidence', "TEXT DEFAULT NULL");
+        ensureColumnExists($conn, 'disputes', 'status', "ENUM('OPEN','UNDER_REVIEW','RESOLVED') NOT NULL DEFAULT 'OPEN'");
+        ensureColumnExists($conn, 'disputes', 'resolution', "ENUM('WORKER_PAID','CREATOR_REFUNDED','SPLIT','DISMISSED') DEFAULT NULL");
+        ensureColumnExists($conn, 'disputes', 'admin_notes', "TEXT DEFAULT NULL");
+        ensureColumnExists($conn, 'disputes', 'resolved_by', "INT DEFAULT NULL");
+        ensureColumnExists($conn, 'disputes', 'filed_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+        ensureColumnExists($conn, 'disputes', 'resolved_at', "TIMESTAMP NULL DEFAULT NULL");
+
+        ensureColumnExists($conn, 'reviews', 'task_id', "INT DEFAULT NULL");
+        ensureColumnExists($conn, 'reviews', 'rating', "TINYINT NOT NULL DEFAULT 5");
+        ensureColumnExists($conn, 'reviews', 'created_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+
+        ensureColumnExists($conn, 'admin_logs', 'details', "TEXT DEFAULT NULL");
+        ensureColumnExists($conn, 'admin_logs', 'ip_address', "VARCHAR(45) DEFAULT NULL");
+        ensureColumnExists($conn, 'admin_logs', 'created_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+
         // 2. Execute table creation & seed statements individually
         $sqlFile = __DIR__ . '/../database/database.sql';
         if (file_exists($sqlFile)) {
