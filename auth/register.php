@@ -86,10 +86,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 $success = "Registration successful! You've received 100 Work Points. Please login.";
 
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 // Something went wrong — undo all changes
-                mysqli_rollback($conn);
-                $error = "Registration failed. Please try again.";
+                if ($conn) {
+                    @mysqli_rollback($conn);
+                }
+                error_log("Registration error: " . $e->getMessage());
+                $error = "Registration failed: " . htmlspecialchars($e->getMessage());
             }
         }
 

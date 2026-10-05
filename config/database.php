@@ -112,6 +112,42 @@ try {
 // This prevents garbled text for special characters.
 mysqli_set_charset($conn, "utf8mb4");
 
+// --- Ensure Database Tables Exist (Auto-bootstrap for Cloud Deployments) ---
+if (!function_exists('ensureDatabaseTablesExist')) {
+    function ensureDatabaseTablesExist($conn) {
+        try {
+            $check = mysqli_query($conn, "SHOW TABLES LIKE 'transactions'");
+            if ($check && mysqli_num_rows($check) > 0) {
+                return; // Tables already initialized
+            }
+
+            $sqlFile = __DIR__ . '/../database/database.sql';
+            if (!file_exists($sqlFile)) {
+                return;
+            }
+
+            $sqlContent = file_get_contents($sqlFile);
+            $sqlContent = preg_replace('/--.*$/m', '', $sqlContent);
+            $statements = explode(';', $sqlContent);
+
+            foreach ($statements as $statement) {
+                $stmt = trim($statement);
+                if (empty($stmt)) continue;
+                if (preg_match('/^(CREATE\s+DATABASE|USE\s+)/i', $stmt)) continue;
+
+                if (stripos($stmt, 'INSERT INTO') === 0) {
+                    $stmt = preg_replace('/^INSERT\s+INTO/i', 'INSERT IGNORE INTO', $stmt);
+                }
+
+                @mysqli_query($conn, $stmt);
+            }
+        } catch (Throwable $e) {
+            error_log('Database auto-initialization error: ' . $e->getMessage());
+        }
+    }
+}
+ensureDatabaseTablesExist($conn);
+
 // --- Define BASE_URL ---
 // Vercel serves the app from the domain root; retain the XAMPP subfolder locally.
 $configuredUrl = getenv('APP_URL');
