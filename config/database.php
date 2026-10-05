@@ -112,35 +112,58 @@ try {
 // This prevents garbled text for special characters.
 mysqli_set_charset($conn, "utf8mb4");
 
-// --- Ensure Database Tables Exist (Auto-bootstrap for Cloud Deployments) ---
+// --- Ensure Database Tables & Required Columns Exist (Auto-bootstrap & Migrations) ---
+if (!function_exists('ensureColumnExists')) {
+    function ensureColumnExists($conn, string $table, string $column, string $definition): void {
+        try {
+            $check = @mysqli_query($conn, "SHOW COLUMNS FROM `$table` LIKE '$column'");
+            if ($check && mysqli_num_rows($check) === 0) {
+                @mysqli_query($conn, "ALTER TABLE `$table` ADD COLUMN `$column` $definition");
+            }
+        } catch (Throwable $e) {
+            error_log("Failed adding column $column to $table: " . $e->getMessage());
+        }
+    }
+}
+
 if (!function_exists('ensureDatabaseTablesExist')) {
     function ensureDatabaseTablesExist($conn) {
         try {
-            $check = mysqli_query($conn, "SHOW TABLES LIKE 'transactions'");
-            if ($check && mysqli_num_rows($check) > 0) {
-                return; // Tables already initialized
-            }
-
             $sqlFile = __DIR__ . '/../database/database.sql';
-            if (!file_exists($sqlFile)) {
-                return;
-            }
+            if (file_exists($sqlFile)) {
+                $sqlContent = file_get_contents($sqlFile);
+                $sqlContent = preg_replace('/--.*$/m', '', $sqlContent);
+                $statements = explode(';', $sqlContent);
 
-            $sqlContent = file_get_contents($sqlFile);
-            $sqlContent = preg_replace('/--.*$/m', '', $sqlContent);
-            $statements = explode(';', $sqlContent);
+                foreach ($statements as $statement) {
+                    $stmt = trim($statement);
+                    if (empty($stmt)) continue;
+                    if (preg_match('/^(CREATE\s+DATABASE|USE\s+)/i', $stmt)) continue;
 
-            foreach ($statements as $statement) {
-                $stmt = trim($statement);
-                if (empty($stmt)) continue;
-                if (preg_match('/^(CREATE\s+DATABASE|USE\s+)/i', $stmt)) continue;
+                    if (stripos($stmt, 'INSERT INTO') === 0) {
+                        $stmt = preg_replace('/^INSERT\s+INTO/i', 'INSERT IGNORE INTO', $stmt);
+                    }
 
-                if (stripos($stmt, 'INSERT INTO') === 0) {
-                    $stmt = preg_replace('/^INSERT\s+INTO/i', 'INSERT IGNORE INTO', $stmt);
+                    @mysqli_query($conn, $stmt);
                 }
-
-                @mysqli_query($conn, $stmt);
             }
+
+            // Ensure essential columns exist in case of outdated table schemas
+            ensureColumnExists($conn, 'transactions', 'type', "ENUM('SIGNUP_BONUS','PURCHASE','ESCROW_LOCK','ESCROW_RELEASE','PAYOUT','REFUND','ADMIN_ADJUST') NOT NULL DEFAULT 'SIGNUP_BONUS'");
+            ensureColumnExists($conn, 'transactions', 'amount_wp', "INT NOT NULL DEFAULT 0");
+            ensureColumnExists($conn, 'transactions', 'description', "VARCHAR(500) DEFAULT NULL");
+            ensureColumnExists($conn, 'transactions', 'reference_id', "INT DEFAULT NULL");
+            ensureColumnExists($conn, 'transactions', 'price_paid', "DECIMAL(10,2) DEFAULT NULL");
+            ensureColumnExists($conn, 'transactions', 'payment_method', "VARCHAR(50) DEFAULT NULL");
+
+            ensureColumnExists($conn, 'users', 'wp_balance', "INT NOT NULL DEFAULT 100");
+            ensureColumnExists($conn, 'users', 'role', "ENUM('user','moderator','admin') NOT NULL DEFAULT 'user'");
+            ensureColumnExists($conn, 'users', 'status', "ENUM('active','warned','suspended','banned') NOT NULL DEFAULT 'active'");
+            ensureColumnExists($conn, 'users', 'status_reason', "TEXT DEFAULT NULL");
+
+            ensureColumnExists($conn, 'tasks', 'reward', "INT NOT NULL DEFAULT 0");
+            ensureColumnExists($conn, 'tasks', 'status', "ENUM('OPEN','ASSIGNED','SUBMITTED','COMPLETED','CANCELLED') NOT NULL DEFAULT 'OPEN'");
+
         } catch (Throwable $e) {
             error_log('Database auto-initialization error: ' . $e->getMessage());
         }
