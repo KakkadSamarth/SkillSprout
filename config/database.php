@@ -143,6 +143,17 @@ if (!function_exists('ensureDatabaseTablesExist')) {
 
         ensureColumnExists($conn, 'tasks', 'reward', "INT NOT NULL DEFAULT 0");
         ensureColumnExists($conn, 'tasks', 'status', "ENUM('OPEN','ASSIGNED','SUBMITTED','COMPLETED','CANCELLED') NOT NULL DEFAULT 'OPEN'");
+        ensureColumnExists($conn, 'tasks', 'domain', "VARCHAR(100) DEFAULT NULL");
+        ensureColumnExists($conn, 'tasks', 'skills_required', "VARCHAR(500) DEFAULT NULL");
+        ensureColumnExists($conn, 'tasks', 'deadline', "DATE DEFAULT NULL");
+        ensureColumnExists($conn, 'tasks', 'assigned_user_id', "INT DEFAULT NULL");
+        ensureColumnExists($conn, 'tasks', 'created_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+        ensureColumnExists($conn, 'tasks', 'updated_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+
+        ensureColumnExists($conn, 'users', 'bio', "TEXT DEFAULT NULL");
+        ensureColumnExists($conn, 'users', 'skills', "VARCHAR(500) DEFAULT NULL");
+        ensureColumnExists($conn, 'users', 'created_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+        ensureColumnExists($conn, 'users', 'updated_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
 
         ensureColumnExists($conn, 'applications', 'pitch', "TEXT DEFAULT NULL");
         ensureColumnExists($conn, 'applications', 'status', "ENUM('PENDING','ACCEPTED','REJECTED') NOT NULL DEFAULT 'PENDING'");
