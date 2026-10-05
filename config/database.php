@@ -116,9 +116,9 @@ mysqli_set_charset($conn, "utf8mb4");
 if (!function_exists('ensureColumnExists')) {
     function ensureColumnExists($conn, string $table, string $column, string $definition): void {
         try {
-            $check = @mysqli_query($conn, "SHOW COLUMNS FROM `$table` LIKE '$column'");
+            $check = mysqli_query($conn, "SHOW COLUMNS FROM `$table` LIKE '$column'");
             if ($check && mysqli_num_rows($check) === 0) {
-                @mysqli_query($conn, "ALTER TABLE `$table` ADD COLUMN `$column` $definition");
+                mysqli_query($conn, "ALTER TABLE `$table` ADD COLUMN `$column` $definition");
             }
         } catch (Throwable $e) {
             error_log("Failed adding column $column to $table: " . $e->getMessage());
@@ -128,44 +128,44 @@ if (!function_exists('ensureColumnExists')) {
 
 if (!function_exists('ensureDatabaseTablesExist')) {
     function ensureDatabaseTablesExist($conn) {
-        try {
-            $sqlFile = __DIR__ . '/../database/database.sql';
-            if (file_exists($sqlFile)) {
-                $sqlContent = file_get_contents($sqlFile);
-                $sqlContent = preg_replace('/--.*$/m', '', $sqlContent);
-                $statements = explode(';', $sqlContent);
+        // 1. Column migrations MUST run first individually
+        ensureColumnExists($conn, 'transactions', 'type', "ENUM('SIGNUP_BONUS','PURCHASE','ESCROW_LOCK','ESCROW_RELEASE','PAYOUT','REFUND','ADMIN_ADJUST') NOT NULL DEFAULT 'SIGNUP_BONUS'");
+        ensureColumnExists($conn, 'transactions', 'amount_wp', "INT NOT NULL DEFAULT 0");
+        ensureColumnExists($conn, 'transactions', 'description', "VARCHAR(500) DEFAULT NULL");
+        ensureColumnExists($conn, 'transactions', 'reference_id', "INT DEFAULT NULL");
+        ensureColumnExists($conn, 'transactions', 'price_paid', "DECIMAL(10,2) DEFAULT NULL");
+        ensureColumnExists($conn, 'transactions', 'payment_method', "VARCHAR(50) DEFAULT NULL");
 
-                foreach ($statements as $statement) {
-                    $stmt = trim($statement);
-                    if (empty($stmt)) continue;
-                    if (preg_match('/^(CREATE\s+DATABASE|USE\s+)/i', $stmt)) continue;
+        ensureColumnExists($conn, 'users', 'wp_balance', "INT NOT NULL DEFAULT 100");
+        ensureColumnExists($conn, 'users', 'role', "ENUM('user','moderator','admin') NOT NULL DEFAULT 'user'");
+        ensureColumnExists($conn, 'users', 'status', "ENUM('active','warned','suspended','banned') NOT NULL DEFAULT 'active'");
+        ensureColumnExists($conn, 'users', 'status_reason', "TEXT DEFAULT NULL");
 
-                    if (stripos($stmt, 'INSERT INTO') === 0) {
-                        $stmt = preg_replace('/^INSERT\s+INTO/i', 'INSERT IGNORE INTO', $stmt);
-                    }
+        ensureColumnExists($conn, 'tasks', 'reward', "INT NOT NULL DEFAULT 0");
+        ensureColumnExists($conn, 'tasks', 'status', "ENUM('OPEN','ASSIGNED','SUBMITTED','COMPLETED','CANCELLED') NOT NULL DEFAULT 'OPEN'");
 
-                    @mysqli_query($conn, $stmt);
+        // 2. Execute table creation & seed statements individually
+        $sqlFile = __DIR__ . '/../database/database.sql';
+        if (file_exists($sqlFile)) {
+            $sqlContent = file_get_contents($sqlFile);
+            $sqlContent = preg_replace('/--.*$/m', '', $sqlContent);
+            $statements = explode(';', $sqlContent);
+
+            foreach ($statements as $statement) {
+                $stmt = trim($statement);
+                if (empty($stmt)) continue;
+                if (preg_match('/^(CREATE\s+DATABASE|USE\s+)/i', $stmt)) continue;
+
+                if (stripos($stmt, 'INSERT INTO') === 0) {
+                    $stmt = preg_replace('/^INSERT\s+INTO/i', 'INSERT IGNORE INTO', $stmt);
+                }
+
+                try {
+                    mysqli_query($conn, $stmt);
+                } catch (Throwable $e) {
+                    // Ignore individual statement failures (e.g. duplicate key or table already exists)
                 }
             }
-
-            // Ensure essential columns exist in case of outdated table schemas
-            ensureColumnExists($conn, 'transactions', 'type', "ENUM('SIGNUP_BONUS','PURCHASE','ESCROW_LOCK','ESCROW_RELEASE','PAYOUT','REFUND','ADMIN_ADJUST') NOT NULL DEFAULT 'SIGNUP_BONUS'");
-            ensureColumnExists($conn, 'transactions', 'amount_wp', "INT NOT NULL DEFAULT 0");
-            ensureColumnExists($conn, 'transactions', 'description', "VARCHAR(500) DEFAULT NULL");
-            ensureColumnExists($conn, 'transactions', 'reference_id', "INT DEFAULT NULL");
-            ensureColumnExists($conn, 'transactions', 'price_paid', "DECIMAL(10,2) DEFAULT NULL");
-            ensureColumnExists($conn, 'transactions', 'payment_method', "VARCHAR(50) DEFAULT NULL");
-
-            ensureColumnExists($conn, 'users', 'wp_balance', "INT NOT NULL DEFAULT 100");
-            ensureColumnExists($conn, 'users', 'role', "ENUM('user','moderator','admin') NOT NULL DEFAULT 'user'");
-            ensureColumnExists($conn, 'users', 'status', "ENUM('active','warned','suspended','banned') NOT NULL DEFAULT 'active'");
-            ensureColumnExists($conn, 'users', 'status_reason', "TEXT DEFAULT NULL");
-
-            ensureColumnExists($conn, 'tasks', 'reward', "INT NOT NULL DEFAULT 0");
-            ensureColumnExists($conn, 'tasks', 'status', "ENUM('OPEN','ASSIGNED','SUBMITTED','COMPLETED','CANCELLED') NOT NULL DEFAULT 'OPEN'");
-
-        } catch (Throwable $e) {
-            error_log('Database auto-initialization error: ' . $e->getMessage());
         }
     }
 }
