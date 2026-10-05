@@ -67,3 +67,5 @@ model_capabilities.yaml
 scripts/
 adapters/
 
+
+.vercel
