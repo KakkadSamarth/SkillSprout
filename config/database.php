@@ -6,40 +6,45 @@
 // ============================================================
 
 // --- Database Credentials ---
-// Vercel deployments provide these values as project environment variables.
+// Support Railway, Vercel, and standard environment variables.
+$dbUrl = getenv('MYSQL_URL') ?: getenv('DATABASE_URL');
+if ($dbUrl) {
+    $parsedUrl = parse_url($dbUrl);
+    $host   = $parsedUrl['host'] ?? null;
+    $port   = $parsedUrl['port'] ?? 3306;
+    $user   = $parsedUrl['user'] ?? null;
+    $pass   = $parsedUrl['pass'] ?? null;
+    $dbname = isset($parsedUrl['path']) ? ltrim($parsedUrl['path'], '/') : null;
+} else {
+    $host   = getenv('DB_HOST') !== false ? getenv('DB_HOST') : getenv('MYSQLHOST');
+    $port   = getenv('DB_PORT') !== false ? getenv('DB_PORT') : getenv('MYSQLPORT');
+    $user   = getenv('DB_USER') !== false ? getenv('DB_USER') : getenv('MYSQLUSER');
+    $pass   = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : getenv('MYSQLPASSWORD');
+    $dbname = getenv('DB_NAME') !== false ? getenv('DB_NAME') : getenv('MYSQLDATABASE');
+}
+
 $isVercel = getenv('VERCEL') !== false;
-$host     = getenv('DB_HOST');
-$port     = getenv('DB_PORT');
-$user     = getenv('DB_USER');
-$pass     = getenv('DB_PASSWORD');
-$dbname   = getenv('DB_NAME');
 
 if ($isVercel) {
     $missingVariables = [];
-    foreach ([
-        'DB_HOST' => $host,
-        'DB_PORT' => $port,
-        'DB_USER' => $user,
-        'DB_PASSWORD' => $pass,
-        'DB_NAME' => $dbname,
-    ] as $variable => $value) {
-        if ($value === false || $value === '') {
-            $missingVariables[] = $variable;
-        }
-    }
+    if ($host === false || $host === '' || $host === null)     $missingVariables[] = 'DB_HOST / MYSQLHOST';
+    if ($port === false || $port === '' || $port === null)     $missingVariables[] = 'DB_PORT / MYSQLPORT';
+    if ($user === false || $user === '' || $user === null)     $missingVariables[] = 'DB_USER / MYSQLUSER';
+    if ($pass === false || $pass === null)                     $missingVariables[] = 'DB_PASSWORD / MYSQLPASSWORD';
+    if ($dbname === false || $dbname === '' || $dbname === null) $missingVariables[] = 'DB_NAME / MYSQLDATABASE';
 
-    if ($missingVariables) {
+    if (!empty($missingVariables) && empty($dbUrl)) {
         http_response_code(500);
         error_log('SkillSprout is missing database environment variables: ' . implode(', ', $missingVariables));
-        echo 'The application database is not configured. Set the required DB_* environment variables.';
+        echo 'The application database is not configured. Set the required DB_* or MYSQL* environment variables (or MYSQL_URL / DATABASE_URL).';
         exit;
     }
 } else {
-    $host   = $host === false ? 'localhost' : $host;
-    $port   = $port === false ? '3306' : $port;
-    $user   = $user === false ? 'root' : $user;
-    $pass   = $pass === false ? '' : $pass;
-    $dbname = $dbname === false ? 'skillsprout' : $dbname;
+    $host   = ($host !== false && $host !== null) ? $host : 'localhost';
+    $port   = ($port !== false && $port !== null) ? $port : '3306';
+    $user   = ($user !== false && $user !== null) ? $user : 'root';
+    $pass   = ($pass !== false && $pass !== null) ? $pass : '';
+    $dbname = ($dbname !== false && $dbname !== null) ? $dbname : 'skillsprout';
 }
 
 $port = filter_var($port, FILTER_VALIDATE_INT, [
