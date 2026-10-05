@@ -9,7 +9,7 @@ session_start();
 
 // Log admin logout before destroying session
 if (isset($_SESSION["user_id"])) {
-    require_once '../config/database.php';
+    require_once __DIR__ . '/../config/database.php';
     $log_sql = "INSERT INTO admin_logs (admin_id, action, ip_address) VALUES (?, 'Admin Logout', ?)";
     $log_stmt = mysqli_prepare($conn, $log_sql);
     $ip = $_SERVER["REMOTE_ADDR"];

@@ -15,7 +15,7 @@ if (isset($_SESSION["user_id"])) {
     exit();
 }
 
-require_once '../config/database.php';
+require_once __DIR__ . '/../config/database.php';
 
 $error   = "";
 $success = "";
@@ -98,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 
-<?php include '../includes/header1.php'; ?>
+<?php include __DIR__ . '/../includes/header1.php'; ?>
 
 <section class="section">
     <div class="container">
@@ -153,4 +153,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
 </section>
 
-<?php include '../includes/footer1.php'; ?>
+<?php include __DIR__ . '/../includes/footer1.php'; ?>
