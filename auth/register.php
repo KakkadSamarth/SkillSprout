@@ -155,5 +155,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </div>
 </section>
-
+<script src="../assets/js/register.js"></script>
 <?php include __DIR__ . '/../includes/footer1.php'; ?>
