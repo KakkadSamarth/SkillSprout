@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `disputes` (
   `resolution`    ENUM('WORKER_PAID','CREATOR_REFUNDED','SPLIT','DISMISSED') DEFAULT NULL,
   `admin_notes`   TEXT DEFAULT NULL,
   `resolved_by`   INT DEFAULT NULL,                         -- Admin who resolved it
-  `filed_at`      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `filed_at`      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
   `resolved_at`   TIMESTAMP NULL DEFAULT NULL,
 
   FOREIGN KEY (`task_id`)    REFERENCES `tasks`(`task_id`) ON DELETE CASCADE,

@@ -18,7 +18,7 @@ $completed_month = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c 
 $cancelled_month = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c FROM tasks WHERE status = 'CANCELLED' AND updated_at >= '$this_month'"))["c"];
 
 // Total WP in system
-$total_wp = mysqli_fetch_assoc(mysqli_query($conn, "SELECT SUM(wp_balance) as total FROM users"))["total"];
+$total_wp = mysqli_fetch_assoc(mysqli_query($conn , "SELECT SUM(wp_balance) as total FROM users WHERE role = 'user'"))["total"];
 
 // Average WP per user
 $avg_wp = mysqli_fetch_assoc(mysqli_query($conn, "SELECT AVG(wp_balance) as avg FROM users WHERE role = 'user'"))["avg"];
