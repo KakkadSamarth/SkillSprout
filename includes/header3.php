@@ -52,7 +52,6 @@ $admin_role = $_SESSION["role"];
                 <li><a href="<?php echo BASE_URL; ?>/admin/dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/manage_users.php"><i class="fas fa-users-cog"></i> Users</a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/manage_tasks.php"><i class="fas fa-tasks"></i> Tasks</a></li>
-                <li><a href="<?php echo BASE_URL; ?>/admin/disputes.php"><i class="fas fa-gavel"></i> Disputes</a></li>
                 <li><a href="<?php echo BASE_URL; ?>/admin/transactions.php"><i class="fas fa-receipt"></i> Transactions</a></li>
                 <?php if ($admin_role === 'admin'): ?>
                 <li><a href="<?php echo BASE_URL; ?>/admin/settings.php"><i class="fas fa-tags"></i> Categories</a></li>

@@ -36,6 +36,7 @@
     </footer>
 
     <script>
+        // Mobile nav toggle
         const navToggle = document.getElementById('navToggle');
         const navLinks = document.getElementById('navLinks');
         if (navToggle) {
@@ -43,6 +44,36 @@
                 navLinks.classList.toggle('active');
             });
         }
+
+        // ── Light/Dark mode toggle ──────────────────────────────
+        (function () {
+            const STORAGE_KEY = 'ss-theme';
+            const body = document.body;
+            const btn  = document.getElementById('themeToggle');
+            const icon = document.getElementById('themeIcon');
+
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    body.setAttribute('data-theme', 'light');
+                    if (icon) { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
+                    if (btn)  btn.title = 'Switch to dark mode';
+                } else {
+                    body.removeAttribute('data-theme');
+                    if (icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
+                    if (btn)  btn.title = 'Switch to light mode';
+                }
+            }
+
+            applyTheme(localStorage.getItem(STORAGE_KEY) || 'dark');
+
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    const next = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                    localStorage.setItem(STORAGE_KEY, next);
+                    applyTheme(next);
+                });
+            }
+        })();
     </script>
 </body>
 </html>

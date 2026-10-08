@@ -3,7 +3,7 @@
 // FILE: admin/dashboard.php
 // PURPOSE: Admin dashboard overview with platform-wide KPIs:
 //          total users, tasks by status, WP circulation,
-//          open disputes, and recent activity summary.
+//          and recent activity summary.
 // ============================================================
 
 include '../includes/header3.php';
@@ -26,8 +26,6 @@ $total_tasks     = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c 
 // Total WP in circulation
 $total_wp = mysqli_fetch_assoc(mysqli_query($conn, "SELECT SUM(wp_balance) as total FROM users"))["total"];
 
-// Open disputes
-$open_disputes = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c FROM disputes WHERE status IN ('OPEN','UNDER_REVIEW')"))["c"];
 
 // Recent admin logs
 $logs = mysqli_query($conn, "SELECT al.*, u.name FROM admin_logs al JOIN users u ON al.admin_id = u.user_id ORDER BY al.created_at DESC LIMIT 10");
@@ -64,12 +62,6 @@ $logs = mysqli_query($conn, "SELECT al.*, u.name FROM admin_logs al JOIN users u
                 </div>
             </div>
 
-            <div class="stat-card accent-orange">
-                <div class="stat-icon"><i class="fas fa-gavel"></i></div>
-                <div class="stat-info">
-                    <div class="stat-number"><?php echo $open_disputes; ?></div>
-                    <div class="stat-label">Open Disputes</div>
-                </div>
             </div>
         </div>
 
@@ -121,11 +113,7 @@ $logs = mysqli_query($conn, "SELECT al.*, u.name FROM admin_logs al JOIN users u
                 <h3>Manage Tasks</h3>
                 <p>Oversee all platform tasks</p>
             </a>
-            <a href="<?php echo BASE_URL; ?>/admin/disputes.php" class="action-card">
-                <i class="fas fa-gavel"></i>
-                <h3>Disputes</h3>
-                <p>Resolve escalated conflicts</p>
-            </a>
+
             <a href="<?php echo BASE_URL; ?>/admin/transactions.php" class="action-card">
                 <i class="fas fa-receipt"></i>
                 <h3>Transactions</h3>

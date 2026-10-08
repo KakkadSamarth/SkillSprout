@@ -1,3 +1,6 @@
+/* ============================================================
+   DARK MODE (default) — applied to :root / body
+   ============================================================ */
 :root {
     --gray-bg: #111215;
     --gray-surface: #1c1d22;
@@ -28,6 +31,276 @@
     --radius-lg: 16px;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.5)
+}
+
+/* ============================================================
+   LIGHT MODE — toggled via data-theme="light" on <body>
+   (user-facing pages only)
+   ============================================================ */
+body[data-theme="light"] {
+    --gray-bg: #f0f4f8;
+    --gray-surface: #ffffff;
+    --gray-surface-hover: #f5f7fa;
+    --gray-border: #dde3ec;
+    --gray-border-light: #c8d0dc;
+    --bg-body: var(--gray-bg);
+    --bg-card: var(--gray-surface);
+    --bg-card-hover: var(--gray-surface-hover);
+    --bg-input: #f8fafc;
+    --border: var(--gray-border);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --primary: #059669;
+    --primary-dark: #047857;
+    --primary-light: #10b981;
+    --primary-soft: rgba(5, 150, 105, 0.1);
+    --primary-glow: 0 0 20px rgba(5, 150, 105, 0.15);
+    --accent-red: #dc2626;
+    --accent-red-soft: rgba(220, 38, 38, 0.1);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.12)
+}
+
+body[data-theme="light"] .navbar {
+    background: rgba(255, 255, 255, 0.95)
+}
+
+body[data-theme="light"] .hero {
+    background: radial-gradient(circle at 50% 20%, rgba(5, 150, 105, 0.08), transparent 70%)
+}
+
+body[data-theme="light"] .data-table tr:hover {
+    background: rgba(0, 0, 0, 0.025)
+}
+
+body[data-theme="light"] .star-rating-item {
+    color: #cbd5e1
+}
+
+body[data-theme="light"] .nav-links {
+    background: #ffffff
+}
+
+body[data-theme="light"] .modal-overlay {
+    background: rgba(15, 23, 42, 0.5)
+}
+
+/* ============================================================
+   ADMIN BLUE THEME — applied to .admin-body
+   Overrides all CSS variables for admin-specific pages
+   ============================================================ */
+.admin-body {
+    --gray-bg: #eef3fb;
+    --gray-surface: #ffffff;
+    --gray-surface-hover: #f0f5ff;
+    --gray-border: #c8d8f0;
+    --gray-border-light: #a3bde0;
+    --bg-body: var(--gray-bg);
+    --bg-card: var(--gray-surface);
+    --bg-card-hover: var(--gray-surface-hover);
+    --bg-input: #f5f8ff;
+    --border: var(--gray-border);
+    --text-primary: #0d1b3e;
+    --text-secondary: #3a5080;
+    --text-muted: #7a90b0;
+    --primary: #1d6fdb;
+    --primary-dark: #1558b8;
+    --primary-light: #4a90e9;
+    --primary-soft: rgba(29, 111, 219, 0.1);
+    --primary-glow: 0 0 20px rgba(29, 111, 219, 0.2);
+    --accent-red: #dc2626;
+    --accent-red-soft: rgba(220, 38, 38, 0.1);
+    --accent-blue: #3a5080;
+    --accent-purple: #3a5080;
+    --accent-orange: #3a5080;
+    --shadow: 0 4px 6px -1px rgba(29, 111, 219, 0.08);
+    --shadow-lg: 0 10px 25px -3px rgba(29, 111, 219, 0.14)
+}
+
+/* Admin navbar: crisp white with a blue accent border */
+.admin-body .admin-navbar {
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 2px solid #1d6fdb;
+    box-shadow: 0 2px 12px rgba(29, 111, 219, 0.1)
+}
+
+/* Admin logo uses blue */
+.admin-body .nav-logo {
+    color: #1d6fdb !important
+}
+
+/* Nav links in admin */
+.admin-body .nav-links a {
+    color: #3a5080
+}
+
+.admin-body .nav-links a:hover {
+    color: #1d6fdb;
+    background: rgba(29, 111, 219, 0.08)
+}
+
+/* Admin badge */
+.admin-body .nav-admin-badge {
+    background: rgba(29, 111, 219, 0.1);
+    color: #1d6fdb;
+    border-color: rgba(29, 111, 219, 0.25)
+}
+
+/* Admin footer */
+.admin-body .admin-footer {
+    background: #ffffff;
+    border-top: 1px solid #c8d8f0
+}
+
+/* stat-icon accents for blue admin */
+.admin-body .stat-icon {
+    background: rgba(29, 111, 219, 0.1);
+    color: #1d6fdb;
+    border-color: rgba(29, 111, 219, 0.2)
+}
+
+.admin-body .accent-green .stat-icon {
+    background: rgba(5, 150, 105, 0.1);
+    color: #059669;
+    border-color: rgba(5, 150, 105, 0.2)
+}
+
+.admin-body .accent-blue .stat-icon {
+    background: rgba(29, 111, 219, 0.1);
+    color: #1d6fdb;
+    border-color: rgba(29, 111, 219, 0.2)
+}
+
+.admin-body .feature-icon {
+    background: rgba(29, 111, 219, 0.1);
+    border-color: rgba(29, 111, 219, 0.2);
+    color: #1d6fdb
+}
+
+.admin-body .action-card i {
+    color: #1d6fdb
+}
+
+.admin-body .data-table tr:hover {
+    background: rgba(29, 111, 219, 0.03)
+}
+
+.admin-body .tab-btn.active {
+    background: #1d6fdb
+}
+
+.admin-body .badge-open,
+.admin-body .badge-completed,
+.admin-body .badge-accepted,
+.admin-body .badge-active {
+    background: rgba(5, 150, 105, 0.1);
+    color: #059669;
+    border-color: rgba(5, 150, 105, 0.2)
+}
+
+.admin-body .modal-overlay {
+    background: rgba(13, 27, 62, 0.55)
+}
+
+.admin-body .admin-logo {
+    color: #1d6fdb
+}
+
+/* Hero gradient adapted for admin */
+.admin-body .hero {
+    background: radial-gradient(circle at 50% 20%, rgba(29, 111, 219, 0.1), transparent 70%)
+}
+
+/* primary buttons use blue in admin */
+.admin-body .btn-primary,
+.admin-body .btn-success {
+    background: #1d6fdb
+}
+
+.admin-body .btn-primary:hover,
+.admin-body .btn-success:hover {
+    background: #1558b8;
+    box-shadow: var(--primary-glow)
+}
+
+.admin-body .btn-outline:hover {
+    border-color: #1d6fdb;
+    color: #1d6fdb;
+    background: rgba(29, 111, 219, 0.08)
+}
+
+.admin-body .alert-success {
+    background: rgba(29, 111, 219, 0.1);
+    border-color: rgba(29, 111, 219, 0.3);
+    color: #1d6fdb
+}
+
+.admin-body .skill-tag {
+    background: rgba(29, 111, 219, 0.1);
+    color: #1d6fdb;
+    border-color: rgba(29, 111, 219, 0.2)
+}
+
+.admin-body .task-domain,
+.admin-body .task-reward {
+    color: #1d6fdb
+}
+
+.admin-body .profile-avatar,
+.admin-body .wallet-icon,
+.admin-body .profile-card-header h3 i,
+.admin-body .info-item i {
+    color: #1d6fdb
+}
+
+.admin-body .about-block h2 {
+    color: #1d6fdb
+}
+
+.admin-body .footer-col h3 {
+    color: #1d6fdb
+}
+
+.admin-body .highlight {
+    color: #1d6fdb
+}
+
+.admin-body input:focus,
+.admin-body textarea:focus,
+.admin-body select:focus {
+    border-color: #1d6fdb;
+    box-shadow: 0 0 0 3px rgba(29, 111, 219, 0.12)
+}
+
+/* ============================================================
+   LIGHT MODE TOGGLE BUTTON — floats in nav for user pages
+   ============================================================ */
+.theme-toggle-btn {
+    background: none;
+    border: 1.5px solid var(--border);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    flex-shrink: 0
+}
+
+.theme-toggle-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-soft)
+}
+
+body[data-theme="light"] .theme-toggle-btn {
+    border-color: #c8d0dc;
+    color: #475569
 }
 
 *,
@@ -335,7 +608,6 @@ img {
 .task-card,
 .package-card,
 .application-card,
-.dispute-card,
 .admin-panel,
 .about-block {
     background: var(--bg-card);
@@ -1465,34 +1737,6 @@ img {
     padding-top: 1.5rem;
     border-top: 1px solid var(--border);
     flex-wrap: wrap
-}
-
-.dispute-card {
-    margin-bottom: 1rem
-}
-
-.dispute-resolved {
-    opacity: 0.65
-}
-
-.dispute-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem
-}
-
-.dispute-resolve-form {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border)
-}
-
-.dispute-actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-top: 0.75rem
 }
 
 .admin-panel h3 {

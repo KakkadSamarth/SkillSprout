@@ -164,14 +164,6 @@ if (!function_exists('ensureDatabaseTablesExist')) {
         ensureColumnExists($conn, 'submissions', 'submitted_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
         ensureColumnExists($conn, 'submissions', 'reviewed_at', "TIMESTAMP NULL DEFAULT NULL");
 
-        ensureColumnExists($conn, 'disputes', 'evidence', "TEXT DEFAULT NULL");
-        ensureColumnExists($conn, 'disputes', 'status', "ENUM('OPEN','UNDER_REVIEW','RESOLVED') NOT NULL DEFAULT 'OPEN'");
-        ensureColumnExists($conn, 'disputes', 'resolution', "ENUM('WORKER_PAID','CREATOR_REFUNDED','SPLIT','DISMISSED') DEFAULT NULL");
-        ensureColumnExists($conn, 'disputes', 'admin_notes', "TEXT DEFAULT NULL");
-        ensureColumnExists($conn, 'disputes', 'resolved_by', "INT DEFAULT NULL");
-        ensureColumnExists($conn, 'disputes', 'filed_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
-        ensureColumnExists($conn, 'disputes', 'resolved_at', "TIMESTAMP NULL DEFAULT NULL");
-
         ensureColumnExists($conn, 'reviews', 'task_id', "INT DEFAULT NULL");
         ensureColumnExists($conn, 'reviews', 'rating', "TINYINT NOT NULL DEFAULT 5");
         ensureColumnExists($conn, 'reviews', 'created_at', "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");

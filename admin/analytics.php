@@ -29,11 +29,8 @@ $top_cats = mysqli_query($conn, "SELECT domain, COUNT(*) as count FROM tasks WHE
 // Most active users (by tasks completed as worker)
 $top_workers = mysqli_query($conn, "SELECT u.name, COUNT(*) as completed FROM tasks t JOIN users u ON t.assigned_user_id = u.user_id WHERE t.status = 'COMPLETED' GROUP BY t.assigned_user_id ORDER BY completed DESC LIMIT 5");
 
-// Dispute rate
-$total_tasks_all = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c FROM tasks"))["c"];
-$total_disputes  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c FROM disputes"))["c"];
-$dispute_rate    = ($total_tasks_all > 0) ? round(($total_disputes / $total_tasks_all) * 100, 1) : 0;
 ?>
+
 
 <section class="section">
     <div class="container">
@@ -61,13 +58,6 @@ $dispute_rate    = ($total_tasks_all > 0) ? round(($total_disputes / $total_task
                 <div class="stat-info">
                     <div class="stat-number"><?php echo $completed_month; ?></div>
                     <div class="stat-label">Completed (Month)</div>
-                </div>
-            </div>
-            <div class="stat-card accent-orange">
-                <div class="stat-icon"><i class="fas fa-percentage"></i></div>
-                <div class="stat-info">
-                    <div class="stat-number"><?php echo $dispute_rate; ?>%</div>
-                    <div class="stat-label">Dispute Rate</div>
                 </div>
             </div>
         </div>

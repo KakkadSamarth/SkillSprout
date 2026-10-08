@@ -39,6 +39,8 @@ $session_user_role = isset($_SESSION["role"]) ? $_SESSION["role"] : "user";
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Apply saved theme before render to avoid flash -->
+    <script>(function(){var t=localStorage.getItem('ss-theme');if(t==='light')document.documentElement.setAttribute('data-theme-pending','light');})();</script>
 </head>
 <body>
     <!-- ===== NAVIGATION BAR (AUTHENTICATED USER) ===== -->
@@ -65,6 +67,11 @@ $session_user_role = isset($_SESSION["role"]) ? $_SESSION["role"] : "user";
                     </a>
                 </li>
                 <li><a href="<?php echo BASE_URL; ?>/auth/logout.php" class="btn btn-outline btn-sm">Logout</a></li>
+                <li>
+                    <button class="theme-toggle-btn" id="themeToggle" aria-label="Toggle light/dark mode" title="Toggle light mode">
+                        <i class="fas fa-sun" id="themeIcon"></i>
+                    </button>
+                </li>
             </ul>
         </div>
     </nav>

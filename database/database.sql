@@ -113,29 +113,6 @@ CREATE TABLE IF NOT EXISTS `transactions` (
 ) ENGINE=InnoDB;
 
 -- ============================================================
--- TABLE: disputes
--- When a task creator and worker disagree on submission quality,
--- a dispute is filed for admin arbitration.
--- ============================================================
-CREATE TABLE IF NOT EXISTS `disputes` (
-  `dispute_id`    INT AUTO_INCREMENT PRIMARY KEY,
-  `task_id`       INT NOT NULL,
-  `filed_by`      INT NOT NULL,                            -- User who filed the dispute
-  `reason`        TEXT NOT NULL,
-  `evidence`      TEXT DEFAULT NULL,                        -- Links or descriptions of proof
-  `status`        ENUM('OPEN','UNDER_REVIEW','RESOLVED') NOT NULL DEFAULT 'OPEN',
-  `resolution`    ENUM('WORKER_PAID','CREATOR_REFUNDED','SPLIT','DISMISSED') DEFAULT NULL,
-  `admin_notes`   TEXT DEFAULT NULL,
-  `resolved_by`   INT DEFAULT NULL,                         -- Admin who resolved it
-  `filed_at`      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-  `resolved_at`   TIMESTAMP NULL DEFAULT NULL,
-
-  FOREIGN KEY (`task_id`)    REFERENCES `tasks`(`task_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`filed_by`)   REFERENCES `users`(`user_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`resolved_by`) REFERENCES `users`(`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB;
-
--- ============================================================
 -- TABLE: reviews
 -- Peer review and rating system where users rate and review
 -- each other with 1-5 stars and feedback comments.
