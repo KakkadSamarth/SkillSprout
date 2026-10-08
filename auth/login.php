@@ -138,6 +138,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </div>
 </section>
-<?php
 <script src="../assets/js/login.js"></script>
 <?php include __DIR__ . '/../includes/footer1.php'; ?>
